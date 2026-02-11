@@ -10,6 +10,7 @@ class CompassXAPITester:
         self.base_url = base_url
         self.session_token = None
         self.user_data = None
+        self.session = requests.Session()  # Use session to handle cookies
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
