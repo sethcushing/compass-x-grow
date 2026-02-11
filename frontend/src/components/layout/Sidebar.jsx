@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Compass, 
@@ -27,7 +27,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  useState(() => {
+  useEffect(() => {
     const fetchUser = async () => {
       try {
         const res = await fetch(`${API}/auth/me`, { credentials: 'include' });
