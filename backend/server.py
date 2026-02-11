@@ -1,4 +1,5 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
+from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -6,10 +7,11 @@ import os
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from typing import List, Optional, Literal
 import uuid
-from datetime import datetime, timezone
-
+from datetime import datetime, timezone, timedelta
+import httpx
+from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -19,63 +21,14 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
+# LLM Key
+EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+
+# Create the main app
 app = FastAPI()
 
 # Create a router with the /api prefix
 api_router = APIRouter(prefix="/api")
-
-
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
-    
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-class StatusCheckCreate(BaseModel):
-    client_name: str
-
-# Add your routes to the router instead of directly to app
-@api_router.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
-
-# Include the router in the main app
-app.include_router(api_router)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Configure logging
 logging.basicConfig(
@@ -83,6 +36,1059 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# ============== PYDANTIC MODELS ==============
+
+class UserBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    user_id: str
+    email: str
+    name: str
+    picture: Optional[str] = None
+    role: str = "sales_lead"  # sales_lead, executive, admin
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class UserSession(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    session_id: str
+    user_id: str
+    session_token: str
+    expires_at: datetime
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class OrganizationBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    org_id: str = Field(default_factory=lambda: f"org_{uuid.uuid4().hex[:12]}")
+    name: str
+    industry: Optional[str] = None
+    company_size: Optional[str] = None
+    region: Optional[str] = None
+    strategic_tier: str = "Active"  # Target, Active, Strategic
+    primary_exec_sponsor: Optional[str] = None
+    notes: Optional[str] = None
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class OrganizationCreate(BaseModel):
+    name: str
+    industry: Optional[str] = None
+    company_size: Optional[str] = None
+    region: Optional[str] = None
+    strategic_tier: str = "Active"
+    primary_exec_sponsor: Optional[str] = None
+    notes: Optional[str] = None
+
+class ContactBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    contact_id: str = Field(default_factory=lambda: f"contact_{uuid.uuid4().hex[:12]}")
+    name: str
+    title: Optional[str] = None
+    function: Optional[str] = None  # IT, Data, AI, Finance, Ops
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    buying_role: Optional[str] = None  # Decision Maker, Influencer, Champion
+    org_id: str
+    notes: Optional[str] = None
+    created_by: str
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ContactCreate(BaseModel):
+    name: str
+    title: Optional[str] = None
+    function: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    buying_role: Optional[str] = None
+    org_id: str
+    notes: Optional[str] = None
+
+class OpportunityBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    opp_id: str = Field(default_factory=lambda: f"opp_{uuid.uuid4().hex[:12]}")
+    name: str
+    org_id: str
+    primary_contact_id: Optional[str] = None
+    engagement_type: str  # Advisory, Strategy, AI Enablement, Data Modernization, Platform / Architecture, Transformation
+    estimated_value: float = 0
+    confidence_level: int = 50  # 0-100
+    owner_id: str
+    pipeline_id: str
+    stage_id: str
+    target_close_date: Optional[datetime] = None
+    source: Optional[str] = None  # Inbound, Referral, Exec Intro, Expansion
+    notes: Optional[str] = None
+    value_hypothesis: Optional[str] = None
+    is_at_risk: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    stage_entered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class OpportunityCreate(BaseModel):
+    name: str
+    org_id: str
+    primary_contact_id: Optional[str] = None
+    engagement_type: str
+    estimated_value: float = 0
+    confidence_level: int = 50
+    pipeline_id: str
+    stage_id: str
+    target_close_date: Optional[str] = None
+    source: Optional[str] = None
+    notes: Optional[str] = None
+    value_hypothesis: Optional[str] = None
+
+class OpportunityUpdate(BaseModel):
+    name: Optional[str] = None
+    org_id: Optional[str] = None
+    primary_contact_id: Optional[str] = None
+    engagement_type: Optional[str] = None
+    estimated_value: Optional[float] = None
+    confidence_level: Optional[int] = None
+    stage_id: Optional[str] = None
+    target_close_date: Optional[str] = None
+    source: Optional[str] = None
+    notes: Optional[str] = None
+    value_hypothesis: Optional[str] = None
+
+class ActivityBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    activity_id: str = Field(default_factory=lambda: f"act_{uuid.uuid4().hex[:12]}")
+    activity_type: str  # Call, Meeting, Demo, Workshop, Follow-up, Exec Readout
+    opp_id: str
+    due_date: datetime
+    owner_id: str
+    status: str = "Planned"  # Planned, Completed, Overdue
+    notes: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class ActivityCreate(BaseModel):
+    activity_type: str
+    opp_id: str
+    due_date: str
+    notes: Optional[str] = None
+
+class ActivityUpdate(BaseModel):
+    activity_type: Optional[str] = None
+    due_date: Optional[str] = None
+    status: Optional[str] = None
+    notes: Optional[str] = None
+
+class PipelineBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    pipeline_id: str = Field(default_factory=lambda: f"pipe_{uuid.uuid4().hex[:12]}")
+    name: str
+    description: Optional[str] = None
+    is_default: bool = False
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class StageBase(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    stage_id: str = Field(default_factory=lambda: f"stage_{uuid.uuid4().hex[:12]}")
+    pipeline_id: str
+    name: str
+    order: int
+    win_probability: int = 0
+    auto_activity: Optional[str] = None
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class AICopilotRequest(BaseModel):
+    action: str  # summarize, suggest_activity, draft_email, value_hypothesis
+    opp_id: str
+    context: Optional[str] = None
+
+# ============== HELPER FUNCTIONS ==============
+
+def serialize_datetime(obj):
+    """Convert datetime to ISO string for MongoDB storage"""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    return obj
+
+def parse_datetime(dt_str):
+    """Parse ISO string to datetime"""
+    if isinstance(dt_str, datetime):
+        return dt_str
+    if isinstance(dt_str, str):
+        return datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+    return dt_str
+
+async def get_current_user(request: Request) -> dict:
+    """Get current user from session token"""
+    # Check cookie first
+    session_token = request.cookies.get("session_token")
+    
+    # Fallback to Authorization header
+    if not session_token:
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            session_token = auth_header.split(" ")[1]
+    
+    if not session_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Find session
+    session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
+    if not session:
+        raise HTTPException(status_code=401, detail="Invalid session")
+    
+    # Check expiry
+    expires_at = session.get("expires_at")
+    if isinstance(expires_at, str):
+        expires_at = datetime.fromisoformat(expires_at)
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at < datetime.now(timezone.utc):
+        raise HTTPException(status_code=401, detail="Session expired")
+    
+    # Get user
+    user = await db.users.find_one({"user_id": session["user_id"]}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="User not found")
+    
+    return user
+
+# ============== AUTH ENDPOINTS ==============
+
+@api_router.post("/auth/session")
+async def exchange_session(request: Request, response: Response):
+    """Exchange session_id for session_token"""
+    body = await request.json()
+    session_id = body.get("session_id")
+    
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id required")
+    
+    # Call Emergent Auth to get user data
+    async with httpx.AsyncClient() as client_http:
+        try:
+            resp = await client_http.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id},
+                timeout=10.0
+            )
+            if resp.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid session_id")
+            auth_data = resp.json()
+        except Exception as e:
+            logger.error(f"Auth error: {e}")
+            raise HTTPException(status_code=401, detail="Authentication failed")
+    
+    # Create or update user
+    user_id = f"user_{uuid.uuid4().hex[:12]}"
+    existing_user = await db.users.find_one({"email": auth_data["email"]}, {"_id": 0})
+    
+    if existing_user:
+        user_id = existing_user["user_id"]
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {
+                "name": auth_data["name"],
+                "picture": auth_data.get("picture"),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+    else:
+        user_doc = {
+            "user_id": user_id,
+            "email": auth_data["email"],
+            "name": auth_data["name"],
+            "picture": auth_data.get("picture"),
+            "role": "sales_lead",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user_doc)
+    
+    # Create session
+    session_token = auth_data.get("session_token", f"sess_{uuid.uuid4().hex}")
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "session_id": f"sid_{uuid.uuid4().hex[:12]}",
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=7*24*60*60
+    )
+    
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    return user
+
+@api_router.post("/auth/demo-login")
+async def demo_login(request: Request, response: Response):
+    """Create demo user session for testing"""
+    body = await request.json()
+    demo_type = body.get("type", "sales_lead")  # sales_lead, executive, admin
+    
+    demo_users = {
+        "sales_lead": {"name": "Alex Thompson", "email": "alex@compassx.demo", "role": "sales_lead"},
+        "executive": {"name": "Jordan Pierce", "email": "jordan@compassx.demo", "role": "executive"},
+        "admin": {"name": "Casey Morgan", "email": "casey@compassx.demo", "role": "admin"}
+    }
+    
+    demo_data = demo_users.get(demo_type, demo_users["sales_lead"])
+    
+    # Find or create demo user
+    user_id = f"demo_{demo_type}"
+    existing = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    
+    if not existing:
+        user_doc = {
+            "user_id": user_id,
+            "email": demo_data["email"],
+            "name": demo_data["name"],
+            "picture": None,
+            "role": demo_data["role"],
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user_doc)
+    
+    # Create session
+    session_token = f"demo_sess_{uuid.uuid4().hex}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "session_id": f"sid_{uuid.uuid4().hex[:12]}",
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=7*24*60*60
+    )
+    
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    return user
+
+@api_router.get("/auth/me")
+async def get_me(request: Request):
+    """Get current authenticated user"""
+    user = await get_current_user(request)
+    return user
+
+@api_router.post("/auth/logout")
+async def logout(request: Request, response: Response):
+    """Logout and clear session"""
+    session_token = request.cookies.get("session_token")
+    if session_token:
+        await db.user_sessions.delete_one({"session_token": session_token})
+    
+    response.delete_cookie(
+        key="session_token",
+        path="/",
+        secure=True,
+        samesite="none"
+    )
+    return {"message": "Logged out"}
+
+# ============== ORGANIZATION ENDPOINTS ==============
+
+@api_router.get("/organizations")
+async def get_organizations(request: Request):
+    user = await get_current_user(request)
+    orgs = await db.organizations.find({}, {"_id": 0}).to_list(1000)
+    return orgs
+
+@api_router.get("/organizations/{org_id}")
+async def get_organization(org_id: str, request: Request):
+    user = await get_current_user(request)
+    org = await db.organizations.find_one({"org_id": org_id}, {"_id": 0})
+    if not org:
+        raise HTTPException(status_code=404, detail="Organization not found")
+    return org
+
+@api_router.post("/organizations")
+async def create_organization(data: OrganizationCreate, request: Request):
+    user = await get_current_user(request)
+    org = OrganizationBase(**data.model_dump(), created_by=user["user_id"])
+    doc = org.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    doc["updated_at"] = doc["updated_at"].isoformat()
+    await db.organizations.insert_one(doc)
+    return await db.organizations.find_one({"org_id": org.org_id}, {"_id": 0})
+
+@api_router.put("/organizations/{org_id}")
+async def update_organization(org_id: str, data: OrganizationCreate, request: Request):
+    user = await get_current_user(request)
+    update_data = data.model_dump(exclude_unset=True)
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.organizations.update_one({"org_id": org_id}, {"$set": update_data})
+    return await db.organizations.find_one({"org_id": org_id}, {"_id": 0})
+
+@api_router.delete("/organizations/{org_id}")
+async def delete_organization(org_id: str, request: Request):
+    user = await get_current_user(request)
+    await db.organizations.delete_one({"org_id": org_id})
+    return {"message": "Deleted"}
+
+# ============== CONTACT ENDPOINTS ==============
+
+@api_router.get("/contacts")
+async def get_contacts(request: Request, org_id: Optional[str] = None):
+    user = await get_current_user(request)
+    query = {} if not org_id else {"org_id": org_id}
+    contacts = await db.contacts.find(query, {"_id": 0}).to_list(1000)
+    return contacts
+
+@api_router.get("/contacts/{contact_id}")
+async def get_contact(contact_id: str, request: Request):
+    user = await get_current_user(request)
+    contact = await db.contacts.find_one({"contact_id": contact_id}, {"_id": 0})
+    if not contact:
+        raise HTTPException(status_code=404, detail="Contact not found")
+    return contact
+
+@api_router.post("/contacts")
+async def create_contact(data: ContactCreate, request: Request):
+    user = await get_current_user(request)
+    contact = ContactBase(**data.model_dump(), created_by=user["user_id"])
+    doc = contact.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    doc["updated_at"] = doc["updated_at"].isoformat()
+    await db.contacts.insert_one(doc)
+    return await db.contacts.find_one({"contact_id": contact.contact_id}, {"_id": 0})
+
+@api_router.put("/contacts/{contact_id}")
+async def update_contact(contact_id: str, data: ContactCreate, request: Request):
+    user = await get_current_user(request)
+    update_data = data.model_dump(exclude_unset=True)
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.contacts.update_one({"contact_id": contact_id}, {"$set": update_data})
+    return await db.contacts.find_one({"contact_id": contact_id}, {"_id": 0})
+
+@api_router.delete("/contacts/{contact_id}")
+async def delete_contact(contact_id: str, request: Request):
+    user = await get_current_user(request)
+    await db.contacts.delete_one({"contact_id": contact_id})
+    return {"message": "Deleted"}
+
+# ============== PIPELINE & STAGE ENDPOINTS ==============
+
+@api_router.get("/pipelines")
+async def get_pipelines(request: Request):
+    user = await get_current_user(request)
+    pipelines = await db.pipelines.find({}, {"_id": 0}).to_list(100)
+    return pipelines
+
+@api_router.get("/pipelines/{pipeline_id}/stages")
+async def get_stages(pipeline_id: str, request: Request):
+    user = await get_current_user(request)
+    stages = await db.stages.find({"pipeline_id": pipeline_id}, {"_id": 0}).sort("order", 1).to_list(100)
+    return stages
+
+# ============== OPPORTUNITY ENDPOINTS ==============
+
+@api_router.get("/opportunities")
+async def get_opportunities(request: Request, pipeline_id: Optional[str] = None, owner_id: Optional[str] = None):
+    user = await get_current_user(request)
+    query = {}
+    if pipeline_id:
+        query["pipeline_id"] = pipeline_id
+    if owner_id:
+        query["owner_id"] = owner_id
+    opps = await db.opportunities.find(query, {"_id": 0}).to_list(1000)
+    return opps
+
+@api_router.get("/opportunities/{opp_id}")
+async def get_opportunity(opp_id: str, request: Request):
+    user = await get_current_user(request)
+    opp = await db.opportunities.find_one({"opp_id": opp_id}, {"_id": 0})
+    if not opp:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+    return opp
+
+@api_router.post("/opportunities")
+async def create_opportunity(data: OpportunityCreate, request: Request):
+    user = await get_current_user(request)
+    opp_data = data.model_dump()
+    if opp_data.get("target_close_date"):
+        opp_data["target_close_date"] = parse_datetime(opp_data["target_close_date"])
+    else:
+        opp_data["target_close_date"] = None
+    
+    opp = OpportunityBase(**opp_data, owner_id=user["user_id"])
+    doc = opp.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    doc["updated_at"] = doc["updated_at"].isoformat()
+    doc["stage_entered_at"] = doc["stage_entered_at"].isoformat()
+    if doc["target_close_date"]:
+        doc["target_close_date"] = doc["target_close_date"].isoformat()
+    
+    await db.opportunities.insert_one(doc)
+    
+    # Check stage automation
+    stage = await db.stages.find_one({"stage_id": data.stage_id}, {"_id": 0})
+    if stage and stage.get("auto_activity"):
+        activity_doc = {
+            "activity_id": f"act_{uuid.uuid4().hex[:12]}",
+            "activity_type": "Follow-up",
+            "opp_id": opp.opp_id,
+            "due_date": (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(),
+            "owner_id": user["user_id"],
+            "status": "Planned",
+            "notes": stage["auto_activity"],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.activities.insert_one(activity_doc)
+    
+    return await db.opportunities.find_one({"opp_id": opp.opp_id}, {"_id": 0})
+
+@api_router.put("/opportunities/{opp_id}")
+async def update_opportunity(opp_id: str, data: OpportunityUpdate, request: Request):
+    user = await get_current_user(request)
+    update_data = data.model_dump(exclude_unset=True)
+    
+    # Handle stage change
+    if "stage_id" in update_data:
+        update_data["stage_entered_at"] = datetime.now(timezone.utc).isoformat()
+        
+        # Check stage automation
+        stage = await db.stages.find_one({"stage_id": update_data["stage_id"]}, {"_id": 0})
+        if stage and stage.get("auto_activity"):
+            activity_doc = {
+                "activity_id": f"act_{uuid.uuid4().hex[:12]}",
+                "activity_type": "Follow-up",
+                "opp_id": opp_id,
+                "due_date": (datetime.now(timezone.utc) + timedelta(days=3)).isoformat(),
+                "owner_id": user["user_id"],
+                "status": "Planned",
+                "notes": stage["auto_activity"],
+                "created_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.activities.insert_one(activity_doc)
+    
+    if "target_close_date" in update_data and update_data["target_close_date"]:
+        update_data["target_close_date"] = parse_datetime(update_data["target_close_date"]).isoformat()
+    
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.opportunities.update_one({"opp_id": opp_id}, {"$set": update_data})
+    return await db.opportunities.find_one({"opp_id": opp_id}, {"_id": 0})
+
+@api_router.delete("/opportunities/{opp_id}")
+async def delete_opportunity(opp_id: str, request: Request):
+    user = await get_current_user(request)
+    await db.opportunities.delete_one({"opp_id": opp_id})
+    await db.activities.delete_many({"opp_id": opp_id})
+    return {"message": "Deleted"}
+
+# ============== ACTIVITY ENDPOINTS ==============
+
+@api_router.get("/activities")
+async def get_activities(request: Request, opp_id: Optional[str] = None, owner_id: Optional[str] = None, status: Optional[str] = None):
+    user = await get_current_user(request)
+    query = {}
+    if opp_id:
+        query["opp_id"] = opp_id
+    if owner_id:
+        query["owner_id"] = owner_id
+    if status:
+        query["status"] = status
+    activities = await db.activities.find(query, {"_id": 0}).to_list(1000)
+    return activities
+
+@api_router.get("/activities/{activity_id}")
+async def get_activity(activity_id: str, request: Request):
+    user = await get_current_user(request)
+    activity = await db.activities.find_one({"activity_id": activity_id}, {"_id": 0})
+    if not activity:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    return activity
+
+@api_router.post("/activities")
+async def create_activity(data: ActivityCreate, request: Request):
+    user = await get_current_user(request)
+    activity_data = data.model_dump()
+    activity_data["due_date"] = parse_datetime(activity_data["due_date"])
+    
+    activity = ActivityBase(**activity_data, owner_id=user["user_id"])
+    doc = activity.model_dump()
+    doc["created_at"] = doc["created_at"].isoformat()
+    doc["updated_at"] = doc["updated_at"].isoformat()
+    doc["due_date"] = doc["due_date"].isoformat()
+    
+    await db.activities.insert_one(doc)
+    
+    # Update opportunity at-risk status
+    await db.opportunities.update_one(
+        {"opp_id": data.opp_id},
+        {"$set": {"is_at_risk": False, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    return await db.activities.find_one({"activity_id": activity.activity_id}, {"_id": 0})
+
+@api_router.put("/activities/{activity_id}")
+async def update_activity(activity_id: str, data: ActivityUpdate, request: Request):
+    user = await get_current_user(request)
+    update_data = data.model_dump(exclude_unset=True)
+    
+    if "due_date" in update_data and update_data["due_date"]:
+        update_data["due_date"] = parse_datetime(update_data["due_date"]).isoformat()
+    
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    await db.activities.update_one({"activity_id": activity_id}, {"$set": update_data})
+    return await db.activities.find_one({"activity_id": activity_id}, {"_id": 0})
+
+@api_router.delete("/activities/{activity_id}")
+async def delete_activity(activity_id: str, request: Request):
+    user = await get_current_user(request)
+    await db.activities.delete_one({"activity_id": activity_id})
+    return {"message": "Deleted"}
+
+# ============== DASHBOARD ENDPOINTS ==============
+
+@api_router.get("/dashboard/sales")
+async def get_sales_dashboard(request: Request):
+    """Sales owner dashboard data"""
+    user = await get_current_user(request)
+    
+    # My opportunities
+    my_opps = await db.opportunities.find(
+        {"owner_id": user["user_id"]},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    # Stages for grouping
+    pipelines = await db.pipelines.find({}, {"_id": 0}).to_list(10)
+    default_pipeline = next((p for p in pipelines if p.get("is_default")), pipelines[0] if pipelines else None)
+    
+    stages = []
+    if default_pipeline:
+        stages = await db.stages.find(
+            {"pipeline_id": default_pipeline["pipeline_id"]},
+            {"_id": 0}
+        ).sort("order", 1).to_list(20)
+    
+    # My activities
+    my_activities = await db.activities.find(
+        {"owner_id": user["user_id"]},
+        {"_id": 0}
+    ).to_list(500)
+    
+    # Calculate metrics
+    total_value = sum(opp.get("estimated_value", 0) for opp in my_opps)
+    weighted_value = sum(
+        opp.get("estimated_value", 0) * opp.get("confidence_level", 0) / 100
+        for opp in my_opps
+    )
+    
+    overdue_activities = [
+        a for a in my_activities
+        if a.get("status") == "Planned" and parse_datetime(a.get("due_date", "2099-01-01")) < datetime.now(timezone.utc)
+    ]
+    
+    at_risk_opps = [opp for opp in my_opps if opp.get("is_at_risk")]
+    
+    return {
+        "opportunities": my_opps,
+        "stages": stages,
+        "activities": my_activities,
+        "metrics": {
+            "total_opportunities": len(my_opps),
+            "total_value": total_value,
+            "weighted_forecast": weighted_value,
+            "overdue_activities": len(overdue_activities),
+            "at_risk_opportunities": len(at_risk_opps)
+        }
+    }
+
+@api_router.get("/dashboard/executive")
+async def get_executive_dashboard(request: Request):
+    """Executive dashboard data"""
+    user = await get_current_user(request)
+    
+    # All opportunities
+    all_opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
+    
+    # Stages
+    pipelines = await db.pipelines.find({}, {"_id": 0}).to_list(10)
+    default_pipeline = next((p for p in pipelines if p.get("is_default")), pipelines[0] if pipelines else None)
+    
+    stages = []
+    if default_pipeline:
+        stages = await db.stages.find(
+            {"pipeline_id": default_pipeline["pipeline_id"]},
+            {"_id": 0}
+        ).sort("order", 1).to_list(20)
+    
+    # All users
+    users = await db.users.find({}, {"_id": 0}).to_list(100)
+    
+    # Calculate metrics
+    total_value = sum(opp.get("estimated_value", 0) for opp in all_opps)
+    weighted_value = sum(
+        opp.get("estimated_value", 0) * opp.get("confidence_level", 0) / 100
+        for opp in all_opps
+    )
+    
+    # By stage
+    by_stage = {}
+    for opp in all_opps:
+        stage_id = opp.get("stage_id", "unknown")
+        if stage_id not in by_stage:
+            by_stage[stage_id] = {"count": 0, "value": 0}
+        by_stage[stage_id]["count"] += 1
+        by_stage[stage_id]["value"] += opp.get("estimated_value", 0)
+    
+    # By owner
+    by_owner = {}
+    for opp in all_opps:
+        owner_id = opp.get("owner_id", "unknown")
+        if owner_id not in by_owner:
+            by_owner[owner_id] = {"count": 0, "value": 0}
+        by_owner[owner_id]["count"] += 1
+        by_owner[owner_id]["value"] += opp.get("estimated_value", 0)
+    
+    # Win/Loss
+    won = [opp for opp in all_opps if "won" in opp.get("stage_id", "").lower()]
+    lost = [opp for opp in all_opps if "lost" in opp.get("stage_id", "").lower()]
+    
+    return {
+        "opportunities": all_opps,
+        "stages": stages,
+        "users": users,
+        "metrics": {
+            "total_pipeline_value": total_value,
+            "weighted_forecast": weighted_value,
+            "total_deals": len(all_opps),
+            "won_deals": len(won),
+            "lost_deals": len(lost),
+            "win_rate": round(len(won) / max(len(won) + len(lost), 1) * 100, 1)
+        },
+        "by_stage": by_stage,
+        "by_owner": by_owner
+    }
+
+# ============== AI COPILOT ENDPOINTS ==============
+
+@api_router.post("/ai/copilot")
+async def ai_copilot(data: AICopilotRequest, request: Request):
+    """AI-powered sales assistance"""
+    user = await get_current_user(request)
+    
+    # Get opportunity data
+    opp = await db.opportunities.find_one({"opp_id": data.opp_id}, {"_id": 0})
+    if not opp:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+    
+    # Get related data
+    org = await db.organizations.find_one({"org_id": opp.get("org_id")}, {"_id": 0})
+    contact = None
+    if opp.get("primary_contact_id"):
+        contact = await db.contacts.find_one({"contact_id": opp["primary_contact_id"]}, {"_id": 0})
+    activities = await db.activities.find({"opp_id": data.opp_id}, {"_id": 0}).to_list(50)
+    
+    # Build context
+    context = f"""
+Opportunity: {opp.get('name')}
+Organization: {org.get('name') if org else 'Unknown'}
+Engagement Type: {opp.get('engagement_type')}
+Estimated Value: ${opp.get('estimated_value', 0):,.0f}
+Confidence: {opp.get('confidence_level', 0)}%
+Notes: {opp.get('notes', 'None')}
+Value Hypothesis: {opp.get('value_hypothesis', 'None')}
+Contact: {contact.get('name') if contact else 'None'} ({contact.get('title', '') if contact else ''})
+Recent Activities: {len(activities)} activities logged
+Additional Context: {data.context or 'None'}
+"""
+    
+    prompts = {
+        "summarize": f"""You are an executive sales advisor. Provide a concise, professional summary of this opportunity for a busy executive. Focus on key facts, current status, and what matters most.
+
+{context}
+
+Provide a 3-4 sentence executive summary.""",
+
+        "suggest_activity": f"""You are a strategic sales advisor for a consulting firm. Based on this opportunity's current state, suggest the most impactful next activity.
+
+{context}
+
+Suggest ONE specific, actionable next step with a brief rationale. Be concrete (e.g., "Schedule discovery call with CFO to validate budget" not "Follow up with stakeholder").""",
+
+        "draft_email": f"""You are a senior consulting sales professional. Draft a professional follow-up email for this opportunity.
+
+{context}
+
+Write a concise, executive-level email that moves the deal forward. Be warm but professional. Keep it under 150 words.""",
+
+        "value_hypothesis": f"""You are a value engineering expert at a consulting firm. Based on this opportunity, craft a compelling value hypothesis.
+
+{context}
+
+Create a structured value hypothesis that includes:
+1. Key business challenge being addressed
+2. Proposed solution approach
+3. Expected outcomes and ROI indicators
+
+Keep it concise and compelling."""
+    }
+    
+    prompt = prompts.get(data.action)
+    if not prompt:
+        raise HTTPException(status_code=400, detail=f"Unknown action: {data.action}")
+    
+    try:
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"copilot_{user['user_id']}_{data.opp_id}",
+            system_message="You are an expert sales advisor for a Tech, Data, and AI Consulting firm. You provide concise, actionable, executive-level guidance."
+        ).with_model("openai", "gpt-5.2")
+        
+        response = await chat.send_message(UserMessage(text=prompt))
+        
+        return {
+            "action": data.action,
+            "opp_id": data.opp_id,
+            "result": response
+        }
+    except Exception as e:
+        logger.error(f"AI Copilot error: {e}")
+        raise HTTPException(status_code=500, detail="AI service temporarily unavailable")
+
+# ============== SEED DATA ENDPOINT ==============
+
+@api_router.post("/seed")
+async def seed_data(request: Request):
+    """Seed sample data for demo"""
+    # Check if already seeded
+    existing = await db.pipelines.find_one({}, {"_id": 0})
+    if existing:
+        return {"message": "Data already seeded"}
+    
+    # Create default pipeline
+    pipeline = {
+        "pipeline_id": "pipe_default",
+        "name": "Consulting Sales Pipeline",
+        "description": "Default sales pipeline for consulting engagements",
+        "is_default": True,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.pipelines.insert_one(pipeline)
+    
+    # Create stages
+    stages_data = [
+        {"name": "Initial Conversation", "order": 1, "win_probability": 10, "auto_activity": None},
+        {"name": "Discovery / Problem Framing", "order": 2, "win_probability": 20, "auto_activity": "Schedule discovery session"},
+        {"name": "Value Hypothesis Defined", "order": 3, "win_probability": 40, "auto_activity": "Prepare value narrative"},
+        {"name": "Solution Direction Aligned", "order": 4, "win_probability": 60, "auto_activity": "Draft solution approach"},
+        {"name": "Commercials & Scope Discussion", "order": 5, "win_probability": 75, "auto_activity": "Draft SOW outline"},
+        {"name": "SOW in Progress", "order": 6, "win_probability": 90, "auto_activity": "Finalize SOW terms"},
+        {"name": "Closed – Won", "order": 7, "win_probability": 100, "auto_activity": None},
+        {"name": "Closed – Lost", "order": 8, "win_probability": 0, "auto_activity": None},
+    ]
+    
+    for s in stages_data:
+        stage = {
+            "stage_id": f"stage_{s['name'].lower().replace(' ', '_').replace('/', '_').replace('–', '')}",
+            "pipeline_id": "pipe_default",
+            "name": s["name"],
+            "order": s["order"],
+            "win_probability": s["win_probability"],
+            "auto_activity": s["auto_activity"],
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.stages.insert_one(stage)
+    
+    # Create sample organizations
+    orgs_data = [
+        {"org_id": "org_acme", "name": "Acme Financial Services", "industry": "Financial Services", "company_size": "Enterprise", "region": "North America", "strategic_tier": "Strategic"},
+        {"org_id": "org_globex", "name": "Globex Manufacturing", "industry": "Manufacturing", "company_size": "Mid-Market", "region": "Europe", "strategic_tier": "Active"},
+        {"org_id": "org_initech", "name": "Initech Healthcare", "industry": "Healthcare", "company_size": "Enterprise", "region": "North America", "strategic_tier": "Target"},
+        {"org_id": "org_umbrella", "name": "Umbrella Retail Group", "industry": "Retail", "company_size": "Enterprise", "region": "APAC", "strategic_tier": "Strategic"},
+        {"org_id": "org_wayne", "name": "Wayne Enterprises", "industry": "Technology", "company_size": "Enterprise", "region": "North America", "strategic_tier": "Active"},
+    ]
+    
+    for org_data in orgs_data:
+        org = {
+            **org_data,
+            "primary_exec_sponsor": None,
+            "notes": None,
+            "created_by": "demo_sales_lead",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.organizations.insert_one(org)
+    
+    # Create sample contacts
+    contacts_data = [
+        {"contact_id": "contact_1", "name": "Sarah Chen", "title": "Chief Data Officer", "function": "Data", "email": "schen@acme.com", "buying_role": "Decision Maker", "org_id": "org_acme"},
+        {"contact_id": "contact_2", "name": "Michael Torres", "title": "VP of Engineering", "function": "IT", "email": "mtorres@acme.com", "buying_role": "Influencer", "org_id": "org_acme"},
+        {"contact_id": "contact_3", "name": "Emily Watson", "title": "Director of AI Initiatives", "function": "AI", "email": "ewatson@globex.com", "buying_role": "Champion", "org_id": "org_globex"},
+        {"contact_id": "contact_4", "name": "James Park", "title": "CTO", "function": "IT", "email": "jpark@initech.com", "buying_role": "Decision Maker", "org_id": "org_initech"},
+        {"contact_id": "contact_5", "name": "Lisa Kumar", "title": "Head of Digital Transformation", "function": "Ops", "email": "lkumar@umbrella.com", "buying_role": "Champion", "org_id": "org_umbrella"},
+    ]
+    
+    for contact_data in contacts_data:
+        contact = {
+            **contact_data,
+            "phone": None,
+            "notes": None,
+            "created_by": "demo_sales_lead",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.contacts.insert_one(contact)
+    
+    # Create sample opportunities
+    opps_data = [
+        {
+            "opp_id": "opp_1", "name": "Acme Data Platform Modernization", "org_id": "org_acme",
+            "primary_contact_id": "contact_1", "engagement_type": "Data Modernization",
+            "estimated_value": 450000, "confidence_level": 70,
+            "stage_id": "stage_commercials__scope_discussion", "source": "Exec Intro",
+            "value_hypothesis": "Modernize legacy data infrastructure to enable real-time analytics, reducing reporting time by 80% and enabling new revenue streams through data monetization."
+        },
+        {
+            "opp_id": "opp_2", "name": "Globex AI-Powered Quality Control", "org_id": "org_globex",
+            "primary_contact_id": "contact_3", "engagement_type": "AI Enablement",
+            "estimated_value": 280000, "confidence_level": 50,
+            "stage_id": "stage_value_hypothesis_defined", "source": "Inbound",
+            "value_hypothesis": "Implement computer vision for defect detection, reducing quality control costs by 40% and improving defect detection rate to 99.5%."
+        },
+        {
+            "opp_id": "opp_3", "name": "Initech Healthcare Analytics Strategy", "org_id": "org_initech",
+            "primary_contact_id": "contact_4", "engagement_type": "Strategy",
+            "estimated_value": 175000, "confidence_level": 30,
+            "stage_id": "stage_discovery___problem_framing", "source": "Referral",
+            "value_hypothesis": None
+        },
+        {
+            "opp_id": "opp_4", "name": "Umbrella Retail Personalization Engine", "org_id": "org_umbrella",
+            "primary_contact_id": "contact_5", "engagement_type": "AI Enablement",
+            "estimated_value": 520000, "confidence_level": 85,
+            "stage_id": "stage_sow_in_progress", "source": "Expansion",
+            "value_hypothesis": "Build real-time personalization engine to increase conversion rates by 25% and average order value by 15%, generating estimated $12M additional annual revenue."
+        },
+        {
+            "opp_id": "opp_5", "name": "Wayne Enterprise Architecture Review", "org_id": "org_wayne",
+            "primary_contact_id": None, "engagement_type": "Platform / Architecture",
+            "estimated_value": 95000, "confidence_level": 20,
+            "stage_id": "stage_initial_conversation", "source": "Inbound",
+            "value_hypothesis": None, "is_at_risk": True
+        },
+    ]
+    
+    for opp_data in opps_data:
+        opp = {
+            **opp_data,
+            "owner_id": "demo_sales_lead",
+            "pipeline_id": "pipe_default",
+            "target_close_date": (datetime.now(timezone.utc) + timedelta(days=60)).isoformat(),
+            "notes": None,
+            "is_at_risk": opp_data.get("is_at_risk", False),
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "stage_entered_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.opportunities.insert_one(opp)
+    
+    # Create sample activities
+    activities_data = [
+        {"activity_id": "act_1", "activity_type": "Meeting", "opp_id": "opp_1", "due_date": (datetime.now(timezone.utc) + timedelta(days=2)).isoformat(), "status": "Planned", "notes": "SOW review meeting with legal"},
+        {"activity_id": "act_2", "activity_type": "Call", "opp_id": "opp_2", "due_date": (datetime.now(timezone.utc) + timedelta(days=1)).isoformat(), "status": "Planned", "notes": "Follow up on value hypothesis feedback"},
+        {"activity_id": "act_3", "activity_type": "Workshop", "opp_id": "opp_3", "due_date": (datetime.now(timezone.utc) - timedelta(days=1)).isoformat(), "status": "Overdue", "notes": "Discovery workshop - needs rescheduling"},
+        {"activity_id": "act_4", "activity_type": "Exec Readout", "opp_id": "opp_4", "due_date": (datetime.now(timezone.utc) + timedelta(days=5)).isoformat(), "status": "Planned", "notes": "Final presentation to CEO"},
+        {"activity_id": "act_5", "activity_type": "Demo", "opp_id": "opp_2", "due_date": (datetime.now(timezone.utc) - timedelta(days=3)).isoformat(), "status": "Completed", "notes": "AI prototype demonstration - went well"},
+    ]
+    
+    for act_data in activities_data:
+        activity = {
+            **act_data,
+            "owner_id": "demo_sales_lead",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.activities.insert_one(activity)
+    
+    return {"message": "Sample data seeded successfully"}
+
+# ============== ANALYTICS ENDPOINTS ==============
+
+@api_router.get("/analytics/pipeline")
+async def get_pipeline_analytics(request: Request):
+    """Pipeline value by stage"""
+    user = await get_current_user(request)
+    
+    opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
+    stages = await db.stages.find({}, {"_id": 0}).sort("order", 1).to_list(20)
+    
+    result = []
+    for stage in stages:
+        stage_opps = [o for o in opps if o.get("stage_id") == stage["stage_id"]]
+        result.append({
+            "stage": stage["name"],
+            "stage_id": stage["stage_id"],
+            "count": len(stage_opps),
+            "value": sum(o.get("estimated_value", 0) for o in stage_opps),
+            "weighted": sum(o.get("estimated_value", 0) * o.get("confidence_level", 0) / 100 for o in stage_opps)
+        })
+    
+    return result
+
+@api_router.get("/analytics/engagement-types")
+async def get_engagement_analytics(request: Request):
+    """Win rate by engagement type"""
+    user = await get_current_user(request)
+    
+    opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
+    
+    by_type = {}
+    for opp in opps:
+        eng_type = opp.get("engagement_type", "Unknown")
+        if eng_type not in by_type:
+            by_type[eng_type] = {"total": 0, "won": 0, "value": 0}
+        by_type[eng_type]["total"] += 1
+        by_type[eng_type]["value"] += opp.get("estimated_value", 0)
+        if "won" in opp.get("stage_id", "").lower():
+            by_type[eng_type]["won"] += 1
+    
+    result = []
+    for eng_type, data in by_type.items():
+        result.append({
+            "type": eng_type,
+            "total": data["total"],
+            "won": data["won"],
+            "value": data["value"],
+            "win_rate": round(data["won"] / max(data["total"], 1) * 100, 1)
+        })
+    
+    return result
+
+# Include the router in the main app
+app.include_router(api_router)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
