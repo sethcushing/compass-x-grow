@@ -1,0 +1,167 @@
+{
+  "identity": {
+    "persona": "E1 - The Anti-AI Designer",
+    "tone": "Executive, Fluid, Clarity-Focused, 'Flow State'",
+    "aesthetic_goals": [
+      "No 'Default SaaS Blue' - Use Deep Ocean & Seafoam",
+      "No Cramped Data - Use 2x Whitespace",
+      "No Boring Tables - Use Visual Cards & Kanban",
+      "Exec-Clean: High contrast, low noise"
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "heading": "Outfit, sans-serif",
+      "body": "Public Sans, sans-serif",
+      "code": "JetBrains Mono, monospace"
+    },
+    "imports": [
+      "https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Public+Sans:wght@300;400;500;600;700&display=swap"
+    ],
+    "scale": {
+      "h1": "text-4xl md:text-5xl font-semibold tracking-tight",
+      "h2": "text-3xl md:text-4xl font-medium tracking-tight",
+      "h3": "text-2xl font-medium",
+      "body": "text-base leading-relaxed text-slate-600",
+      "caption": "text-sm text-slate-500 font-medium tracking-wide uppercase"
+    }
+  },
+  "colors": {
+    "palette_name": "The Executive Coast",
+    "theme": "light",
+    "tokens": {
+      "background": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "surface_highlight": "#F1F5F9",
+      "primary": "#023047",
+      "primary_foreground": "#FFFFFF",
+      "secondary": "#8ECAE6",
+      "secondary_foreground": "#023047",
+      "accent": "#FFB703",
+      "accent_foreground": "#023047",
+      "muted": "#F1F5F9",
+      "muted_foreground": "#64748B",
+      "border": "#E2E8F0",
+      "input": "#E2E8F0",
+      "ring": "#023047"
+    },
+    "chart_colors": [
+      "#023047",
+      "#219EBC",
+      "#8ECAE6",
+      "#FFB703",
+      "#FB8500"
+    ],
+    "gradients": {
+      "ocean_mist": "linear-gradient(135deg, #F8FAFC 0%, #E0F2FE 100%)",
+      "deep_sea": "linear-gradient(135deg, #023047 0%, #0F4C75 100%)"
+    },
+    "usage_rules": [
+      "NEVER use gradients for text.",
+      "Use 'Deep Sea' gradient ONLY for the Sidebar or Primary Action buttons (hover).",
+      "Backgrounds must be solid #F8FAFC (Slate 50) or White.",
+      "Cards must be White with a subtle border #E2E8F0."
+    ]
+  },
+  "layout": {
+    "grid_system": "Bento Grid (CSS Grid)",
+    "container_max_width": "max-w-7xl",
+    "spacing": {
+      "section_gap": "gap-8 md:gap-12",
+      "card_padding": "p-6 md:p-8",
+      "element_gap": "gap-4"
+    },
+    "border_radius": {
+      "card": "rounded-xl",
+      "button": "rounded-full",
+      "input": "rounded-lg"
+    }
+  },
+  "components": {
+    "Button": {
+      "style": "pill",
+      "classes": "rounded-full font-medium px-6 py-2 transition-all duration-300 hover:shadow-lg active:scale-95"
+    },
+    "Card": {
+      "style": "clean_border",
+      "classes": "bg-white border border-slate-200 shadow-sm hover:shadow-md transition-shadow duration-300 rounded-xl"
+    },
+    "Input": {
+      "style": "soft",
+      "classes": "bg-slate-50 border-slate-200 focus:ring-2 focus:ring-primary/20 focus:border-primary rounded-lg"
+    },
+    "Navigation": {
+      "style": "floating_sidebar",
+      "classes": "h-screen sticky top-0 border-r border-slate-200 bg-white/80 backdrop-blur-md z-50"
+    },
+    "KanbanBoard": {
+        "style": "modern_horizontal",
+        "classes": "flex gap-6 overflow-x-auto p-6 bg-slate-50/50 min-h-[calc(100vh-100px)]"
+    }
+  },
+  "visual_enhancers": {
+    "glassmorphism": "backdrop-blur-md bg-white/70 border-b border-white/20",
+    "shadows": {
+      "soft": "0 4px 20px -2px rgba(2, 48, 71, 0.05)",
+      "hover": "0 10px 25px -5px rgba(2, 48, 71, 0.1)"
+    },
+    "textures": "Use subtle noise overlay on the Sidebar (opacity 2%) to add tactile feel."
+  },
+  "motion": {
+    "library": "framer-motion",
+    "animations": {
+      "page_transition": {
+        "initial": { "opacity": 0, "y": 20 },
+        "animate": { "opacity": 1, "y": 0 },
+        "exit": { "opacity": 0, "y": -20 },
+        "transition": { "duration": 0.3, "ease": "easeOut" }
+      },
+      "stagger_children": {
+        "animate": { "transition": { "staggerChildren": 0.1 } }
+      },
+      "hover_lift": {
+        "whileHover": { "y": -4, "transition": { "duration": 0.2 } }
+      }
+    }
+  },
+  "assets": {
+    "image_urls": {
+      "login_hero_bg": "https://images.unsplash.com/photo-1675284731155-e3d7af1daa07?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "avatars": [
+        "https://images.unsplash.com/photo-1659353221237-6a1cfb73fd90?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "https://images.unsplash.com/photo-1762522926984-e721bff0d6c6?crop=entropy&cs=srgb&fm=jpg&q=85",
+        "https://images.unsplash.com/photo-1765005204058-10418f5123c5?crop=entropy&cs=srgb&fm=jpg&q=85"
+      ],
+      "placeholders": {
+        "consulting_abstract": "https://images.unsplash.com/photo-1643518896965-832ec832638e?crop=entropy&cs=srgb&fm=jpg&q=85"
+      }
+    },
+    "icons": "lucide-react"
+  },
+  "accessibility": {
+    "contrast": "Ensure text is #0F172A (Slate 900) on light backgrounds. Use #64748B (Slate 500) ONLY for secondary text.",
+    "focus_states": "All interactive elements must have visible focus rings (ring-2 ring-primary/50)."
+  },
+  "universal_guidelines": {
+    "do_not_use": [
+      "Gradients on text",
+      "Generic 'Inter' font for headings",
+      "Pure Black (#000000)",
+      "Default browser scrollbars (use custom thin scrollbar)"
+    ],
+    "must_do": [
+      "Use 2x padding everywhere.",
+      "Add 'data-testid' to all buttons and inputs.",
+      "Use 'sonner' for toasts.",
+      "Make the UI feel 'Beachy' via Whitespace and soft Blues, not literal beach icons."
+    ]
+  },
+  "instructions_to_main_agent": [
+    "1. INSTALL FONTS: Add Outfit and Public Sans to index.html/css immediately.",
+    "2. THEME SETUP: Update tailwind.config.js with the 'Executive Coast' colors provided.",
+    "3. LAYOUT: Create a Sidebar Layout component that uses the Glassmorphism effect.",
+    "4. KANBAN: This is the core view. Make it horizontal scrolling, with 'Drag' handles on cards.",
+    "5. DASHBOARD: Use a Bento Grid (CSS Grid) for the Sales Owner Dashboard. Do not use simple rows.",
+    "6. AI COPILOT: Create a distinct visual style for AI elements (e.g., a subtle Gold/Accent border or glow) to differentiate from human data."
+  ]
+}
