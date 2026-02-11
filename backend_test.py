@@ -37,7 +37,7 @@ class CompassXAPITester:
         return success
 
     def make_request(self, method, endpoint, data=None, expect_status=200):
-        """Make API request with proper headers"""
+        """Make API request with proper headers and session handling"""
         url = f"{self.base_url}/{endpoint}"
         headers = {'Content-Type': 'application/json'}
         
@@ -47,13 +47,13 @@ class CompassXAPITester:
 
         try:
             if method == 'GET':
-                response = requests.get(url, headers=headers, timeout=10)
+                response = self.session.get(url, headers=headers, timeout=10)
             elif method == 'POST':
-                response = requests.post(url, json=data, headers=headers, timeout=10)
+                response = self.session.post(url, json=data, headers=headers, timeout=10)
             elif method == 'PUT':
-                response = requests.put(url, json=data, headers=headers, timeout=10)
+                response = self.session.put(url, json=data, headers=headers, timeout=10)
             elif method == 'DELETE':
-                response = requests.delete(url, headers=headers, timeout=10)
+                response = self.session.delete(url, headers=headers, timeout=10)
             else:
                 return False, {"error": "Invalid method"}
 
