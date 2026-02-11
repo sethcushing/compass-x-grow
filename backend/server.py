@@ -210,9 +210,14 @@ def serialize_datetime(obj):
 def parse_datetime(dt_str):
     """Parse ISO string to datetime"""
     if isinstance(dt_str, datetime):
+        if dt_str.tzinfo is None:
+            return dt_str.replace(tzinfo=timezone.utc)
         return dt_str
     if isinstance(dt_str, str):
-        return datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+        dt = datetime.fromisoformat(dt_str.replace('Z', '+00:00'))
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return dt
     return dt_str
 
 async def get_current_user(request: Request) -> dict:
