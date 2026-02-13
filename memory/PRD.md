@@ -43,6 +43,10 @@ Default password for password login: `CompassX2026!`
 - ✅ **Top Opportunities by Client** - Grouped view showing clients with total value and individual deals
 - ✅ **At-Risk Clients Badge** - Shows count of at-risk clients in At-Risk Deals metric card
 - ✅ **Color-coded Activities** - Activities in dashboard use type-specific colors and icons
+- ✅ **Won vs Lost Metrics** - Dashboard shows Won (Closed) and Lost (Closed) totals with counts
+- ✅ **Active Opportunities Card** - Shows Closed Won opportunities count and value
+- ✅ **Pipeline Opportunities Card** - Shows Open opportunities count and value
+- ✅ **8 Metric Cards** - Two rows: Top row (Total Pipeline, Weighted Forecast, Overdue Activities, At-Risk Deals), Bottom row (Won, Lost, Active, Pipeline)
 
 ### Activities Enhancements (Feb 13, 2026)
 - ✅ **Title Field** - Activities now have title as main content (type shown as badge)
