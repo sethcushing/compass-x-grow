@@ -309,13 +309,16 @@ class CompassXAPITester:
         print("=" * 60)
         
         # Core Authentication Tests
-        if not self.test_demo_login():
+        if not self.test_jwt_login():
             print("❌ Authentication failed - stopping tests")
             return False
         
         if not self.test_auth_me():
             print("❌ User verification failed - stopping tests") 
             return False
+            
+        # Test invalid login scenarios
+        self.test_invalid_login()
         
         # Data Setup
         self.test_seed_data()
