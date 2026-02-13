@@ -41,7 +41,8 @@ import {
   FileText,
   AlertTriangle,
   CheckCircle,
-  Clock
+  Clock,
+  Presentation
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
