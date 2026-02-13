@@ -28,7 +28,8 @@ import {
   MapPin,
   Users,
   Briefcase,
-  User
+  User,
+  AlertTriangle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -46,7 +47,7 @@ const Organizations = () => {
     industry: '',
     company_size: '',
     region: '',
-    strategic_tier: 'Active',
+    strategic_tier: 'Current',
     owner_id: '',
     notes: ''
   });
@@ -70,8 +71,8 @@ const Organizations = () => {
         setUsers(usersData);
       }
     } catch (error) {
-      console.error('Error fetching organizations:', error);
-      toast.error('Failed to load organizations');
+      console.error('Error fetching clients:', error);
+      toast.error('Failed to load clients');
     } finally {
       setLoading(false);
     }
@@ -79,7 +80,7 @@ const Organizations = () => {
 
   const handleCreateOrg = async () => {
     if (!newOrg.name) {
-      toast.error('Organization name is required');
+      toast.error('Client name is required');
       return;
     }
     if (!newOrg.owner_id) {
@@ -105,14 +106,14 @@ const Organizations = () => {
         industry: '',
         company_size: '',
         region: '',
-        strategic_tier: 'Active',
+        strategic_tier: 'Current',
         owner_id: '',
         notes: ''
       });
-      toast.success('Organization created');
+      toast.success('Client created');
     } catch (error) {
-      console.error('Error creating organization:', error);
-      toast.error('Failed to create organization');
+      console.error('Error creating client:', error);
+      toast.error('Failed to create client');
     }
   };
 
@@ -121,11 +122,26 @@ const Organizations = () => {
     org.industry?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const getTierColor = (tier) => {
-    switch (tier) {
-      case 'Strategic': return 'bg-amber-100 text-amber-700';
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Current': return 'bg-emerald-100 text-emerald-700';
+      case 'Future': return 'bg-ocean-100 text-ocean-700';
+      case 'Return': return 'bg-amber-100 text-amber-700';
+      // Legacy values mapping
+      case 'Strategic': return 'bg-emerald-100 text-emerald-700';
       case 'Target': return 'bg-ocean-100 text-ocean-700';
+      case 'Active': return 'bg-amber-100 text-amber-700';
       default: return 'bg-slate-100 text-slate-700';
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    // Map legacy values to new values
+    switch (status) {
+      case 'Strategic': return 'Current';
+      case 'Target': return 'Future';
+      case 'Active': return 'Return';
+      default: return status;
     }
   };
 
@@ -164,23 +180,23 @@ const Organizations = () => {
           {/* Header */}
           <div className="flex justify-between items-start mb-8">
             <div>
-              <h1 className="text-3xl font-heading font-semibold text-slate-900">Organizations</h1>
+              <h1 className="text-3xl font-heading font-semibold text-slate-900">Clients</h1>
               <p className="text-slate-500 mt-1">Manage your client accounts</p>
             </div>
             
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button data-testid="create-org-btn" className="bg-ocean-950 hover:bg-ocean-900 rounded-full">
-                  <Plus className="w-4 h-4 mr-2" /> Add Organization
+                  <Plus className="w-4 h-4 mr-2" /> Add Client
                 </Button>
               </DialogTrigger>
               <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                  <DialogTitle className="font-heading">Add Organization</DialogTitle>
+                  <DialogTitle className="font-heading">Add Client</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 mt-4">
                   <div>
-                    <Label htmlFor="org-name">Organization Name *</Label>
+                    <Label htmlFor="org-name">Client Name *</Label>
                     <Input
                       id="org-name"
                       data-testid="org-name-input"
@@ -253,18 +269,18 @@ const Organizations = () => {
                     </div>
                     
                     <div>
-                      <Label htmlFor="org-tier">Strategic Tier</Label>
+                      <Label htmlFor="org-status">Client Status</Label>
                       <Select
                         value={newOrg.strategic_tier}
                         onValueChange={(value) => setNewOrg(prev => ({ ...prev, strategic_tier: value }))}
                       >
-                        <SelectTrigger data-testid="org-tier-select" className="mt-1">
+                        <SelectTrigger data-testid="org-status-select" className="mt-1">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Target">Target</SelectItem>
-                          <SelectItem value="Active">Active</SelectItem>
-                          <SelectItem value="Strategic">Strategic</SelectItem>
+                          <SelectItem value="Current">Current</SelectItem>
+                          <SelectItem value="Future">Future</SelectItem>
+                          <SelectItem value="Return">Return</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -293,10 +309,9 @@ const Organizations = () => {
                     <Label htmlFor="org-notes">Notes</Label>
                     <Textarea
                       id="org-notes"
-                      data-testid="org-notes-input"
                       value={newOrg.notes}
                       onChange={(e) => setNewOrg(prev => ({ ...prev, notes: e.target.value }))}
-                      placeholder="Additional notes about this organization..."
+                      placeholder="Additional notes about this client..."
                       className="mt-1"
                       rows={3}
                     />
@@ -307,7 +322,7 @@ const Organizations = () => {
                     onClick={handleCreateOrg}
                     className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
                   >
-                    Add Organization
+                    Add Client
                   </Button>
                 </div>
               </DialogContent>
@@ -316,72 +331,75 @@ const Organizations = () => {
 
           {/* Search */}
           <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4" />
             <Input
-              data-testid="org-search-input"
-              placeholder="Search organizations..."
+              data-testid="search-clients"
+              placeholder="Search clients..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 rounded-xl border-slate-200"
+              className="pl-10 rounded-full border-slate-200"
             />
           </div>
 
-          {/* Organizations Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredOrgs.length === 0 ? (
-              <div className="col-span-full text-center py-12">
+          {/* Client Grid */}
+          {filteredOrgs.length === 0 ? (
+            <Card className="border-slate-200 shadow-soft">
+              <CardContent className="py-16 text-center">
                 <Building2 className="w-12 h-12 mx-auto text-slate-300 mb-4" />
-                <p className="text-slate-500">No organizations found</p>
-              </div>
-            ) : (
-              filteredOrgs.map((org, index) => (
-                <motion.div
-                  key={org.org_id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <Link to={`/organizations/${org.org_id}`}>
-                    <Card className="border-slate-200 shadow-soft hover:shadow-hover transition-all hover:border-ocean-300 cursor-pointer">
-                      <CardContent className="p-6">
-                        <div className="flex items-start justify-between mb-4">
+                <h3 className="text-lg font-heading font-medium text-slate-900">No clients yet</h3>
+                <p className="text-slate-500 mt-1">Add your first client to get started</p>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredOrgs.map((org) => (
+                <Link key={org.org_id} to={`/organizations/${org.org_id}`}>
+                  <Card className="border-slate-200 shadow-soft hover:shadow-md hover:border-ocean-300 transition-all cursor-pointer h-full">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
                           <div className="w-12 h-12 bg-ocean-100 rounded-xl flex items-center justify-center">
                             <Building2 className="w-6 h-6 text-ocean-600" />
                           </div>
-                          <Badge className={getTierColor(org.strategic_tier)}>
-                            {org.strategic_tier}
-                          </Badge>
-                        </div>
-                        
-                        <h3 className="font-heading font-semibold text-lg text-slate-900 mb-2">
-                          {org.name}
-                        </h3>
-                        
-                        <div className="space-y-2 text-sm text-slate-500">
-                          {org.industry && (
-                            <div className="flex items-center gap-2">
-                              <Briefcase className="w-4 h-4" />
-                              <span>{org.industry}</span>
-                            </div>
-                          )}
-                          {org.region && (
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4" />
-                              <span>{org.region}</span>
-                            </div>
-                          )}
-                          <div className="flex items-center gap-2">
-                            <User className="w-4 h-4" />
-                            <span>{getUserName(org.owner_id)}</span>
+                          <div>
+                            <h3 className="font-heading font-semibold text-slate-900">{org.name}</h3>
+                            <p className="text-sm text-slate-500">{org.industry || 'No industry'}</p>
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))
-            )}
-          </div>
+                        <div className="flex flex-col items-end gap-1">
+                          <Badge className={getStatusColor(org.strategic_tier)}>
+                            {getStatusLabel(org.strategic_tier)}
+                          </Badge>
+                          {org.is_at_risk && (
+                            <Badge className="bg-rose-100 text-rose-700 flex items-center gap-1">
+                              <AlertTriangle className="w-3 h-3" />
+                              At Risk
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <MapPin className="w-4 h-4" />
+                          <span>{org.region || 'No region'}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-500">
+                          <Users className="w-4 h-4" />
+                          <span>{org.company_size || 'Unknown'}</span>
+                        </div>
+                      </div>
+                      
+                      <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-sm text-slate-500">
+                        <User className="w-4 h-4" />
+                        <span>{getUserName(org.owner_id)}</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
         </motion.div>
       </main>
     </div>
