@@ -150,9 +150,37 @@ const Reports = () => {
           className="max-w-7xl mx-auto"
         >
           {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-heading font-semibold text-slate-900">Reports & Analytics</h1>
-            <p className="text-slate-500 mt-1">Pipeline and sales performance insights</p>
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-heading font-semibold text-slate-900">Reports & Analytics</h1>
+              <p className="text-slate-500 mt-1">Pipeline and sales performance insights</p>
+            </div>
+            
+            {/* View Toggle */}
+            <div className="flex items-center bg-slate-100 rounded-full p-1">
+              <button
+                data-testid="reports-view-all"
+                onClick={() => setViewMode('all')}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  viewMode === 'all' 
+                    ? 'bg-white text-slate-900 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                All
+              </button>
+              <button
+                data-testid="reports-view-mine"
+                onClick={() => setViewMode('mine')}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  viewMode === 'mine' 
+                    ? 'bg-white text-slate-900 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Mine
+              </button>
+            </div>
           </div>
 
           {/* Summary Metrics */}
