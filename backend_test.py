@@ -110,6 +110,30 @@ class CompassXAPITester:
         self.log_test("Wrong Password", success, "Should reject invalid password")
         
         return True
+        
+    def test_change_password(self):
+        """Test change password functionality"""
+        print("\n🔑 Testing Change Password...")
+        
+        change_data = {
+            'current_password': 'CompassX2026!',
+            'new_password': 'NewPassword123!'
+        }
+        success, data = self.make_request('POST', 'auth/change-password', change_data, 200)
+        if success:
+            self.log_test("Change Password", True, "Password changed successfully")
+            
+            # Change back to original password
+            revert_data = {
+                'current_password': 'NewPassword123!',
+                'new_password': 'CompassX2026!'
+            }
+            success, data = self.make_request('POST', 'auth/change-password', revert_data, 200)
+            self.log_test("Revert Password", success, "Password reverted successfully")
+            return success
+        else:
+            self.log_test("Change Password", False, f"Response: {data}")
+            return False
 
     def test_auth_me(self):
         """Test getting current user info"""
