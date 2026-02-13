@@ -487,21 +487,16 @@ const Activities = () => {
                   <CardContent className="pt-0">
                     <div className="space-y-2">
                       {clientActivities.slice(0, 5).map(activity => {
-                        const Icon = getActivityIcon(activity.activity_type);
+                        const config = getActivityConfig(activity.activity_type);
+                        const Icon = config.icon;
                         const status = getActivityStatus(activity);
                         return (
-                          <div key={activity.activity_id} className="flex items-center gap-4 p-3 rounded-lg bg-slate-50">
-                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-                              status === 'completed' ? 'bg-emerald-100' : 
-                              status === 'overdue' ? 'bg-rose-100' : 'bg-ocean-100'
-                            }`}>
-                              <Icon className={`w-4 h-4 ${
-                                status === 'completed' ? 'text-emerald-600' : 
-                                status === 'overdue' ? 'text-rose-600' : 'text-ocean-600'
-                              }`} />
+                          <div key={activity.activity_id} className={`flex items-center gap-4 p-3 rounded-lg border-l-4 ${config.border} ${config.bgLight}`}>
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${config.color}`}>
+                              <Icon className="w-4 h-4" />
                             </div>
                             <div className="flex-1">
-                              <p className="text-sm font-medium text-slate-900">{activity.activity_type}</p>
+                              <p className="text-sm font-medium text-slate-900">{activity.title || activity.activity_type}</p>
                               <p className="text-xs text-slate-500">{activity.notes || 'No notes'}</p>
                             </div>
                             <div className="text-right">
