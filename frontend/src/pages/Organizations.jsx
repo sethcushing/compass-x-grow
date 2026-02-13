@@ -31,7 +31,10 @@ import {
   User,
   AlertTriangle,
   FileText,
-  ExternalLink
+  ExternalLink,
+  DollarSign,
+  Target,
+  TrendingUp
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -40,6 +43,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const Organizations = () => {
   const [organizations, setOrganizations] = useState([]);
+  const [orgSummaries, setOrgSummaries] = useState({});
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -73,6 +77,20 @@ const Organizations = () => {
         const usersData = await usersRes.json();
         setUsers(usersData);
       }
+      
+      // Fetch summary data for each org
+      const summaries = {};
+      await Promise.all(orgsData.map(async (org) => {
+        try {
+          const summaryRes = await fetch(`${API}/organizations/${org.org_id}/summary`, { credentials: 'include' });
+          if (summaryRes.ok) {
+            summaries[org.org_id] = await summaryRes.json();
+          }
+        } catch (e) {
+          console.error(`Error fetching summary for ${org.org_id}:`, e);
+        }
+      }));
+      setOrgSummaries(summaries);
     } catch (error) {
       console.error('Error fetching clients:', error);
       toast.error('Failed to load clients');
