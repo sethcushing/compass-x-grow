@@ -29,7 +29,9 @@ import {
   Users,
   Briefcase,
   User,
-  AlertTriangle
+  AlertTriangle,
+  FileText,
+  ExternalLink
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -49,7 +51,8 @@ const Organizations = () => {
     region: '',
     strategic_tier: 'Current',
     owner_id: '',
-    notes: ''
+    notes: '',
+    google_drive_link: ''
   });
 
   useEffect(() => {
@@ -108,7 +111,8 @@ const Organizations = () => {
         region: '',
         strategic_tier: 'Current',
         owner_id: '',
-        notes: ''
+        notes: '',
+        google_drive_link: ''
       });
       toast.success('Client created');
     } catch (error) {
