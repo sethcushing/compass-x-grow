@@ -1099,13 +1099,13 @@ async def seed_data(request: Request):
     for act_data in activities_data:
         activity = {
             **act_data,
-            "owner_id": "demo_sales_lead",
+            "owner_id": default_owner,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
         }
         await db.activities.insert_one(activity)
     
-    return {"message": "Sample data seeded successfully"}
+    return {"message": "Sample data seeded successfully", "owner_id": default_owner}
 
 # ============== ANALYTICS ENDPOINTS ==============
 
