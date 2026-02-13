@@ -131,8 +131,14 @@ Default password for password login: `CompassX2026!`
   source,
   notes,
   value_hypothesis,
-  is_at_risk: boolean,      // NEW
-  at_risk_reason: string,   // NEW
+  is_at_risk: boolean,
+  at_risk_reason: string,
+  // Deal Builder fields
+  deal_start_date: datetime,
+  deal_end_date: datetime,
+  num_consultants: int,
+  blended_hourly_rate: float,
+  calculated_value: float,
   created_at,
   updated_at,
   stage_entered_at
