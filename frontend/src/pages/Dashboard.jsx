@@ -329,6 +329,7 @@ const Dashboard = () => {
                                 <div>
                                   <h4 className="font-medium text-slate-900">{opp.name}</h4>
                                   <p className="text-sm text-slate-500">{opp.engagement_type}</p>
+                                  <p className="text-xs text-slate-400 mt-1">Owner: {getUserName(opp.owner_id)}</p>
                                 </div>
                                 <div className="text-right">
                                   <p className="font-heading font-semibold text-ocean-950">
