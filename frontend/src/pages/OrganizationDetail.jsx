@@ -93,15 +93,18 @@ const OrganizationDetail = () => {
     if (!window.confirm('Are you sure you want to delete this organization?')) return;
     
     try {
-      await fetch(`${API}/organizations/${orgId}`, {
+      const response = await fetch(`${API}/organizations/${orgId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
+      
+      if (!response.ok) throw new Error('Failed to delete');
+      
       toast.success('Organization deleted');
       navigate('/organizations');
     } catch (error) {
       console.error('Error deleting:', error);
-      toast.error('Failed to delete');
+      toast.error('Failed to delete organization');
     }
   };
 
