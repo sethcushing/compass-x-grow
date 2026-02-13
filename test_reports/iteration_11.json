@@ -1,0 +1,99 @@
+{
+  "summary": "Iteration 11 testing complete - All at-risk features verified working. Backend PUT /api/opportunities/{opp_id}/at-risk endpoint works correctly. Frontend Pipeline page allows marking deals as at-risk via dropdown menu with reason dialog. OpportunityDetail shows at-risk banner with reason and toggle buttons. Dashboard displays At-Risk Deals metric. Executive View removed from sidebar and /executive route renders blank (not defined).",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: GET /api/opportunities returns opportunities with is_at_risk and at_risk_reason fields",
+    "Backend: PUT /api/opportunities/{opp_id}/at-risk marks opportunity as at-risk with reason",
+    "Backend: PUT /api/opportunities/{opp_id}/at-risk clears at-risk status (is_at_risk=false, at_risk_reason=null)",
+    "Backend: PUT /api/opportunities/{opp_id}/at-risk returns 404 for non-existent opportunity",
+    "Backend: GET /api/opportunities/{opp_id} includes is_at_risk and at_risk_reason in response",
+    "Backend: GET /api/dashboard/sales includes at_risk_opportunities metric",
+    "Backend: GET /api/dashboard/my-pipeline includes at_risk_opportunities metric",
+    "Backend: Mark at-risk without reason (is_at_risk=true, no reason) works",
+    "Backend: At-risk update returns full opportunity object",
+    "Frontend: Dashboard 'At-Risk Deals' metric card visible with count",
+    "Frontend: Sidebar does NOT contain 'Executive View' link",
+    "Frontend: Pipeline cards have dropdown menu with 'Mark as At-Risk' option (amber text with shield icon)",
+    "Frontend: Pipeline at-risk dialog shows opportunity name, reason textarea, Cancel/Confirm buttons",
+    "Frontend: Pipeline at-risk cards show amber ring border and reason text with warning icon",
+    "Frontend: Toast notification 'Marked as at-risk' appears after marking",
+    "Frontend: OpportunityDetail shows at-risk banner with warning icon, message, and reason",
+    "Frontend: OpportunityDetail banner has edit (pencil) button to update reason",
+    "Frontend: OpportunityDetail shows 'Clear At-Risk' button (emerald/green) when at-risk",
+    "Frontend: OpportunityDetail shows 'Mark At-Risk' button when not at-risk",
+    "Frontend: Toast notification 'At-risk status cleared' appears after clearing",
+    "Frontend: /executive route renders blank (not defined in routes)",
+    "Frontend: App name 'Compass X Grow' displays correctly in sidebar"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_iteration11_at_risk.py",
+    "/app/test_reports/pytest/pytest_results_iteration11.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_iteration11_at_risk.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 tests passed)",
+    "frontend": "100% (All visual verifications passed)"
+  },
+  "test_credentials": {
+    "email": "brian.clements@compassx.com",
+    "password": "CompassX2026!"
+  },
+  "seed_data_creation": "Marked PO Agile Coach opportunity as at-risk during testing with 'TEST - Budget constraints causing delays' reason, then cleared it",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All iteration 11 at-risk features verified working: 1) PUT /api/opportunities/{opp_id}/at-risk endpoint properly updates is_at_risk and at_risk_reason fields. 2) Dashboard shows 'At-Risk Deals' count metric (fourth card in top row). 3) Pipeline page dropdown menu has 'Mark as At-Risk' option that opens dialog with reason textarea. 4) At-risk cards on Pipeline show amber ring and display the reason text. 5) OpportunityDetail page shows prominent amber banner with 'This opportunity is at risk' message, reason text, and edit button. 6) OpportunityDetail header shows 'Clear At-Risk' (green) or 'Mark At-Risk' (amber) button depending on status. 7) Sidebar does NOT have 'Executive View' link - only has Dashboard, Pipeline, Clients, Contacts, Activities, Reports, Settings. 8) /executive route renders blank page (not defined, acceptable behavior).",
+  "verified_features": {
+    "backend_at_risk_endpoint": "Working - PUT /api/opportunities/{opp_id}/at-risk accepts is_at_risk boolean and at_risk_reason string",
+    "backend_at_risk_in_list": "Working - GET /api/opportunities includes is_at_risk and at_risk_reason fields",
+    "backend_at_risk_in_detail": "Working - GET /api/opportunities/{opp_id} includes at-risk fields",
+    "backend_dashboard_metric": "Working - Both /dashboard/sales and /dashboard/my-pipeline include at_risk_opportunities count",
+    "frontend_dashboard_at_risk_card": "Working - Fourth metric card shows 'At-Risk Deals' with count",
+    "frontend_pipeline_dropdown": "Working - Three-dot menu on cards has 'Mark as At-Risk' option",
+    "frontend_pipeline_at_risk_dialog": "Working - Dialog shows opportunity name, reason textarea with placeholder, Cancel/Mark buttons",
+    "frontend_pipeline_at_risk_visual": "Working - At-risk cards have amber ring-2 border and show reason text",
+    "frontend_detail_at_risk_banner": "Working - Amber banner shows warning icon, 'This opportunity is at risk' text, reason, and edit button",
+    "frontend_detail_toggle_buttons": "Working - 'Clear At-Risk' (emerald) or 'Mark At-Risk' (amber) buttons shown appropriately",
+    "sidebar_no_executive_view": "Working - Sidebar navigation only has: Dashboard, Pipeline, Clients, Contacts, Activities, Reports, Settings",
+    "executive_route_removed": "Working - /executive renders blank (not defined in App.js routes)"
+  },
+  "at_risk_ui_details": {
+    "pipeline_dropdown_menu": {
+      "trigger": "Three-dot button (MoreHorizontal icon) on each kanban card",
+      "option_text": "Mark as At-Risk (amber text with ShieldAlert icon)",
+      "option_testid": "mark-at-risk-{opp_id}"
+    },
+    "pipeline_at_risk_dialog": {
+      "title": "Mark as At-Risk (with AlertTriangle icon)",
+      "fields": ["Opportunity name display", "Reason textarea with placeholder"],
+      "buttons": ["Cancel", "Mark as At-Risk (amber bg)"],
+      "testids": ["at-risk-reason-input", "confirm-at-risk-btn"]
+    },
+    "pipeline_at_risk_card": {
+      "visual": "ring-2 ring-amber-300 border",
+      "reason_display": "Amber text with AlertTriangle icon showing reason text"
+    },
+    "detail_at_risk_banner": {
+      "container": "p-4 bg-amber-50 border border-amber-200 rounded-xl",
+      "icon": "AlertTriangle w-5 h-5 text-amber-600",
+      "title": "This opportunity is at risk (amber-800 font-medium)",
+      "reason": "Reason text (amber-600 text-sm)",
+      "edit_button": "Edit pencil icon button (amber-100 hover)"
+    },
+    "detail_header_buttons": {
+      "when_at_risk": "Clear At-Risk (emerald/green)",
+      "when_not_at_risk": "Mark At-Risk (amber)"
+    }
+  }
+}
