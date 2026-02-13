@@ -1169,65 +1169,35 @@ const OrganizationDetail = () => {
                         </div>
                         
                         <div>
-                          <Label>Source</Label>
+                          <Label>Initial Stage</Label>
                           <Select
-                            value={newOpp.source}
-                            onValueChange={(value) => setNewOpp(prev => ({ ...prev, source: value }))}
+                            value={newOpp.stage_id}
+                            onValueChange={(value) => setNewOpp(prev => ({ ...prev, stage_id: value }))}
                           >
                             <SelectTrigger className="mt-1">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="Inbound">Inbound</SelectItem>
-                              <SelectItem value="Referral">Referral</SelectItem>
-                              <SelectItem value="Exec Intro">Exec Intro</SelectItem>
-                              <SelectItem value="Expansion">Expansion</SelectItem>
+                              {stages.filter(s => !s.name.includes('Closed')).map(stage => (
+                                <SelectItem key={stage.stage_id} value={stage.stage_id}>
+                                  {stage.name}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label>Estimated Value ($)</Label>
-                          <Input
-                            type="number"
-                            value={newOpp.estimated_value}
-                            onChange={(e) => setNewOpp(prev => ({ ...prev, estimated_value: parseFloat(e.target.value) || 0 }))}
-                            className="mt-1"
-                          />
-                        </div>
-                        
-                        <div>
-                          <Label>Confidence (%)</Label>
-                          <Input
-                            type="number"
-                            min="0"
-                            max="100"
-                            value={newOpp.confidence_level}
-                            onChange={(e) => setNewOpp(prev => ({ ...prev, confidence_level: parseInt(e.target.value) || 0 }))}
-                            className="mt-1"
-                          />
-                        </div>
-                      </div>
-                      
                       <div>
-                        <Label>Initial Stage</Label>
-                        <Select
-                          value={newOpp.stage_id}
-                          onValueChange={(value) => setNewOpp(prev => ({ ...prev, stage_id: value }))}
-                        >
-                          <SelectTrigger className="mt-1">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {stages.filter(s => !s.name.includes('Closed')).map(stage => (
-                              <SelectItem key={stage.stage_id} value={stage.stage_id}>
-                                {stage.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <Label>Confidence (%)</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={newOpp.confidence_level}
+                          onChange={(e) => setNewOpp(prev => ({ ...prev, confidence_level: parseInt(e.target.value) || 0 }))}
+                          className="mt-1"
+                        />
                       </div>
                       
                       <Button
