@@ -608,18 +608,6 @@ const Pipeline = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="opp-value">Estimated Value ($)</Label>
-                    <Input
-                      id="opp-value"
-                      data-testid="opp-value-input"
-                      type="number"
-                      value={newOpp.estimated_value}
-                      onChange={(e) => setNewOpp(prev => ({ ...prev, estimated_value: parseFloat(e.target.value) || 0 }))}
-                      className="mt-1"
-                    />
-                  </div>
-                  
-                  <div>
                     <Label htmlFor="opp-confidence">Confidence (%)</Label>
                     <Input
                       id="opp-confidence"
@@ -632,12 +620,11 @@ const Pipeline = () => {
                       className="mt-1"
                     />
                   </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="opp-stage">Initial Stage</Label>
-                  <Select
-                    value={newOpp.stage_id}
+                  
+                  <div>
+                    <Label htmlFor="opp-stage">Initial Stage</Label>
+                    <Select
+                      value={newOpp.stage_id}
                     onValueChange={(value) => setNewOpp(prev => ({ ...prev, stage_id: value }))}
                   >
                     <SelectTrigger data-testid="opp-stage-select" className="mt-1">
