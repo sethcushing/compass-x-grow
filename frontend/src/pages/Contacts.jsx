@@ -391,12 +391,10 @@ const Contacts = () => {
                               <Building2 className="w-4 h-4 flex-shrink-0" />
                               <span className="truncate">{org?.name || 'Unknown'}</span>
                             </div>
-                            {contact.email && (
-                              <div className="flex items-center gap-2 text-slate-500">
-                                <Mail className="w-4 h-4 flex-shrink-0" />
-                                <span className="truncate">{contact.email}</span>
-                              </div>
-                            )}
+                            <div className="flex items-center gap-2 text-slate-500">
+                              <User className="w-4 h-4 flex-shrink-0" />
+                              <span className="truncate">{getUserName(contact.owner_id)}</span>
+                            </div>
                           </div>
                           
                           {contact.buying_role && (
