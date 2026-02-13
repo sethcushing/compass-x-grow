@@ -486,7 +486,7 @@ async def google_oauth_session(request: Request, response: Response):
     email = auth_data.get("email", "").lower().strip()
     name = auth_data.get("name", "")
     picture = auth_data.get("picture", "")
-    emergent_session_token = auth_data.get("session_token", "")
+    # Note: emergent session_token is available but we create our own JWT for app consistency
     
     # Check if email is in authorized list
     authorized = next((u for u in AUTHORIZED_USERS if u["email"].lower() == email), None)
