@@ -681,6 +681,7 @@ const Pipeline = () => {
                   opportunities={stageOpps}
                   organizations={organizations}
                   users={users}
+                  onToggleAtRisk={handleToggleAtRisk}
                 />
               );
             })}
@@ -694,6 +695,53 @@ const Pipeline = () => {
             )}
           </DragOverlay>
         </DndContext>
+        
+        {/* At-Risk Dialog */}
+        <Dialog open={atRiskDialogOpen} onOpenChange={setAtRiskDialogOpen}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-heading flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5 text-amber-500" />
+                Mark as At-Risk
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 mt-4">
+              <div className="p-3 bg-slate-50 rounded-lg">
+                <p className="text-sm text-slate-600">
+                  <strong>{selectedOppForRisk?.name}</strong>
+                </p>
+              </div>
+              <div>
+                <Label htmlFor="at-risk-reason">Reason for At-Risk Status *</Label>
+                <Textarea
+                  id="at-risk-reason"
+                  data-testid="at-risk-reason-input"
+                  value={atRiskReason}
+                  onChange={(e) => setAtRiskReason(e.target.value)}
+                  placeholder="e.g., Budget concerns, Decision maker left, Competitor threat..."
+                  className="mt-1"
+                  rows={3}
+                />
+              </div>
+            </div>
+            <DialogFooter className="mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setAtRiskDialogOpen(false)}
+                className="rounded-full"
+              >
+                Cancel
+              </Button>
+              <Button
+                data-testid="confirm-at-risk-btn"
+                onClick={handleConfirmAtRisk}
+                className="bg-amber-500 hover:bg-amber-600 text-white rounded-full"
+              >
+                Mark as At-Risk
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </main>
     </div>
   );
