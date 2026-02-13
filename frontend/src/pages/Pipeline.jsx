@@ -407,7 +407,7 @@ const Pipeline = () => {
                     : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
-                Mine
+                My
               </button>
             </div>
           </div>
