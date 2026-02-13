@@ -442,7 +442,8 @@ async def get_organization(org_id: str, request: Request):
 @api_router.post("/organizations")
 async def create_organization(data: OrganizationCreate, request: Request):
     user = await get_current_user(request)
-    org = OrganizationBase(**data.model_dump(), created_by=user["user_id"])
+    owner_id = data.owner_id or user["user_id"]
+    org = OrganizationBase(**data.model_dump(exclude={'owner_id'}), owner_id=owner_id, created_by=user["user_id"])
     doc = org.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
     doc["updated_at"] = doc["updated_at"].isoformat()
