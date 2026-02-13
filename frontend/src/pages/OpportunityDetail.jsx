@@ -43,7 +43,9 @@ import {
   Lightbulb,
   Target,
   ShieldAlert,
-  ShieldCheck
+  ShieldCheck,
+  Calculator,
+  Users
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
