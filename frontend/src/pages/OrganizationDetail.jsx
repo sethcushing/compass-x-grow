@@ -546,10 +546,10 @@ const OrganizationDetail = () => {
               </div>
             </CardHeader>
             
-            {/* Summary Stats - Buyer, Deals, Value, Confidence */}
+            {/* Summary Stats - Buyer, Deals, Value, Confidence, Won/Lost */}
             {!isEditing && (
               <div className="px-6 pb-4">
-                <div className="grid grid-cols-4 gap-4">
+                <div className="grid grid-cols-6 gap-4">
                   {/* Buyer */}
                   <div className="p-4 bg-slate-50 rounded-xl">
                     <p className="text-xs font-medium text-slate-400 uppercase mb-2">Buyer</p>
@@ -583,6 +583,28 @@ const OrganizationDetail = () => {
                   <div className="p-4 bg-amber-50 rounded-xl">
                     <p className="text-xs font-medium text-amber-600 uppercase mb-2">Avg Confidence</p>
                     <p className="text-2xl font-bold text-amber-700">{orgSummary.opportunities.avg_confidence}%</p>
+                  </div>
+                  
+                  {/* Won Value */}
+                  <div className="p-4 bg-green-50 rounded-xl" data-testid="client-won-value">
+                    <p className="text-xs font-medium text-green-600 uppercase mb-2">Won</p>
+                    <p className="text-2xl font-bold text-green-700">
+                      ${(orgSummary.opportunities.won_value || 0) >= 1000 
+                        ? `${((orgSummary.opportunities.won_value || 0) / 1000).toFixed(0)}K` 
+                        : (orgSummary.opportunities.won_value || 0).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-green-500">{orgSummary.opportunities.won_count || 0} deals</p>
+                  </div>
+                  
+                  {/* Lost Value */}
+                  <div className="p-4 bg-rose-50 rounded-xl" data-testid="client-lost-value">
+                    <p className="text-xs font-medium text-rose-600 uppercase mb-2">Lost</p>
+                    <p className="text-2xl font-bold text-rose-700">
+                      ${(orgSummary.opportunities.lost_value || 0) >= 1000 
+                        ? `${((orgSummary.opportunities.lost_value || 0) / 1000).toFixed(0)}K` 
+                        : (orgSummary.opportunities.lost_value || 0).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-rose-500">{orgSummary.opportunities.lost_count || 0} deals</p>
                   </div>
                 </div>
               </div>
