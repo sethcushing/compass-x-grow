@@ -430,6 +430,9 @@ class CompassXAPITester:
         # Test invalid login scenarios
         self.test_invalid_login()
         
+        # Test change password
+        self.test_change_password()
+        
         # Data Setup
         self.test_seed_data()
         
