@@ -379,9 +379,37 @@ const Pipeline = () => {
       <main className="flex-1 overflow-hidden">
         {/* Header */}
         <div className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-heading font-semibold text-slate-900">Sales Pipeline</h1>
-            <p className="text-sm text-slate-500">Drag deals between stages to update progress</p>
+          <div className="flex items-center gap-6">
+            <div>
+              <h1 className="text-2xl font-heading font-semibold text-slate-900">Sales Pipeline</h1>
+              <p className="text-sm text-slate-500">Drag deals between stages to update progress</p>
+            </div>
+            
+            {/* View Toggle */}
+            <div className="flex items-center bg-slate-100 rounded-full p-1">
+              <button
+                data-testid="pipeline-view-all"
+                onClick={() => setViewMode('all')}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  viewMode === 'all' 
+                    ? 'bg-white text-slate-900 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                All
+              </button>
+              <button
+                data-testid="pipeline-view-mine"
+                onClick={() => setViewMode('mine')}
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
+                  viewMode === 'mine' 
+                    ? 'bg-white text-slate-900 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
+              >
+                Mine
+              </button>
+            </div>
           </div>
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
