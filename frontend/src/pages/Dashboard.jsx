@@ -266,17 +266,20 @@ const Dashboard = () => {
               transition={{ delay: 0.4 }}
             >
               <Card className={`border-slate-200 shadow-soft hover:shadow-hover transition-shadow ${
-                metrics?.at_risk_opportunities > 0 ? 'ring-2 ring-amber-200' : ''
+                (metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'ring-2 ring-amber-200' : ''
               }`}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                      metrics?.at_risk_opportunities > 0 ? 'bg-amber-100' : 'bg-slate-100'
+                      (metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'bg-amber-100' : 'bg-slate-100'
                     }`}>
                       <AlertTriangle className={`w-5 h-5 ${
-                        metrics?.at_risk_opportunities > 0 ? 'text-amber-600' : 'text-slate-600'
+                        (metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'text-amber-600' : 'text-slate-600'
                       }`} />
                     </div>
+                    {atRiskClients > 0 && (
+                      <Badge className="bg-rose-100 text-rose-700">{atRiskClients} clients</Badge>
+                    )}
                   </div>
                   <p className="text-sm text-slate-500 mb-1">At-Risk Deals</p>
                   <p className="text-2xl font-heading font-semibold text-slate-900">
