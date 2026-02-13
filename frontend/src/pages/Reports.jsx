@@ -65,19 +65,31 @@ const Reports = () => {
   const [engagementData, setEngagementData] = useState([]);
   const [ownerData, setOwnerData] = useState([]);
   const [summary, setSummary] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [viewMode, setViewMode] = useState('all'); // 'all' or 'mine'
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [viewMode]);
 
   const fetchData = async () => {
     try {
+      // Get current user first
+      const meRes = await fetch(`${API}/auth/me`, { credentials: 'include' });
+      if (meRes.ok) {
+        const meData = await meRes.json();
+        setCurrentUser(meData);
+      }
+      
+      // Build query params for filtered view
+      const ownerParam = viewMode === 'mine' && currentUser ? `?owner_id=${currentUser.user_id}` : '';
+      
       const [pipelineRes, engagementRes, ownerRes, summaryRes] = await Promise.all([
-        fetch(`${API}/analytics/pipeline`, { credentials: 'include' }),
-        fetch(`${API}/analytics/engagement-types`, { credentials: 'include' }),
+        fetch(`${API}/analytics/pipeline${ownerParam}`, { credentials: 'include' }),
+        fetch(`${API}/analytics/engagement-types${ownerParam}`, { credentials: 'include' }),
         fetch(`${API}/analytics/by-owner`, { credentials: 'include' }),
-        fetch(`${API}/analytics/summary`, { credentials: 'include' })
+        fetch(`${API}/analytics/summary${ownerParam}`, { credentials: 'include' })
       ]);
       
       const pipeline = await pipelineRes.json();
