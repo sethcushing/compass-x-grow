@@ -308,6 +308,51 @@ const Pipeline = () => {
     ? opportunities.filter(opp => opp.owner_id === currentUser.user_id)
     : opportunities;
 
+  // Handle at-risk toggle
+  const handleToggleAtRisk = (opportunity, markAsAtRisk) => {
+    if (markAsAtRisk) {
+      // Open dialog to get reason
+      setSelectedOppForRisk(opportunity);
+      setAtRiskReason('');
+      setAtRiskDialogOpen(true);
+    } else {
+      // Clear at-risk status directly
+      updateAtRiskStatus(opportunity.opp_id, false, null);
+    }
+  };
+
+  const updateAtRiskStatus = async (oppId, isAtRisk, reason) => {
+    try {
+      const response = await fetch(`${API}/opportunities/${oppId}/at-risk`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ is_at_risk: isAtRisk, at_risk_reason: reason })
+      });
+      
+      if (!response.ok) throw new Error('Failed to update');
+      
+      const updated = await response.json();
+      setOpportunities(prev => prev.map(o => o.opp_id === oppId ? updated : o));
+      toast.success(isAtRisk ? 'Marked as at-risk' : 'At-risk status cleared');
+    } catch (error) {
+      console.error('Error updating at-risk status:', error);
+      toast.error('Failed to update at-risk status');
+    }
+  };
+
+  const handleConfirmAtRisk = () => {
+    if (!selectedOppForRisk) return;
+    if (!atRiskReason.trim()) {
+      toast.error('Please provide a reason');
+      return;
+    }
+    updateAtRiskStatus(selectedOppForRisk.opp_id, true, atRiskReason.trim());
+    setAtRiskDialogOpen(false);
+    setSelectedOppForRisk(null);
+    setAtRiskReason('');
+  };
+
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
   };
