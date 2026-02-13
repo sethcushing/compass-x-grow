@@ -988,6 +988,10 @@ async def seed_data(request: Request):
         }
         await db.stages.insert_one(stage)
     
+    # Get first user to assign as owner
+    first_user = await db.users.find_one({}, {"_id": 0})
+    default_owner = first_user["user_id"] if first_user else "system"
+    
     # Create sample organizations
     orgs_data = [
         {"org_id": "org_acme", "name": "Acme Financial Services", "industry": "Financial Services", "company_size": "Enterprise", "region": "North America", "strategic_tier": "Strategic"},
@@ -1002,7 +1006,8 @@ async def seed_data(request: Request):
             **org_data,
             "primary_exec_sponsor": None,
             "notes": None,
-            "created_by": "demo_sales_lead",
+            "owner_id": default_owner,
+            "created_by": default_owner,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
         }
@@ -1022,7 +1027,8 @@ async def seed_data(request: Request):
             **contact_data,
             "phone": None,
             "notes": None,
-            "created_by": "demo_sales_lead",
+            "owner_id": default_owner,
+            "created_by": default_owner,
             "created_at": datetime.now(timezone.utc).isoformat(),
             "updated_at": datetime.now(timezone.utc).isoformat()
         }
