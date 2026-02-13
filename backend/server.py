@@ -684,10 +684,64 @@ async def delete_activity(activity_id: str, request: Request):
 
 @api_router.get("/dashboard/sales")
 async def get_sales_dashboard(request: Request):
-    """Sales owner dashboard data"""
+    """Main dashboard - shows ALL opportunities and activities"""
     user = await get_current_user(request)
     
-    # My opportunities
+    # ALL opportunities (everyone sees everything)
+    all_opps = await db.opportunities.find({}, {"_id": 0}).to_list(1000)
+    
+    # Stages for grouping
+    pipelines = await db.pipelines.find({}, {"_id": 0}).to_list(10)
+    default_pipeline = next((p for p in pipelines if p.get("is_default")), pipelines[0] if pipelines else None)
+    
+    stages = []
+    if default_pipeline:
+        stages = await db.stages.find(
+            {"pipeline_id": default_pipeline["pipeline_id"]},
+            {"_id": 0}
+        ).sort("order", 1).to_list(20)
+    
+    # ALL activities
+    all_activities = await db.activities.find({}, {"_id": 0}).to_list(500)
+    
+    # Get all users for owner names
+    users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
+    
+    # Calculate metrics
+    total_value = sum(opp.get("estimated_value", 0) for opp in all_opps)
+    weighted_value = sum(
+        opp.get("estimated_value", 0) * opp.get("confidence_level", 0) / 100
+        for opp in all_opps
+    )
+    
+    overdue_activities = [
+        a for a in all_activities
+        if a.get("status") == "Planned" and parse_datetime(a.get("due_date", "2099-01-01")) < datetime.now(timezone.utc)
+    ]
+    
+    at_risk_opps = [opp for opp in all_opps if opp.get("is_at_risk")]
+    
+    return {
+        "opportunities": all_opps,
+        "stages": stages,
+        "activities": all_activities,
+        "users": users,
+        "current_user_id": user["user_id"],
+        "metrics": {
+            "total_opportunities": len(all_opps),
+            "total_value": total_value,
+            "weighted_forecast": weighted_value,
+            "overdue_activities": len(overdue_activities),
+            "at_risk_opportunities": len(at_risk_opps)
+        }
+    }
+
+@api_router.get("/dashboard/my-pipeline")
+async def get_my_pipeline(request: Request):
+    """My Pipeline - shows only opportunities owned by current user"""
+    user = await get_current_user(request)
+    
+    # My opportunities only
     my_opps = await db.opportunities.find(
         {"owner_id": user["user_id"]},
         {"_id": 0}
@@ -704,7 +758,7 @@ async def get_sales_dashboard(request: Request):
             {"_id": 0}
         ).sort("order", 1).to_list(20)
     
-    # My activities
+    # My activities only
     my_activities = await db.activities.find(
         {"owner_id": user["user_id"]},
         {"_id": 0}
