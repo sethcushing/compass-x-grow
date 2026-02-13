@@ -413,6 +413,25 @@ const Pipeline = () => {
                   </Select>
                 </div>
                 
+                <div>
+                  <Label htmlFor="opp-owner">Owner *</Label>
+                  <Select
+                    value={newOpp.owner_id}
+                    onValueChange={(value) => setNewOpp(prev => ({ ...prev, owner_id: value }))}
+                  >
+                    <SelectTrigger data-testid="opp-owner-select" className="mt-1">
+                      <SelectValue placeholder="Select owner" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map(user => (
+                        <SelectItem key={user.user_id} value={user.user_id}>
+                          {user.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor="opp-type">Engagement Type</Label>
