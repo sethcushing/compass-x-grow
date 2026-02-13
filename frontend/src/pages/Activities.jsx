@@ -622,29 +622,27 @@ const Activities = () => {
                   ) : (
                     <div className="space-y-4">
                       {filteredActivities.map(activity => {
-                        const Icon = getActivityIcon(activity.activity_type);
+                        const config = getActivityConfig(activity.activity_type);
+                        const Icon = config.icon;
                         const status = getActivityStatus(activity);
                         const client = getClientForActivity(activity);
                         
                         return (
-                          <Card key={activity.activity_id} className="border-slate-200 shadow-soft hover:shadow-md transition-all">
+                          <Card key={activity.activity_id} className={`border-l-4 ${config.border} shadow-soft hover:shadow-md transition-all`}>
                             <CardContent className="p-4">
                               <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                                  status === 'completed' ? 'bg-emerald-100' : 
-                                  status === 'overdue' ? 'bg-rose-100' : 'bg-ocean-100'
-                                }`}>
-                                  <Icon className={`w-6 h-6 ${
-                                    status === 'completed' ? 'text-emerald-600' : 
-                                    status === 'overdue' ? 'text-rose-600' : 'text-ocean-600'
-                                  }`} />
+                                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${config.color}`}>
+                                  <Icon className="w-6 h-6" />
                                 </div>
                                 
                                 <div className="flex-1">
                                   <div className="flex items-center gap-2">
                                     <h3 className="font-heading font-medium text-slate-900">
-                                      {activity.activity_type}
+                                      {activity.title || activity.activity_type}
                                     </h3>
+                                    <Badge variant="secondary" className="text-xs">
+                                      {activity.activity_type}
+                                    </Badge>
                                     <Badge className={getStatusColor(status)}>
                                       {status === 'completed' ? 'Completed' : 
                                        status === 'overdue' ? 'Overdue' : 
