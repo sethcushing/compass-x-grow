@@ -184,6 +184,7 @@ const Pipeline = () => {
   const [stages, setStages] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
   const [organizations, setOrganizations] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeId, setActiveId] = useState(null);
@@ -195,7 +196,8 @@ const Pipeline = () => {
     estimated_value: 0,
     confidence_level: 50,
     stage_id: '',
-    source: 'Inbound'
+    source: 'Inbound',
+    owner_id: ''
   });
 
   useEffect(() => {
@@ -204,14 +206,20 @@ const Pipeline = () => {
 
   const fetchData = async () => {
     try {
-      const [pipelinesRes, orgsRes] = await Promise.all([
+      const [pipelinesRes, orgsRes, usersRes] = await Promise.all([
         fetch(`${API}/pipelines`, { credentials: 'include' }),
-        fetch(`${API}/organizations`, { credentials: 'include' })
+        fetch(`${API}/organizations`, { credentials: 'include' }),
+        fetch(`${API}/auth/users`, { credentials: 'include' })
       ]);
       
       const pipelines = await pipelinesRes.json();
       const orgsData = await orgsRes.json();
       setOrganizations(orgsData);
+      
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData);
+      }
       
       if (pipelines.length > 0) {
         const defaultPipeline = pipelines.find(p => p.is_default) || pipelines[0];
