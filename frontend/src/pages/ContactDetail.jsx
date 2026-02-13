@@ -203,6 +203,7 @@ const ContactDetail = () => {
                     </h1>
                   )}
                   <p className="text-slate-500">{contact.title}</p>
+                  <p className="text-sm text-slate-400 mt-1">Owner: {getOwnerName(contact.owner_id)}</p>
                 </div>
               </div>
               
