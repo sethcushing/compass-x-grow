@@ -43,7 +43,8 @@ import {
   CheckCircle,
   Clock,
   Presentation,
-  ExternalLink
+  ExternalLink,
+  Send
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
