@@ -33,7 +33,15 @@ import {
   X,
   Plus,
   User,
-  Target
+  Target,
+  Calendar,
+  Phone,
+  Mail,
+  Video,
+  FileText,
+  AlertTriangle,
+  CheckCircle,
+  Clock
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -46,12 +54,18 @@ const OrganizationDetail = () => {
   const [organization, setOrganization] = useState(null);
   const [contacts, setContacts] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
+  const [activities, setActivities] = useState([]);
   const [users, setUsers] = useState([]);
   const [stages, setStages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
+  
+  // Dialog states
   const [isOppDialogOpen, setIsOppDialogOpen] = useState(false);
+  const [isContactDialogOpen, setIsContactDialogOpen] = useState(false);
+  const [isActivityDialogOpen, setIsActivityDialogOpen] = useState(false);
+  
   const [newOpp, setNewOpp] = useState({
     name: '',
     engagement_type: 'Advisory',
@@ -61,6 +75,22 @@ const OrganizationDetail = () => {
     source: 'Inbound',
     owner_id: ''
   });
+  
+  const [newContact, setNewContact] = useState({
+    name: '',
+    title: '',
+    email: '',
+    phone: '',
+    buying_role: '',
+    owner_id: ''
+  });
+  
+  const [newActivity, setNewActivity] = useState({
+    activity_type: 'Call',
+    due_date: '',
+    notes: '',
+    status: 'Planned'
+  });
 
   useEffect(() => {
     fetchData();
@@ -68,12 +98,13 @@ const OrganizationDetail = () => {
 
   const fetchData = async () => {
     try {
-      const [orgRes, contactsRes, oppsRes, usersRes, pipelinesRes] = await Promise.all([
+      const [orgRes, contactsRes, oppsRes, usersRes, pipelinesRes, activitiesRes] = await Promise.all([
         fetch(`${API}/organizations/${orgId}`, { credentials: 'include' }),
         fetch(`${API}/contacts?org_id=${orgId}`, { credentials: 'include' }),
         fetch(`${API}/opportunities`, { credentials: 'include' }),
         fetch(`${API}/auth/users`, { credentials: 'include' }),
-        fetch(`${API}/pipelines`, { credentials: 'include' })
+        fetch(`${API}/pipelines`, { credentials: 'include' }),
+        fetch(`${API}/activities?org_id=${orgId}`, { credentials: 'include' })
       ]);
       
       const orgData = await orgRes.json();
@@ -81,12 +112,14 @@ const OrganizationDetail = () => {
       const oppsData = await oppsRes.json();
       const usersData = await usersRes.json();
       const pipelines = await pipelinesRes.json();
+      const activitiesData = await activitiesRes.json();
       
       setOrganization(orgData);
       setEditData(orgData);
       setContacts(contactsData);
       setOpportunities(oppsData.filter(o => o.org_id === orgId));
       setUsers(usersData);
+      setActivities(activitiesData);
       
       // Get stages for opportunity creation
       if (pipelines.length > 0) {
@@ -100,7 +133,7 @@ const OrganizationDetail = () => {
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      toast.error('Failed to load organization');
+      toast.error('Failed to load client');
     } finally {
       setLoading(false);
     }
@@ -120,7 +153,7 @@ const OrganizationDetail = () => {
       const updated = await response.json();
       setOrganization(updated);
       setIsEditing(false);
-      toast.success('Organization updated');
+      toast.success('Client updated');
     } catch (error) {
       console.error('Error updating:', error);
       toast.error('Failed to update');
@@ -128,7 +161,7 @@ const OrganizationDetail = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this organization? This will also remove all associated contacts and opportunities.')) return;
+    if (!window.confirm('Are you sure you want to delete this client? This will also remove all associated contacts and opportunities.')) return;
     
     try {
       const response = await fetch(`${API}/organizations/${orgId}`, {
@@ -141,11 +174,11 @@ const OrganizationDetail = () => {
         throw new Error(errorData.detail || 'Failed to delete');
       }
       
-      toast.success('Organization deleted');
+      toast.success('Client deleted');
       navigate('/organizations');
     } catch (error) {
       console.error('Error deleting:', error);
-      toast.error(error.message || 'Failed to delete organization');
+      toast.error(error.message || 'Failed to delete client');
     }
   };
 
@@ -192,11 +225,102 @@ const OrganizationDetail = () => {
     }
   };
 
-  const getTierColor = (tier) => {
-    switch (tier) {
-      case 'Strategic': return 'bg-amber-100 text-amber-700';
+  const handleCreateContact = async () => {
+    if (!newContact.name) {
+      toast.error('Contact name is required');
+      return;
+    }
+    if (!newContact.owner_id) {
+      toast.error('Please select an owner');
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API}/contacts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...newContact,
+          org_id: orgId
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to create');
+      
+      const created = await response.json();
+      setContacts(prev => [...prev, created]);
+      setIsContactDialogOpen(false);
+      setNewContact({
+        name: '',
+        title: '',
+        email: '',
+        phone: '',
+        buying_role: '',
+        owner_id: ''
+      });
+      toast.success('Contact created');
+    } catch (error) {
+      console.error('Error creating contact:', error);
+      toast.error('Failed to create contact');
+    }
+  };
+
+  const handleCreateActivity = async () => {
+    if (!newActivity.due_date) {
+      toast.error('Due date is required');
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API}/activities`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          ...newActivity,
+          org_id: orgId
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to create');
+      
+      const created = await response.json();
+      setActivities(prev => [...prev, created]);
+      setIsActivityDialogOpen(false);
+      setNewActivity({
+        activity_type: 'Call',
+        due_date: '',
+        notes: '',
+        status: 'Planned'
+      });
+      toast.success('Activity created');
+      // Refresh to update at-risk status
+      fetchData();
+    } catch (error) {
+      console.error('Error creating activity:', error);
+      toast.error('Failed to create activity');
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'Current': return 'bg-emerald-100 text-emerald-700';
+      case 'Future': return 'bg-ocean-100 text-ocean-700';
+      case 'Return': return 'bg-amber-100 text-amber-700';
+      case 'Strategic': return 'bg-emerald-100 text-emerald-700';
       case 'Target': return 'bg-ocean-100 text-ocean-700';
+      case 'Active': return 'bg-amber-100 text-amber-700';
       default: return 'bg-slate-100 text-slate-700';
+    }
+  };
+
+  const getStatusLabel = (status) => {
+    switch (status) {
+      case 'Strategic': return 'Current';
+      case 'Target': return 'Future';
+      case 'Active': return 'Return';
+      default: return status;
     }
   };
 
@@ -211,6 +335,23 @@ const OrganizationDetail = () => {
   const getOwnerName = (ownerId) => {
     const user = users.find(u => u.user_id === ownerId);
     return user?.name || 'Unassigned';
+  };
+
+  const getActivityIcon = (type) => {
+    switch (type) {
+      case 'Call': return Phone;
+      case 'Email': return Mail;
+      case 'Meeting': return Video;
+      default: return FileText;
+    }
+  };
+
+  const getActivityStatusColor = (status) => {
+    switch (status) {
+      case 'Completed': return 'text-emerald-600';
+      case 'Planned': return 'text-ocean-600';
+      default: return 'text-slate-600';
+    }
   };
 
   if (loading) {
@@ -232,7 +373,7 @@ const OrganizationDetail = () => {
       <div className="flex min-h-screen bg-slate-50">
         <Sidebar />
         <main className="flex-1 p-8">
-          <p className="text-slate-500">Organization not found</p>
+          <p className="text-slate-500">Client not found</p>
         </main>
       </div>
     );
@@ -256,11 +397,11 @@ const OrganizationDetail = () => {
               className="rounded-full"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              Back to Clients
             </Button>
           </div>
 
-          {/* Organization Details */}
+          {/* Client Details */}
           <Card className="border-slate-200 shadow-soft mb-6">
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-4">
@@ -280,9 +421,15 @@ const OrganizationDetail = () => {
                     </h1>
                   )}
                   <div className="flex items-center gap-2 mt-1">
-                    <Badge className={getTierColor(organization.strategic_tier)}>
-                      {organization.strategic_tier}
+                    <Badge className={getStatusColor(organization.strategic_tier)}>
+                      {getStatusLabel(organization.strategic_tier)}
                     </Badge>
+                    {organization.is_at_risk && (
+                      <Badge className="bg-rose-100 text-rose-700 flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" />
+                        At Risk
+                      </Badge>
+                    )}
                     <span className="text-sm text-slate-500">
                       Owner: {getOwnerName(organization.owner_id)}
                     </span>
@@ -391,18 +538,18 @@ const OrganizationDetail = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label>Strategic Tier</Label>
+                    <Label>Client Status</Label>
                     <Select
-                      value={editData.strategic_tier || 'Active'}
+                      value={editData.strategic_tier || 'Current'}
                       onValueChange={(value) => setEditData(prev => ({ ...prev, strategic_tier: value }))}
                     >
                       <SelectTrigger className="mt-1">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Target">Target</SelectItem>
-                        <SelectItem value="Active">Active</SelectItem>
-                        <SelectItem value="Strategic">Strategic</SelectItem>
+                        <SelectItem value="Current">Current</SelectItem>
+                        <SelectItem value="Future">Future</SelectItem>
+                        <SelectItem value="Return">Return</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -475,21 +622,228 @@ const OrganizationDetail = () => {
             </CardContent>
           </Card>
 
+          {/* Activities Section */}
+          <Card className="border-slate-200 shadow-soft mb-6">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="text-lg font-heading">Activities ({activities.length})</CardTitle>
+              <Dialog open={isActivityDialogOpen} onOpenChange={setIsActivityDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button data-testid="add-activity-btn" variant="outline" size="sm" className="rounded-full">
+                    <Plus className="w-4 h-4 mr-1" /> Add Activity
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle className="font-heading">Add Activity for {organization.name}</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 mt-4">
+                    <div>
+                      <Label>Activity Type</Label>
+                      <Select
+                        value={newActivity.activity_type}
+                        onValueChange={(value) => setNewActivity(prev => ({ ...prev, activity_type: value }))}
+                      >
+                        <SelectTrigger className="mt-1">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Call">Call</SelectItem>
+                          <SelectItem value="Email">Email</SelectItem>
+                          <SelectItem value="Meeting">Meeting</SelectItem>
+                          <SelectItem value="Follow-up">Follow-up</SelectItem>
+                          <SelectItem value="Exec Readout">Exec Readout</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div>
+                      <Label>Due Date *</Label>
+                      <Input
+                        type="datetime-local"
+                        value={newActivity.due_date}
+                        onChange={(e) => setNewActivity(prev => ({ ...prev, due_date: e.target.value }))}
+                        className="mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label>Notes</Label>
+                      <Textarea
+                        value={newActivity.notes}
+                        onChange={(e) => setNewActivity(prev => ({ ...prev, notes: e.target.value }))}
+                        placeholder="Activity details..."
+                        className="mt-1"
+                        rows={3}
+                      />
+                    </div>
+                    
+                    <Button
+                      data-testid="submit-activity-btn"
+                      onClick={handleCreateActivity}
+                      className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                    >
+                      Add Activity
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </CardHeader>
+            <CardContent>
+              {activities.length === 0 ? (
+                <div className="text-center py-8">
+                  <Calendar className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+                  <p className="text-sm text-slate-500">No activities yet</p>
+                  <p className="text-xs text-slate-400 mt-1">Add an activity to track client engagement</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {activities.slice(0, 5).map(activity => {
+                    const Icon = getActivityIcon(activity.activity_type);
+                    return (
+                      <div key={activity.activity_id} className="p-3 rounded-xl border border-slate-200 flex items-center gap-4">
+                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                          activity.status === 'Completed' ? 'bg-emerald-100' : 'bg-ocean-100'
+                        }`}>
+                          <Icon className={`w-5 h-5 ${getActivityStatusColor(activity.status)}`} />
+                        </div>
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-900">{activity.activity_type}</p>
+                          <p className="text-sm text-slate-500">{activity.notes || 'No notes'}</p>
+                        </div>
+                        <div className="text-right">
+                          <Badge variant="secondary" className={activity.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-700'}>
+                            {activity.status}
+                          </Badge>
+                          <p className="text-xs text-slate-400 mt-1">
+                            {new Date(activity.due_date).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Contacts & Opportunities */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Contacts */}
             <Card className="border-slate-200 shadow-soft">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg font-heading">Contacts ({contacts.length})</CardTitle>
-                <Link to="/contacts">
-                  <Button variant="outline" size="sm" className="rounded-full">
-                    <Plus className="w-4 h-4 mr-1" /> Add Contact
-                  </Button>
-                </Link>
+                <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button data-testid="add-contact-btn" variant="outline" size="sm" className="rounded-full">
+                      <Plus className="w-4 h-4 mr-1" /> Add Contact
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                      <DialogTitle className="font-heading">Add Contact for {organization.name}</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4 mt-4">
+                      <div>
+                        <Label>Name *</Label>
+                        <Input
+                          value={newContact.name}
+                          onChange={(e) => setNewContact(prev => ({ ...prev, name: e.target.value }))}
+                          placeholder="e.g., John Smith"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Title</Label>
+                        <Input
+                          value={newContact.title}
+                          onChange={(e) => setNewContact(prev => ({ ...prev, title: e.target.value }))}
+                          placeholder="e.g., VP of Engineering"
+                          className="mt-1"
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label>Email</Label>
+                          <Input
+                            type="email"
+                            value={newContact.email}
+                            onChange={(e) => setNewContact(prev => ({ ...prev, email: e.target.value }))}
+                            placeholder="john@company.com"
+                            className="mt-1"
+                          />
+                        </div>
+                        <div>
+                          <Label>Phone</Label>
+                          <Input
+                            value={newContact.phone}
+                            onChange={(e) => setNewContact(prev => ({ ...prev, phone: e.target.value }))}
+                            placeholder="+1 555-1234"
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label>Buying Role</Label>
+                        <Select
+                          value={newContact.buying_role}
+                          onValueChange={(value) => setNewContact(prev => ({ ...prev, buying_role: value }))}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Select role" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="Decision Maker">Decision Maker</SelectItem>
+                            <SelectItem value="Influencer">Influencer</SelectItem>
+                            <SelectItem value="Champion">Champion</SelectItem>
+                            <SelectItem value="User">User</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label>Owner *</Label>
+                        <Select
+                          value={newContact.owner_id}
+                          onValueChange={(value) => setNewContact(prev => ({ ...prev, owner_id: value }))}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue placeholder="Select owner" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {users.map(user => (
+                              <SelectItem key={user.user_id} value={user.user_id}>
+                                {user.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <Button
+                        data-testid="submit-contact-btn"
+                        onClick={handleCreateContact}
+                        className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                      >
+                        Add Contact
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </CardHeader>
               <CardContent>
                 {contacts.length === 0 ? (
-                  <p className="text-sm text-slate-500 text-center py-8">No contacts yet</p>
+                  <div className="text-center py-8">
+                    <Users className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+                    <p className="text-sm text-slate-500">No contacts yet</p>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {contacts.map(contact => (
