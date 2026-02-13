@@ -1,0 +1,101 @@
+{
+  "summary": "Iteration 12 testing complete - Deal Builder and Organization Won/Lost Summary features verified working. Backend APIs accept and return all deal builder fields. Frontend OpportunityDetail shows Opportunity Financials card with Manual Estimate and Calculated Value side by side, edit mode with date/consultant/rate inputs and live calculation preview. Client Detail page now has 6 columns including Won and Lost values in summary grid.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {
+        "screen": "Organizations (Clients) list page",
+        "issues": ["Console warning: Nested <a> inside <a> - Google Drive link inside organization card link causing hydration error"]
+      }
+    ]
+  },
+  "passed_tests": [
+    "Backend: GET /api/opportunities returns deal_start_date, deal_end_date, num_consultants, blended_hourly_rate, calculated_value fields",
+    "Backend: GET /api/opportunities/{opp_id} returns all deal builder fields",
+    "Backend: PUT /api/opportunities/{opp_id} accepts deal builder fields (deal_start_date, deal_end_date, num_consultants, blended_hourly_rate, calculated_value)",
+    "Backend: PUT /api/opportunities/{opp_id} accepts partial deal builder updates",
+    "Backend: PUT /api/opportunities/{opp_id} allows clearing deal builder fields (null)",
+    "Backend: GET /api/organizations/{org_id}/summary returns won_count, won_value, lost_count, lost_value fields",
+    "Backend: GET /api/organizations/{org_id}/summary preserves existing buyer and opportunity summary fields",
+    "Backend: Organization summary endpoint works for multiple organizations",
+    "Backend: Deal builder values persist and retrieve correctly",
+    "Backend: Deal builder and regular opportunity fields update together",
+    "Frontend: OpportunityDetail page shows 'Opportunity Financials' card with Calculator icon",
+    "Frontend: OpportunityDetail shows 'Manual Estimate' label with value",
+    "Frontend: OpportunityDetail shows 'Calculated Value' label with value (green emerald box)",
+    "Frontend: OpportunityDetail Edit button opens Deal Builder edit mode",
+    "Frontend: Deal Builder edit mode shows Start Date input (data-testid='deal-start-date')",
+    "Frontend: Deal Builder edit mode shows End Date input (data-testid='deal-end-date')",
+    "Frontend: Deal Builder edit mode shows Number of Consultants input (data-testid='num-consultants')",
+    "Frontend: Deal Builder edit mode shows Blended Hourly Rate input (data-testid='hourly-rate')",
+    "Frontend: Deal Builder calculation updates in real-time (green preview box shows formula: X days × 8 hrs × Y consultants × $Z/hr)",
+    "Frontend: Deal Builder Save button saves values and shows 'Deal financials updated' toast",
+    "Frontend: Deal Builder view mode shows Engagement Period, Consultants, Hourly Rate details",
+    "Frontend: Client Detail page shows 6-column summary grid",
+    "Frontend: Client Detail page shows 'Won' column with green background (won_value and won_count)",
+    "Frontend: Client Detail page shows 'Lost' column with rose/red background (lost_value and lost_count)"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_iteration12_deal_builder.py",
+    "/app/test_reports/pytest/pytest_results_iteration12.xml"
+  ],
+  "action_items": [
+    "MINOR: Fix nested <a> elements on Clients list page - Google Drive link inside org card link causes console warning"
+  ],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_iteration12_deal_builder.py"
+  ],
+  "success_rate": {
+    "backend": "100% (10/10 tests passed)",
+    "frontend": "100% (All visual verifications passed)"
+  },
+  "test_credentials": {
+    "email": "brian.clements@compassx.com",
+    "password": "CompassX2026!"
+  },
+  "seed_data_creation": "Updated 'PO Agile Coach' opportunity with deal builder values: start=2026-01-15, end=2026-03-15, consultants=4, rate=$225, calculated_value=$72,000",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 12 Deal Builder and Won/Lost summary features fully working. 1) Backend OpportunityUpdate model accepts deal_start_date, deal_end_date, num_consultants, blended_hourly_rate, calculated_value - all optional fields stored in MongoDB. 2) GET /api/opportunities and GET /api/opportunities/{opp_id} return these fields. 3) GET /api/organizations/{org_id}/summary now includes won_count, won_value, lost_count, lost_value calculated from opportunities with 'won' or 'lost' in stage_id. 4) Frontend OpportunityDetail page has 'Opportunity Financials' card with Calculator icon, Manual Estimate and Calculated Value displayed side by side, Edit button opens form with date inputs, consultants number, hourly rate, and live calculation preview in green box. 5) Client Detail page has 6-column summary grid: Buyer, Deals, Total Value, Avg Confidence, Won (green), Lost (rose). Working days calculation excludes weekends.",
+  "verified_features": {
+    "backend_deal_builder_fields": "Working - PUT/GET /api/opportunities accepts and returns deal_start_date, deal_end_date, num_consultants, blended_hourly_rate, calculated_value",
+    "backend_org_summary_won_lost": "Working - GET /api/organizations/{org_id}/summary returns won_count, won_value, lost_count, lost_value",
+    "frontend_opportunity_financials_card": "Working - Card shows Calculator icon, 'Opportunity Financials' title, Edit button",
+    "frontend_manual_vs_calculated_display": "Working - Manual Estimate (slate bg) and Calculated Value (emerald/green bg) shown side by side",
+    "frontend_deal_builder_edit_mode": "Working - Date inputs, consultants, hourly rate inputs with data-testid attributes",
+    "frontend_deal_builder_live_calculation": "Working - Green preview box shows formula and calculated result updating in real-time",
+    "frontend_deal_builder_save": "Working - Save button saves values, shows 'Deal financials updated' toast",
+    "frontend_client_detail_won_column": "Working - Green box with 'WON' label, value, and deal count",
+    "frontend_client_detail_lost_column": "Working - Rose box with 'LOST' label, value, and deal count"
+  },
+  "ui_element_details": {
+    "opportunity_financials_card": {
+      "title": "Opportunity Financials",
+      "icon": "Calculator (lucide)",
+      "edit_button_testid": "edit-deal-builder-btn",
+      "save_button_testid": "save-deal-builder-btn"
+    },
+    "deal_builder_inputs": {
+      "start_date_testid": "deal-start-date",
+      "end_date_testid": "deal-end-date",
+      "consultants_testid": "num-consultants",
+      "rate_testid": "hourly-rate"
+    },
+    "calculation_preview": {
+      "container_class": "bg-emerald-50 border-emerald-200",
+      "formula_display": "{working_days} days × 8 hrs × {consultants} × ${rate}/hr"
+    },
+    "client_detail_columns": {
+      "won_testid": "client-won-value",
+      "lost_testid": "client-lost-value",
+      "won_bg_class": "bg-green-50",
+      "lost_bg_class": "bg-rose-50"
+    }
+  }
+}
