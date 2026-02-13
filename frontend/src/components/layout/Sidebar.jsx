@@ -58,6 +58,7 @@ const Sidebar = () => {
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
     { icon: Kanban, label: 'Pipeline', path: '/pipeline' },
+    { icon: Kanban, label: 'My Pipeline', path: '/my-pipeline' },
     { icon: Building2, label: 'Organizations', path: '/organizations' },
     { icon: Users, label: 'Contacts', path: '/contacts' },
     { icon: Calendar, label: 'Activities', path: '/activities' },
