@@ -165,6 +165,7 @@ const Activities = () => {
       setIsDialogOpen(false);
       setNewActivity({
         activity_type: 'Call',
+        title: '',
         org_id: '',
         due_date: '',
         notes: '',
