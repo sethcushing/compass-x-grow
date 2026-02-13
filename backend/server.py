@@ -1076,7 +1076,7 @@ async def seed_data(request: Request):
     for opp_data in opps_data:
         opp = {
             **opp_data,
-            "owner_id": "demo_sales_lead",
+            "owner_id": default_owner,
             "pipeline_id": "pipe_default",
             "target_close_date": (datetime.now(timezone.utc) + timedelta(days=60)).isoformat(),
             "notes": None,
