@@ -16,6 +16,7 @@ import Activities from "@/pages/Activities";
 import Reports from "@/pages/Reports";
 import ExecutiveDashboard from "@/pages/ExecutiveDashboard";
 import Settings from "@/pages/Settings";
+import AuthCallback from "@/pages/AuthCallback";
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
@@ -27,7 +28,7 @@ const ProtectedRoute = ({ children }) => {
   const location = useLocation();
 
   useEffect(() => {
-    // If user was passed from login, use it
+    // If user was passed from login or OAuth callback, use it
     if (location.state?.user) {
       setUser(location.state.user);
       setIsAuthenticated(true);
@@ -71,26 +72,41 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+// App Router - Handles OAuth callback detection synchronously
+const AppRouter = () => {
+  const location = useLocation();
+  
+  // CRITICAL: Check for session_id during render (NOT in useEffect)
+  // This prevents race conditions with ProtectedRoute
+  if (location.hash?.includes('session_id=')) {
+    return <AuthCallback />;
+  }
+  
+  return (
+    <Routes>
+      <Route path="/login" element={<Login />} />
+      <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path="/executive" element={<ProtectedRoute><ExecutiveDashboard /></ProtectedRoute>} />
+      <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
+      <Route path="/organizations" element={<ProtectedRoute><Organizations /></ProtectedRoute>} />
+      <Route path="/organizations/:orgId" element={<ProtectedRoute><OrganizationDetail /></ProtectedRoute>} />
+      <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
+      <Route path="/contacts/:contactId" element={<ProtectedRoute><ContactDetail /></ProtectedRoute>} />
+      <Route path="/opportunities/:oppId" element={<ProtectedRoute><OpportunityDetail /></ProtectedRoute>} />
+      <Route path="/activities" element={<ProtectedRoute><Activities /></ProtectedRoute>} />
+      <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+      <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/my-pipeline" element={<Navigate to="/pipeline" replace />} />
+    </Routes>
+  );
+};
+
 function App() {
   return (
     <div className="App font-body">
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/executive" element={<ProtectedRoute><ExecutiveDashboard /></ProtectedRoute>} />
-          <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
-          <Route path="/organizations" element={<ProtectedRoute><Organizations /></ProtectedRoute>} />
-          <Route path="/organizations/:orgId" element={<ProtectedRoute><OrganizationDetail /></ProtectedRoute>} />
-          <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
-          <Route path="/contacts/:contactId" element={<ProtectedRoute><ContactDetail /></ProtectedRoute>} />
-          <Route path="/opportunities/:oppId" element={<ProtectedRoute><OpportunityDetail /></ProtectedRoute>} />
-          <Route path="/activities" element={<ProtectedRoute><Activities /></ProtectedRoute>} />
-          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/my-pipeline" element={<Navigate to="/pipeline" replace />} />
-        </Routes>
+        <AppRouter />
       </BrowserRouter>
       <Toaster position="top-right" richColors />
     </div>
