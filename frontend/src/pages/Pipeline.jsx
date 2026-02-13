@@ -90,6 +90,10 @@ const OpportunityCard = ({ opportunity, organizations, users }) => {
             <Building2 className="w-3 h-3 text-slate-400" />
             <span className="text-xs text-slate-500 truncate">{org?.name || 'Unknown'}</span>
           </div>
+          <div className="flex items-center gap-1 mt-1">
+            <User className="w-3 h-3 text-slate-400" />
+            <span className="text-xs text-slate-500 truncate">{owner?.name || 'Unassigned'}</span>
+          </div>
         </div>
       </div>
       
