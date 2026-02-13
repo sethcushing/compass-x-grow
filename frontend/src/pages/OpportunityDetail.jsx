@@ -69,6 +69,10 @@ const OpportunityDetail = () => {
     notes: ''
   });
   
+  // At-risk dialog state
+  const [atRiskDialogOpen, setAtRiskDialogOpen] = useState(false);
+  const [atRiskReason, setAtRiskReason] = useState('');
+  
   // AI Copilot state
   const [aiLoading, setAiLoading] = useState(null);
   const [aiResponse, setAiResponse] = useState(null);
