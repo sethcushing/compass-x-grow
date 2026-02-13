@@ -710,6 +710,33 @@ async def get_organization_summary(org_id: str, request: Request):
         }
     }
 
+@api_router.post("/organizations/{org_id}/notes")
+async def add_organization_note(org_id: str, request: Request):
+    """Add a note to the organization's notes history"""
+    user = await get_current_user(request)
+    body = await request.json()
+    note_text = body.get("text", "").strip()
+    
+    if not note_text:
+        raise HTTPException(status_code=400, detail="Note text is required")
+    
+    note_entry = {
+        "text": note_text,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "created_by": user["user_id"],
+        "created_by_name": user.get("name", "Unknown")
+    }
+    
+    await db.organizations.update_one(
+        {"org_id": org_id},
+        {
+            "$push": {"notes_history": note_entry},
+            "$set": {"updated_at": datetime.now(timezone.utc).isoformat()}
+        }
+    )
+    
+    return note_entry
+
 # ============== PIPELINE & STAGE ENDPOINTS ==============
 
 @api_router.get("/pipelines")
