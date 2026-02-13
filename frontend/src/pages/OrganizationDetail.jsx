@@ -603,6 +603,15 @@ const OrganizationDetail = () => {
                       rows={3}
                     />
                   </div>
+                  <div className="col-span-2">
+                    <Label>Google Drive Link</Label>
+                    <Input
+                      value={editData.google_drive_link || ''}
+                      onChange={(e) => setEditData(prev => ({ ...prev, google_drive_link: e.target.value }))}
+                      placeholder="https://drive.google.com/..."
+                      className="mt-1"
+                    />
+                  </div>
                 </div>
               ) : (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
