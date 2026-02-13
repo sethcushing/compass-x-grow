@@ -128,58 +128,6 @@ const Contacts = () => {
     const user = users.find(u => u.user_id === userId);
     return user?.name || 'Unassigned';
   };
-        fetch(`${API}/contacts`, { credentials: 'include' }),
-        fetch(`${API}/organizations`, { credentials: 'include' })
-      ]);
-      
-      const contactsData = await contactsRes.json();
-      const orgsData = await orgsRes.json();
-      
-      setContacts(contactsData);
-      setOrganizations(orgsData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-      toast.error('Failed to load contacts');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleCreateContact = async () => {
-    if (!newContact.name || !newContact.org_id) {
-      toast.error('Name and Organization are required');
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API}/contacts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(newContact)
-      });
-
-      if (!response.ok) throw new Error('Failed to create');
-
-      const created = await response.json();
-      setContacts(prev => [...prev, created]);
-      setIsDialogOpen(false);
-      setNewContact({
-        name: '',
-        title: '',
-        function: '',
-        email: '',
-        phone: '',
-        buying_role: '',
-        org_id: '',
-        notes: ''
-      });
-      toast.success('Contact created');
-    } catch (error) {
-      console.error('Error creating contact:', error);
-      toast.error('Failed to create contact');
-    }
-  };
 
   const filteredContacts = contacts.filter(contact =>
     contact.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
