@@ -484,7 +484,8 @@ async def get_contact(contact_id: str, request: Request):
 @api_router.post("/contacts")
 async def create_contact(data: ContactCreate, request: Request):
     user = await get_current_user(request)
-    contact = ContactBase(**data.model_dump(), created_by=user["user_id"])
+    owner_id = data.owner_id or user["user_id"]
+    contact = ContactBase(**data.model_dump(exclude={'owner_id'}), owner_id=owner_id, created_by=user["user_id"])
     doc = contact.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
     doc["updated_at"] = doc["updated_at"].isoformat()
