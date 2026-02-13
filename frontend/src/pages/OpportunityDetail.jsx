@@ -55,6 +55,7 @@ const OpportunityDetail = () => {
   const [contact, setContact] = useState(null);
   const [activities, setActivities] = useState([]);
   const [stages, setStages] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
@@ -75,19 +76,22 @@ const OpportunityDetail = () => {
 
   const fetchData = async () => {
     try {
-      const [oppRes, activitiesRes, pipelinesRes] = await Promise.all([
+      const [oppRes, activitiesRes, pipelinesRes, usersRes] = await Promise.all([
         fetch(`${API}/opportunities/${oppId}`, { credentials: 'include' }),
         fetch(`${API}/activities?opp_id=${oppId}`, { credentials: 'include' }),
-        fetch(`${API}/pipelines`, { credentials: 'include' })
+        fetch(`${API}/pipelines`, { credentials: 'include' }),
+        fetch(`${API}/auth/users`, { credentials: 'include' })
       ]);
       
       const oppData = await oppRes.json();
       const activitiesData = await activitiesRes.json();
       const pipelines = await pipelinesRes.json();
+      const usersData = await usersRes.json();
       
       setOpportunity(oppData);
       setEditData(oppData);
       setActivities(activitiesData);
+      setUsers(usersData);
       
       if (pipelines.length > 0) {
         const defaultPipeline = pipelines.find(p => p.is_default) || pipelines[0];
@@ -113,6 +117,11 @@ const OpportunityDetail = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getOwnerName = (ownerId) => {
+    const user = users.find(u => u.user_id === ownerId);
+    return user?.name || 'Unassigned';
   };
 
   const handleSave = async () => {
