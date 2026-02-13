@@ -633,13 +633,13 @@ const OpportunityDetail = () => {
                     <div className="space-y-6">
                       {/* Key Metrics */}
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div className="p-4 bg-slate-50 rounded-xl">
+                        <div className="p-4 bg-emerald-50 rounded-xl">
                           <div className="flex items-center gap-2 mb-1">
                             <DollarSign className="w-4 h-4 text-emerald-600" />
-                            <span className="text-xs text-slate-500">Value</span>
+                            <span className="text-xs text-emerald-600 font-medium">Opportunity Total</span>
                           </div>
-                          <p className="text-xl font-heading font-semibold text-slate-900">
-                            {formatCurrency(opportunity.estimated_value)}
+                          <p className="text-xl font-heading font-semibold text-emerald-700">
+                            {formatCurrency(opportunity.calculated_value || opportunity.estimated_value)}
                           </p>
                         </div>
                         <div className="p-4 bg-slate-50 rounded-xl">
