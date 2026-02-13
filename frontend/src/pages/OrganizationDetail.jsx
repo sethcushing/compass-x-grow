@@ -42,7 +42,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  Presentation
+  Presentation,
+  ExternalLink
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
