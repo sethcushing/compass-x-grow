@@ -92,6 +92,7 @@ const OrganizationDetail = () => {
   
   const [newActivity, setNewActivity] = useState({
     activity_type: 'Call',
+    title: '',
     due_date: '',
     notes: '',
     status: 'Planned'
