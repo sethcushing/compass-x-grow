@@ -404,11 +404,8 @@ async def get_me(request: Request):
 
 @api_router.get("/auth/users")
 async def get_users(request: Request):
-    """Get all users (admin only)"""
+    """Get all users"""
     user = await get_current_user(request)
-    if user["role"] != "admin":
-        raise HTTPException(status_code=403, detail="Admin access required")
-    
     users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
     return users
 
