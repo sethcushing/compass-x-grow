@@ -36,7 +36,8 @@ import {
   Video,
   FileText,
   Plus,
-  Search
+  Search,
+  Trash2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -103,6 +104,25 @@ const Activities = () => {
     } catch (error) {
       console.error('Error completing activity:', error);
       toast.error('Failed to complete activity');
+    }
+  };
+
+  const handleDelete = async (activityId) => {
+    if (!window.confirm('Are you sure you want to delete this activity?')) return;
+    
+    try {
+      const response = await fetch(`${API}/activities/${activityId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      
+      if (!response.ok) throw new Error('Failed to delete');
+      
+      setActivities(prev => prev.filter(a => a.activity_id !== activityId));
+      toast.success('Activity deleted');
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      toast.error('Failed to delete activity');
     }
   };
 
@@ -356,8 +376,12 @@ const Activities = () => {
                           <SelectItem value="Call">Call</SelectItem>
                           <SelectItem value="Email">Email</SelectItem>
                           <SelectItem value="Meeting">Meeting</SelectItem>
+                          <SelectItem value="Demo">Demo</SelectItem>
+                          <SelectItem value="Workshop">Workshop</SelectItem>
+                          <SelectItem value="Discovery Session">Discovery Session</SelectItem>
                           <SelectItem value="Follow-up">Follow-up</SelectItem>
                           <SelectItem value="Exec Readout">Exec Readout</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -478,6 +502,15 @@ const Activities = () => {
                                 <CheckCircle2 className="w-4 h-4" />
                               </Button>
                             )}
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => handleDelete(activity.activity_id)}
+                              className="text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                              data-testid={`delete-activity-${activity.activity_id}`}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
                           </div>
                         );
                       })}
@@ -639,6 +672,15 @@ const Activities = () => {
                                     <CheckCircle2 className="w-5 h-5" />
                                   </Button>
                                 )}
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => handleDelete(activity.activity_id)}
+                                  className="text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                                  data-testid={`delete-activity-${activity.activity_id}`}
+                                >
+                                  <Trash2 className="w-5 h-5" />
+                                </Button>
                               </div>
                             </CardContent>
                           </Card>
