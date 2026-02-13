@@ -321,6 +321,18 @@ const Organizations = () => {
                     />
                   </div>
                   
+                  <div>
+                    <Label htmlFor="org-drive-link">Google Drive Link</Label>
+                    <Input
+                      id="org-drive-link"
+                      data-testid="org-drive-link-input"
+                      value={newOrg.google_drive_link}
+                      onChange={(e) => setNewOrg(prev => ({ ...prev, google_drive_link: e.target.value }))}
+                      placeholder="https://drive.google.com/..."
+                      className="mt-1"
+                    />
+                  </div>
+                  
                   <Button
                     data-testid="submit-org-btn"
                     onClick={handleCreateOrg}
