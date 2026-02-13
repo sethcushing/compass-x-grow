@@ -11,8 +11,7 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
-  ChevronRight,
-  LineChart
+  ChevronRight
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -65,7 +64,6 @@ const Sidebar = () => {
   ];
 
   const secondaryItems = [
-    { icon: LineChart, label: 'Executive View', path: '/executive' },
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 

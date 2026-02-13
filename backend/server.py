@@ -158,6 +158,7 @@ class OpportunityBase(BaseModel):
     notes: Optional[str] = None
     value_hypothesis: Optional[str] = None
     is_at_risk: bool = False
+    at_risk_reason: Optional[str] = None  # User-provided reason for at-risk status
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     stage_entered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -190,6 +191,12 @@ class OpportunityUpdate(BaseModel):
     notes: Optional[str] = None
     value_hypothesis: Optional[str] = None
     owner_id: Optional[str] = None  # Allow changing owner
+    is_at_risk: Optional[bool] = None
+    at_risk_reason: Optional[str] = None
+
+class OpportunityAtRiskUpdate(BaseModel):
+    is_at_risk: bool
+    at_risk_reason: Optional[str] = None
 
 class ActivityBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -852,6 +859,25 @@ async def delete_opportunity(opp_id: str, request: Request):
     await db.opportunities.delete_one({"opp_id": opp_id})
     await db.activities.delete_many({"opp_id": opp_id})
     return {"message": "Deleted"}
+
+@api_router.put("/opportunities/{opp_id}/at-risk")
+async def update_opportunity_at_risk(opp_id: str, data: OpportunityAtRiskUpdate, request: Request):
+    """Update opportunity at-risk status with reason"""
+    user = await get_current_user(request)
+    
+    # Verify opportunity exists
+    opp = await db.opportunities.find_one({"opp_id": opp_id}, {"_id": 0})
+    if not opp:
+        raise HTTPException(status_code=404, detail="Opportunity not found")
+    
+    update_data = {
+        "is_at_risk": data.is_at_risk,
+        "at_risk_reason": data.at_risk_reason if data.is_at_risk else None,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.opportunities.update_one({"opp_id": opp_id}, {"$set": update_data})
+    return await db.opportunities.find_one({"opp_id": opp_id}, {"_id": 0})
 
 # ============== ACTIVITY ENDPOINTS ==============
 
