@@ -546,15 +546,6 @@ const OpportunityDetail = () => {
                   {isEditing ? (
                     <div className="grid grid-cols-2 gap-6">
                       <div>
-                        <Label>Estimated Value ($)</Label>
-                        <Input
-                          type="number"
-                          value={editData.estimated_value || 0}
-                          onChange={(e) => setEditData(prev => ({ ...prev, estimated_value: parseFloat(e.target.value) || 0 }))}
-                          className="mt-1"
-                        />
-                      </div>
-                      <div>
                         <Label>Confidence (%)</Label>
                         <Input
                           type="number"
