@@ -102,6 +102,7 @@ const Organizations = () => {
         company_size: '',
         region: '',
         strategic_tier: 'Active',
+        owner_id: '',
         notes: ''
       });
       toast.success('Organization created');
@@ -122,6 +123,11 @@ const Organizations = () => {
       case 'Target': return 'bg-ocean-100 text-ocean-700';
       default: return 'bg-slate-100 text-slate-700';
     }
+  };
+
+  const getUserName = (userId) => {
+    const user = users.find(u => u.user_id === userId);
+    return user?.name || 'Unassigned';
   };
 
   if (loading) {
