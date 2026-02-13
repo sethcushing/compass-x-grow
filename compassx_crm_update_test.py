@@ -6,7 +6,7 @@ import json
 from datetime import datetime
 
 class CompassXCRMUpdateTester:
-    def __init__(self, base_url="https://activity-hub-62.preview.emergentagent.com/api"):
+    def __init__(self, base_url="https://activity-hub-63.preview.emergentagent.com/api"):
         self.base_url = base_url
         self.session = requests.Session()
         self.user_data = None

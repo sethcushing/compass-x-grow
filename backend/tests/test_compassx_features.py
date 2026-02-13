@@ -13,7 +13,7 @@ import time
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL')
 if not BASE_URL:
-    BASE_URL = "https://activity-hub-62.preview.emergentagent.com"
+    BASE_URL = "https://activity-hub-63.preview.emergentagent.com"
 
 print(f"Testing BASE_URL: {BASE_URL}")
 
