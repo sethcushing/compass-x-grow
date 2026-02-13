@@ -146,18 +146,24 @@ const OpportunityDetail = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm('Are you sure you want to delete this opportunity?')) return;
+    if (!window.confirm('Are you sure you want to delete this opportunity? This will also delete all related activities.')) return;
     
     try {
-      await fetch(`${API}/opportunities/${oppId}`, {
+      const response = await fetch(`${API}/opportunities/${oppId}`, {
         method: 'DELETE',
         credentials: 'include'
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to delete');
+      }
+      
       toast.success('Opportunity deleted');
       navigate('/pipeline');
     } catch (error) {
       console.error('Error deleting:', error);
-      toast.error('Failed to delete');
+      toast.error(error.message || 'Failed to delete');
     }
   };
 
