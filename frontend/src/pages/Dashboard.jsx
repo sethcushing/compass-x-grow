@@ -317,19 +317,22 @@ const Dashboard = () => {
                   ) : (
                     upcomingActivities.map((activity) => {
                       const status = getActivityStatus(activity);
+                      const config = ACTIVITY_CONFIG[activity.activity_type] || ACTIVITY_CONFIG['Other'];
+                      const IconComponent = config.icon;
                       return (
                         <div
                           key={activity.activity_id}
-                          className={`p-3 rounded-lg border-l-3 ${
-                            status === 'overdue' ? 'activity-red bg-red-50/50' :
-                            status === 'today' ? 'activity-yellow bg-amber-50/50' :
-                            'activity-green bg-slate-50'
-                          }`}
+                          className={`p-3 rounded-lg border-l-4 ${config.border} bg-white shadow-sm`}
                         >
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <p className="font-medium text-sm text-slate-900">{activity.activity_type}</p>
-                              <p className="text-xs text-slate-500 mt-0.5">{activity.notes || 'No notes'}</p>
+                          <div className="flex items-start gap-3">
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${config.color}`}>
+                              <IconComponent className="w-4 h-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="font-medium text-sm text-slate-900">
+                                {activity.title || activity.activity_type}
+                              </p>
+                              <p className="text-xs text-slate-500 truncate">{activity.notes || 'No notes'}</p>
                             </div>
                             <Badge className={getStatusColor(status)} variant="secondary">
                               {status === 'overdue' ? 'Overdue' :
