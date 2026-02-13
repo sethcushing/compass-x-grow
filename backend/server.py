@@ -460,6 +460,34 @@ async def logout(request: Request, response: Response):
 async def get_organizations(request: Request):
     user = await get_current_user(request)
     orgs = await db.organizations.find({}, {"_id": 0}).to_list(1000)
+    
+    # Calculate at-risk status based on no activity in 7 days
+    now = datetime.now(timezone.utc)
+    seven_days_ago = now - timedelta(days=7)
+    
+    for org in orgs:
+        # Get all activities for this org (direct org activities + activities from org's opportunities)
+        org_activities = await db.activities.find({"org_id": org["org_id"]}, {"_id": 0}).to_list(100)
+        
+        # Also get activities from opportunities linked to this org
+        org_opps = await db.opportunities.find({"org_id": org["org_id"]}, {"opp_id": 1, "_id": 0}).to_list(100)
+        opp_ids = [o["opp_id"] for o in org_opps]
+        if opp_ids:
+            opp_activities = await db.activities.find({"opp_id": {"$in": opp_ids}}, {"_id": 0}).to_list(100)
+            org_activities.extend(opp_activities)
+        
+        # Check if any activity in the last 7 days
+        has_recent_activity = False
+        for act in org_activities:
+            act_date = parse_datetime(act.get("due_date") or act.get("created_at", "2000-01-01"))
+            if act_date >= seven_days_ago:
+                has_recent_activity = True
+                break
+        
+        # Mark as at-risk if no recent activity and org has been created more than 7 days ago
+        org_created = parse_datetime(org.get("created_at", now.isoformat()))
+        org["is_at_risk"] = not has_recent_activity and org_created < seven_days_ago
+    
     return orgs
 
 @api_router.get("/organizations/{org_id}")
@@ -468,6 +496,28 @@ async def get_organization(org_id: str, request: Request):
     org = await db.organizations.find_one({"org_id": org_id}, {"_id": 0})
     if not org:
         raise HTTPException(status_code=404, detail="Organization not found")
+    
+    # Calculate at-risk status
+    now = datetime.now(timezone.utc)
+    seven_days_ago = now - timedelta(days=7)
+    
+    org_activities = await db.activities.find({"org_id": org_id}, {"_id": 0}).to_list(100)
+    org_opps = await db.opportunities.find({"org_id": org_id}, {"opp_id": 1, "_id": 0}).to_list(100)
+    opp_ids = [o["opp_id"] for o in org_opps]
+    if opp_ids:
+        opp_activities = await db.activities.find({"opp_id": {"$in": opp_ids}}, {"_id": 0}).to_list(100)
+        org_activities.extend(opp_activities)
+    
+    has_recent_activity = False
+    for act in org_activities:
+        act_date = parse_datetime(act.get("due_date") or act.get("created_at", "2000-01-01"))
+        if act_date >= seven_days_ago:
+            has_recent_activity = True
+            break
+    
+    org_created = parse_datetime(org.get("created_at", now.isoformat()))
+    org["is_at_risk"] = not has_recent_activity and org_created < seven_days_ago
+    
     return org
 
 @api_router.post("/organizations")
