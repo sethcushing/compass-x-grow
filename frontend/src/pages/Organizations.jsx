@@ -267,6 +267,25 @@ const Organizations = () => {
                   </div>
                   
                   <div>
+                    <Label htmlFor="org-owner">Owner *</Label>
+                    <Select
+                      value={newOrg.owner_id}
+                      onValueChange={(value) => setNewOrg(prev => ({ ...prev, owner_id: value }))}
+                    >
+                      <SelectTrigger data-testid="org-owner-select" className="mt-1">
+                        <SelectValue placeholder="Select owner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.map(user => (
+                          <SelectItem key={user.user_id} value={user.user_id}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
                     <Label htmlFor="org-notes">Notes</Label>
                     <Textarea
                       id="org-notes"
