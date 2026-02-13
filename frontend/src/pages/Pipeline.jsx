@@ -49,7 +49,7 @@ import { toast } from 'sonner';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 // Sortable Opportunity Card
-const OpportunityCard = ({ opportunity, organizations, users }) => {
+const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) => {
   const {
     attributes,
     listeners,
@@ -105,6 +105,36 @@ const OpportunityCard = ({ opportunity, organizations, users }) => {
             <span className="text-xs text-slate-500 truncate">{owner?.name || 'Unassigned'}</span>
           </div>
         </div>
+        
+        {/* Actions Menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+              <MoreHorizontal className="w-4 h-4 text-slate-400" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {opportunity.is_at_risk ? (
+              <DropdownMenuItem
+                data-testid={`clear-at-risk-${opportunity.opp_id}`}
+                onClick={() => onToggleAtRisk(opportunity, false)}
+                className="text-emerald-600"
+              >
+                <ShieldCheck className="w-4 h-4 mr-2" />
+                Clear At-Risk Status
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem
+                data-testid={`mark-at-risk-${opportunity.opp_id}`}
+                onClick={() => onToggleAtRisk(opportunity, true)}
+                className="text-amber-600"
+              >
+                <ShieldAlert className="w-4 h-4 mr-2" />
+                Mark as At-Risk
+              </DropdownMenuItem>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
       
       <div className="mt-3 flex items-center justify-between">
@@ -125,7 +155,9 @@ const OpportunityCard = ({ opportunity, organizations, users }) => {
       {opportunity.is_at_risk && (
         <div className="mt-2 flex items-center gap-1 text-amber-600">
           <AlertTriangle className="w-3 h-3" />
-          <span className="text-xs">At Risk - No activity</span>
+          <span className="text-xs truncate" title={opportunity.at_risk_reason || 'At Risk'}>
+            {opportunity.at_risk_reason || 'At Risk'}
+          </span>
         </div>
       )}
       
