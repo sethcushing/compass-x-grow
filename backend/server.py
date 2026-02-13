@@ -192,7 +192,8 @@ class ActivityBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
     activity_id: str = Field(default_factory=lambda: f"act_{uuid.uuid4().hex[:12]}")
     activity_type: str  # Call, Meeting, Demo, Workshop, Follow-up, Exec Readout
-    opp_id: str
+    opp_id: Optional[str] = None  # Optional - can be tied to opportunity
+    org_id: Optional[str] = None  # Optional - can be tied to organization directly
     due_date: datetime
     owner_id: str
     status: str = "Planned"  # Planned, Completed, Overdue
@@ -202,9 +203,11 @@ class ActivityBase(BaseModel):
 
 class ActivityCreate(BaseModel):
     activity_type: str
-    opp_id: str
+    opp_id: Optional[str] = None
+    org_id: Optional[str] = None
     due_date: str
     notes: Optional[str] = None
+    status: Optional[str] = "Planned"
 
 class ActivityUpdate(BaseModel):
     activity_type: Optional[str] = None
