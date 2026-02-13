@@ -177,7 +177,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
 };
 
 // Kanban Column
-const KanbanColumn = ({ stage, opportunities, organizations, users }) => {
+const KanbanColumn = ({ stage, opportunities, organizations, users, onToggleAtRisk }) => {
   const totalValue = opportunities.reduce((sum, o) => sum + (o.estimated_value || 0), 0);
   
   return (
@@ -212,6 +212,7 @@ const KanbanColumn = ({ stage, opportunities, organizations, users }) => {
                   opportunity={opp}
                   organizations={organizations}
                   users={users}
+                  onToggleAtRisk={onToggleAtRisk}
                 />
               </motion.div>
             ))}
