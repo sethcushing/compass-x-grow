@@ -1,0 +1,65 @@
+{
+  "summary": "Iteration 14 - Tested Dashboard metrics (Won/Lost/Active/Pipeline), Create Opportunity dialog field removal (Source, Estimated Value), and Client page opportunities separation. All features working correctly.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "API: /api/reports/summary returns won, lost, active, pipeline counts and values",
+    "API: /api/organizations/{org_id}/summary returns active_opportunities and pipeline_opportunities arrays",
+    "API: Opportunity creation works without source and estimated_value fields",
+    "Dashboard: Shows 8 metric cards - Total Pipeline, Weighted Forecast, Overdue Activities, At-Risk Deals, Won (Closed), Lost (Closed), Active (Closed Won), Pipeline (Open)",
+    "Dashboard: Won card shows count and value correctly (1 deals, $100,000)",
+    "Dashboard: Lost card shows count and value correctly (0 deals, $0)",
+    "Dashboard: Active card shows count and value (same as Won - 1 deals, $100,000)",
+    "Dashboard: Pipeline card shows count and value correctly (5 deals, $941,184)",
+    "Pipeline Page: Create Opportunity dialog does NOT have 'Source' dropdown field",
+    "Pipeline Page: Create Opportunity dialog does NOT have 'Estimated Value' field",
+    "Pipeline Page: Create Opportunity dialog has: Opportunity Name, Organization, Owner, Engagement Type, Initial Stage, Confidence",
+    "Client Page: Create Opportunity dialog does NOT have 'Source' dropdown field",
+    "Client Page: Create Opportunity dialog does NOT have 'Estimated Value' field",
+    "Client Page: Shows 'Pipeline Opportunities' section separately (2 opportunities)",
+    "Client Page: Shows 'Active Opportunities - Closed Won' section separately (1 opportunity)",
+    "Client Page: Won/Lost value stats displayed (Won: $100K, Lost: $0)"
+  ],
+  "test_report_links": [
+    "/app/backend/tests/test_dashboard_features.py",
+    "/app/test_reports/pytest/pytest_results_iteration14.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [
+    "/app/backend/tests/test_dashboard_features.py"
+  ],
+  "success_rate": {
+    "backend": "100% - 11/11 tests passed",
+    "frontend": "100% - All UI tests passed"
+  },
+  "test_credentials": {
+    "email": "brian.clements@compassx.com",
+    "password": "CompassX2026!"
+  },
+  "seed_data_creation": "None - used existing data",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 14 verified: 1) Dashboard now shows 8 metric cards in 2 rows - top row has Total Pipeline/Weighted Forecast/Overdue Activities/At-Risk Deals, bottom row has Won (Closed)/Lost (Closed)/Active (Closed Won)/Pipeline (Open). 2) /api/reports/summary endpoint returns won, lost, active, pipeline objects with count and value. 3) Create Opportunity dialog on Pipeline page has fields: Opportunity Name*, Organization*, Owner*, Engagement Type, Initial Stage, Confidence (%) - NO Source or Estimated Value fields. 4) Create Opportunity dialog on Client page has same fields - NO Source or Estimated Value fields. 5) Client detail page Opportunities section is now split into 'Pipeline Opportunities' (open deals) and 'Active Opportunities - Closed Won' with visual separation and different styling (blue border for pipeline, green border with 'Closed Won' badge for active). 6) /api/organizations/{org_id}/summary returns active_opportunities and pipeline_opportunities arrays.",
+  "verified_features": {
+    "dashboard_won_card": "Working - Shows count and value for Closed Won opportunities",
+    "dashboard_lost_card": "Working - Shows count and value for Closed Lost opportunities",
+    "dashboard_active_card": "Working - Shows count and value (same as Won)",
+    "dashboard_pipeline_card": "Working - Shows count and value for Open opportunities",
+    "pipeline_create_dialog_no_source": "Working - Source dropdown removed",
+    "pipeline_create_dialog_no_estimated_value": "Working - Estimated Value field removed",
+    "client_create_dialog_no_source": "Working - Source dropdown removed",
+    "client_create_dialog_no_estimated_value": "Working - Estimated Value field removed",
+    "client_page_pipeline_opportunities_section": "Working - Shows open opportunities in blue-bordered cards",
+    "client_page_active_opportunities_section": "Working - Shows Closed Won opportunities in green-bordered cards with badge",
+    "api_reports_summary": "Working - Returns won/lost/active/pipeline metrics",
+    "api_org_summary_separated_opps": "Working - Returns active_opportunities and pipeline_opportunities arrays"
+  }
+}
