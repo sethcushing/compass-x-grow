@@ -4,9 +4,21 @@
 Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting firms.
 
 ## User Management
-**7 authorized CompassX team members** with password `CompassX2026!`
+**7 authorized CompassX team members** - Access via Google OAuth or password login
+
+**Admin:** Seth Cushing (seth.cushing@compassx.com)
+**Sales Leads:** Arman, Brian, Jamie, Kyle, Randy, Ray
+
+Default password for password login: `CompassX2026!`
 
 ## What's Been Implemented
+
+### Google OAuth Authentication (Feb 13, 2026)
+- ✅ **Google OAuth** via Emergent-managed Auth
+- ✅ **Email Whitelisting** - Only 7 authorized CompassX emails can login
+- ✅ **Both auth methods** - Password login + Google OAuth on same page
+- ✅ **Role sync** - Admin/Sales Lead roles synced from authorized list
+- ✅ **Seth Cushing** is the only admin
 
 ### Activity Deletion & Expanded Types (Feb 13, 2026)
 - ✅ **Delete Activities** - DELETE /api/activities/{activity_id} endpoint
