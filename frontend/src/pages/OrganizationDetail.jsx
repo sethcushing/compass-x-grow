@@ -93,6 +93,8 @@ const OrganizationDetail = () => {
     notes: '',
     status: 'Planned'
   });
+  
+  const [newNote, setNewNote] = useState('');
 
   useEffect(() => {
     fetchData();
