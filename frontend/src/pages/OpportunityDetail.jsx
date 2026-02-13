@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -40,7 +41,9 @@ import {
   FileText,
   Mail,
   Lightbulb,
-  Target
+  Target,
+  ShieldAlert,
+  ShieldCheck
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
