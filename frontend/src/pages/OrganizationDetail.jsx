@@ -362,6 +362,9 @@ const OrganizationDetail = () => {
       case 'Call': return Phone;
       case 'Email': return Mail;
       case 'Meeting': return Video;
+      case 'Demo': 
+      case 'Workshop': 
+      case 'Discovery Session': return Presentation;
       default: return FileText;
     }
   };
