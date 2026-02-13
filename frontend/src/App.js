@@ -14,7 +14,6 @@ import ContactDetail from "@/pages/ContactDetail";
 import OpportunityDetail from "@/pages/OpportunityDetail";
 import Activities from "@/pages/Activities";
 import Reports from "@/pages/Reports";
-import ExecutiveDashboard from "@/pages/ExecutiveDashboard";
 import Settings from "@/pages/Settings";
 import AuthCallback from "@/pages/AuthCallback";
 
@@ -86,7 +85,6 @@ const AppRouter = () => {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-      <Route path="/executive" element={<ProtectedRoute><ExecutiveDashboard /></ProtectedRoute>} />
       <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
       <Route path="/organizations" element={<ProtectedRoute><Organizations /></ProtectedRoute>} />
       <Route path="/organizations/:orgId" element={<ProtectedRoute><OrganizationDetail /></ProtectedRoute>} />
