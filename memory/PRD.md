@@ -65,6 +65,11 @@ Default password for password login: `CompassX2026!`
 - ✅ **Separated Opportunities** - Pipeline Opportunities and Active Opportunities (Closed Won) shown in separate sections
 - ✅ **Visual Distinction** - Pipeline opps have blue border, Active opps have green border with "Closed Won" badge
 
+### Create Opportunity Simplification (Feb 13, 2026)
+- ✅ **Removed Source Dropdown** - Source field removed from Create Opportunity dialog
+- ✅ **Removed Estimated Value** - No manual entry, use Deal Builder on opportunity detail page
+- ✅ **Streamlined Fields** - Only Name, Organization, Owner, Engagement Type, Initial Stage, Confidence
+
 ### App Rebranding (Feb 13, 2026)
 - ✅ Changed app name from "CompassX" to "**Compass X Grow**"
 - ✅ Updated login page, sidebar, and settings
