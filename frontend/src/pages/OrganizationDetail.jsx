@@ -96,6 +96,7 @@ const OrganizationDetail = () => {
   });
   
   const [newNote, setNewNote] = useState('');
+  const [orgSummary, setOrgSummary] = useState({ buyer: null, opportunities: { count: 0, total_value: 0, avg_confidence: 0 } });
 
   useEffect(() => {
     fetchData();
@@ -103,13 +104,14 @@ const OrganizationDetail = () => {
 
   const fetchData = async () => {
     try {
-      const [orgRes, contactsRes, oppsRes, usersRes, pipelinesRes, activitiesRes] = await Promise.all([
+      const [orgRes, contactsRes, oppsRes, usersRes, pipelinesRes, activitiesRes, summaryRes] = await Promise.all([
         fetch(`${API}/organizations/${orgId}`, { credentials: 'include' }),
         fetch(`${API}/contacts?org_id=${orgId}`, { credentials: 'include' }),
         fetch(`${API}/opportunities`, { credentials: 'include' }),
         fetch(`${API}/auth/users`, { credentials: 'include' }),
         fetch(`${API}/pipelines`, { credentials: 'include' }),
-        fetch(`${API}/activities?org_id=${orgId}`, { credentials: 'include' })
+        fetch(`${API}/activities?org_id=${orgId}`, { credentials: 'include' }),
+        fetch(`${API}/organizations/${orgId}/summary`, { credentials: 'include' })
       ]);
       
       const orgData = await orgRes.json();
@@ -118,6 +120,7 @@ const OrganizationDetail = () => {
       const usersData = await usersRes.json();
       const pipelines = await pipelinesRes.json();
       const activitiesData = await activitiesRes.json();
+      const summaryData = summaryRes.ok ? await summaryRes.json() : { buyer: null, opportunities: { count: 0, total_value: 0, avg_confidence: 0 } };
       
       setOrganization(orgData);
       setEditData(orgData);
@@ -125,6 +128,7 @@ const OrganizationDetail = () => {
       setOpportunities(oppsData.filter(o => o.org_id === orgId));
       setUsers(usersData);
       setActivities(activitiesData);
+      setOrgSummary(summaryData);
       
       // Get stages for opportunity creation
       if (pipelines.length > 0) {
