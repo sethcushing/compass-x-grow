@@ -118,11 +118,12 @@ const Sidebar = () => {
         <nav className="flex-1 px-3 py-4 space-y-1">
           {navItems.map((item) => {
             const active = isActive(item.path);
+            const testId = `nav-${item.label.toLowerCase().replace(/\s+/g, '-')}`;
             const NavLink = (
               <Link
                 key={item.path}
                 to={item.path}
-                data-testid={`nav-${item.label.toLowerCase()}`}
+                data-testid={testId}
                 className={`
                   flex items-center gap-3 px-3 py-2.5 rounded-xl
                   transition-all duration-200
