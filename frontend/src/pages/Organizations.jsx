@@ -27,7 +27,8 @@ import {
   Building2,
   MapPin,
   Users,
-  Briefcase
+  Briefcase,
+  User
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
@@ -36,6 +37,7 @@ const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const Organizations = () => {
   const [organizations, setOrganizations] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -45,18 +47,28 @@ const Organizations = () => {
     company_size: '',
     region: '',
     strategic_tier: 'Active',
+    owner_id: '',
     notes: ''
   });
 
   useEffect(() => {
-    fetchOrganizations();
+    fetchData();
   }, []);
 
-  const fetchOrganizations = async () => {
+  const fetchData = async () => {
     try {
-      const response = await fetch(`${API}/organizations`, { credentials: 'include' });
-      const data = await response.json();
-      setOrganizations(data);
+      const [orgsRes, usersRes] = await Promise.all([
+        fetch(`${API}/organizations`, { credentials: 'include' }),
+        fetch(`${API}/auth/users`, { credentials: 'include' })
+      ]);
+      
+      const orgsData = await orgsRes.json();
+      setOrganizations(orgsData);
+      
+      if (usersRes.ok) {
+        const usersData = await usersRes.json();
+        setUsers(usersData);
+      }
     } catch (error) {
       console.error('Error fetching organizations:', error);
       toast.error('Failed to load organizations');
