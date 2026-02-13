@@ -696,10 +696,10 @@ async def get_organization_summary(org_id: str, request: Request):
     )
     
     # Get opportunity totals
-    opps = await db.opportunities.find({"org_id": org_id}, {"_id": 0, "value": 1, "confidence": 1}).to_list(100)
+    opps = await db.opportunities.find({"org_id": org_id}, {"_id": 0, "estimated_value": 1, "confidence_level": 1}).to_list(100)
     opp_count = len(opps)
-    total_value = sum(o.get("value", 0) or 0 for o in opps)
-    avg_confidence = round(sum(o.get("confidence", 0) or 0 for o in opps) / opp_count, 1) if opp_count > 0 else 0
+    total_value = sum(o.get("estimated_value", 0) or 0 for o in opps)
+    avg_confidence = round(sum(o.get("confidence_level", 0) or 0 for o in opps) / opp_count, 1) if opp_count > 0 else 0
     
     return {
         "buyer": buyer,
