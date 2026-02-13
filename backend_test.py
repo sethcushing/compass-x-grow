@@ -213,18 +213,104 @@ class CompassXAPITester:
             self.log_test("Get Opportunities", False, f"Response: {data}")
             return False
 
-    def test_activities(self):
-        """Test activity endpoints"""
-        print("\n📅 Testing Activities...")
+    def test_create_organization(self):
+        """Test creating an organization"""
+        org_data = {
+            'name': 'Test Organization',
+            'industry': 'Technology', 
+            'company_size': 'Mid-Market',
+            'region': 'North America',
+            'strategic_tier': 'Active'
+        }
+        success, data = self.make_request('POST', 'organizations', org_data, 201)
+        if success and 'org_id' in data:
+            self.log_test("Create Organization", True, f"Created: {data.get('name')}")
+            return data['org_id']
+        else:
+            self.log_test("Create Organization", False, f"Response: {data}")
+            return None
+
+    def test_create_contact(self):
+        """Test creating a contact"""
+        # First create an organization
+        org_id = self.test_create_organization()
+        if not org_id:
+            return None
+            
+        contact_data = {
+            'name': 'Test Contact',
+            'title': 'CTO',
+            'function': 'IT',
+            'email': 'test@testorg.com',
+            'buying_role': 'Decision Maker',
+            'org_id': org_id
+        }
+        success, data = self.make_request('POST', 'contacts', contact_data, 201)
+        if success and 'contact_id' in data:
+            self.log_test("Create Contact", True, f"Created: {data.get('name')}")
+            return data['contact_id']
+        else:
+            self.log_test("Create Contact", False, f"Response: {data}")
+            return None
+
+    def test_create_opportunity(self):
+        """Test creating an opportunity"""
+        # Get pipeline and stage IDs
+        success, pipelines = self.make_request('GET', 'pipelines', expect_status=200)
+        if not success or not pipelines:
+            self.log_test("Create Opportunity", False, "No pipelines available")
+            return None
         
-        # Get activities
-        success, data = self.make_request('GET', 'activities', expect_status=200)
-        if success and isinstance(data, list):
-            activity_count = len(data)
-            self.log_test("Get Activities", True, f"Found {activity_count} activities")
+        pipeline_id = pipelines[0]['pipeline_id']
+        
+        success, stages = self.make_request('GET', f'pipelines/{pipeline_id}/stages', expect_status=200)
+        if not success or not stages:
+            self.log_test("Create Opportunity", False, "No stages available")
+            return None
+        
+        stage_id = stages[0]['stage_id']
+        
+        # Create organization if needed
+        org_id = self.test_create_organization()
+        if not org_id:
+            return None
+        
+        opp_data = {
+            'name': 'Test Opportunity',
+            'org_id': org_id,
+            'engagement_type': 'Advisory',
+            'estimated_value': 100000,
+            'confidence_level': 75,
+            'pipeline_id': pipeline_id,
+            'stage_id': stage_id
+        }
+        success, data = self.make_request('POST', 'opportunities', opp_data, 201)
+        if success and 'opp_id' in data:
+            self.log_test("Create Opportunity", True, f"Created: {data.get('name')}")
+            return data['opp_id']
+        else:
+            self.log_test("Create Opportunity", False, f"Response: {data}")
+            return None
+
+    def test_create_activity(self):
+        """Test creating an activity"""
+        # Create opportunity first
+        opp_id = self.test_create_opportunity()
+        if not opp_id:
+            return None
+        
+        activity_data = {
+            'activity_type': 'Call',
+            'opp_id': opp_id,
+            'due_date': '2024-12-31T15:00:00Z',
+            'notes': 'Test follow-up call'
+        }
+        success, data = self.make_request('POST', 'activities', activity_data, 201)
+        if success and 'activity_id' in data:
+            self.log_test("Create Activity", True, f"Created: {data.get('activity_type')}")
             return True
         else:
-            self.log_test("Get Activities", False, f"Response: {data}")
+            self.log_test("Create Activity", False, f"Response: {data}")
             return False
 
     def test_dashboard(self):
