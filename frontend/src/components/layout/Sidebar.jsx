@@ -66,6 +66,7 @@ const Sidebar = () => {
 
   const secondaryItems = [
     { icon: LineChart, label: 'Executive View', path: '/executive' },
+    { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 
   const isActive = (path) => location.pathname === path;
