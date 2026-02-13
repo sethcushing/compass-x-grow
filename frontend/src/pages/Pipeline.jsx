@@ -431,10 +431,8 @@ const Pipeline = () => {
         name: '',
         org_id: '',
         engagement_type: 'Advisory',
-        estimated_value: 0,
         confidence_level: 50,
         stage_id: stages[0]?.stage_id || '',
-        source: 'Inbound',
         owner_id: ''
       });
       toast.success('Opportunity created');
