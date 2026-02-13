@@ -681,26 +681,83 @@ const OrganizationDetail = () => {
                 </div>
               )}
               
-              {!isEditing && organization.notes && (
-                <div className="mt-6 p-4 bg-slate-50 rounded-xl">
-                  <p className="text-sm font-medium text-slate-700 mb-1">Notes</p>
-                  <p className="text-sm text-slate-600">{organization.notes}</p>
-                </div>
-              )}
-              
+              {/* Google Drive Link - Prominent */}
               {!isEditing && organization.google_drive_link && (
-                <div className="mt-4 flex items-center gap-2">
-                  <ExternalLink className="w-5 h-5 text-ocean-600" />
+                <div className="mt-6">
                   <a 
                     href={organization.google_drive_link} 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="text-ocean-600 hover:text-ocean-700 hover:underline font-medium"
+                    className="flex items-center gap-3 p-4 bg-ocean-50 rounded-xl hover:bg-ocean-100 transition-colors"
                   >
-                    Open Google Drive Folder
+                    <div className="w-10 h-10 bg-ocean-100 rounded-lg flex items-center justify-center">
+                      <ExternalLink className="w-5 h-5 text-ocean-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-ocean-700">Google Drive</p>
+                      <p className="text-sm text-ocean-600">Open client folder</p>
+                    </div>
                   </a>
                 </div>
               )}
+            </CardContent>
+          </Card>
+          
+          {/* Notes Running Tally Section */}
+          <Card className="border-slate-200 shadow-soft mb-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-heading flex items-center gap-2">
+                <FileText className="w-5 h-5 text-slate-400" />
+                Notes
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {/* Add New Note */}
+              <div className="flex gap-2 mb-4">
+                <Input
+                  placeholder="Add a note..."
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddNote()}
+                  className="flex-1"
+                  data-testid="new-note-input"
+                />
+                <Button 
+                  onClick={handleAddNote}
+                  className="bg-ocean-950 hover:bg-ocean-900"
+                  data-testid="add-note-btn"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              {/* Notes History */}
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {organization.notes_history?.length > 0 ? (
+                  [...organization.notes_history].reverse().map((note, idx) => (
+                    <div key={idx} className="p-3 bg-slate-50 rounded-lg">
+                      <p className="text-sm text-slate-700">{note.text}</p>
+                      <div className="flex items-center gap-2 mt-2 text-xs text-slate-400">
+                        <span>{note.created_by_name || 'Unknown'}</span>
+                        <span>•</span>
+                        <span>{new Date(note.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}</span>
+                      </div>
+                    </div>
+                  ))
+                ) : organization.notes ? (
+                  <div className="p-3 bg-slate-50 rounded-lg">
+                    <p className="text-sm text-slate-700">{organization.notes}</p>
+                    <p className="text-xs text-slate-400 mt-2">Legacy note</p>
+                  </div>
+                ) : (
+                  <p className="text-sm text-slate-400 italic text-center py-4">No notes yet</p>
+                )}
+              </div>
             </CardContent>
           </Card>
 
