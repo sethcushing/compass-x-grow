@@ -410,6 +410,28 @@ const Organizations = () => {
                         <User className="w-4 h-4" />
                         <span>{getUserName(org.owner_id)}</span>
                       </div>
+                      
+                      {org.notes && (
+                        <div className="mt-3 flex items-start gap-2 text-sm text-slate-500">
+                          <FileText className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                          <span className="line-clamp-2">{org.notes}</span>
+                        </div>
+                      )}
+                      
+                      {org.google_drive_link && (
+                        <div className="mt-2 flex items-center gap-2 text-sm">
+                          <ExternalLink className="w-4 h-4 text-ocean-600" />
+                          <a 
+                            href={org.google_drive_link} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-ocean-600 hover:text-ocean-700 hover:underline truncate"
+                          >
+                            Google Drive
+                          </a>
+                        </div>
+                      )}
                     </CardContent>
                   </Card>
                 </Link>
