@@ -588,40 +588,6 @@ const Pipeline = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="opp-source">Source</Label>
-                    <Select
-                      value={newOpp.source}
-                      onValueChange={(value) => setNewOpp(prev => ({ ...prev, source: value }))}
-                    >
-                      <SelectTrigger data-testid="opp-source-select" className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Inbound">Inbound</SelectItem>
-                        <SelectItem value="Referral">Referral</SelectItem>
-                        <SelectItem value="Exec Intro">Exec Intro</SelectItem>
-                        <SelectItem value="Expansion">Expansion</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="opp-confidence">Confidence (%)</Label>
-                    <Input
-                      id="opp-confidence"
-                      data-testid="opp-confidence-input"
-                      type="number"
-                      min="0"
-                      max="100"
-                      value={newOpp.confidence_level}
-                      onChange={(e) => setNewOpp(prev => ({ ...prev, confidence_level: parseInt(e.target.value) || 0 }))}
-                      className="mt-1"
-                    />
-                  </div>
-                  
-                  <div>
                     <Label htmlFor="opp-stage">Initial Stage</Label>
                     <Select
                       value={newOpp.stage_id}
@@ -639,6 +605,20 @@ const Pipeline = () => {
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="opp-confidence">Confidence (%)</Label>
+                  <Input
+                    id="opp-confidence"
+                    data-testid="opp-confidence-input"
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={newOpp.confidence_level}
+                    onChange={(e) => setNewOpp(prev => ({ ...prev, confidence_level: parseInt(e.target.value) || 0 }))}
+                    className="mt-1"
+                  />
                 </div>
                 
                 <Button
