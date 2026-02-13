@@ -386,74 +386,121 @@ const Organizations = () => {
             </Card>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredOrgs.map((org) => (
-                <Link key={org.org_id} to={`/organizations/${org.org_id}`}>
-                  <Card className="border-slate-200 shadow-soft hover:shadow-md hover:border-ocean-300 transition-all cursor-pointer h-full">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-ocean-100 rounded-xl flex items-center justify-center">
-                            <Building2 className="w-6 h-6 text-ocean-600" />
+              {filteredOrgs.map((org) => {
+                const summary = orgSummaries[org.org_id] || {};
+                const buyer = summary.buyer;
+                const opps = summary.opportunities || { count: 0, total_value: 0, avg_confidence: 0 };
+                
+                return (
+                  <Link key={org.org_id} to={`/organizations/${org.org_id}`}>
+                    <Card className="border-slate-200 shadow-soft hover:shadow-md hover:border-ocean-300 transition-all cursor-pointer h-full">
+                      <CardContent className="p-6">
+                        {/* Header */}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 bg-ocean-100 rounded-xl flex items-center justify-center">
+                              <Building2 className="w-6 h-6 text-ocean-600" />
+                            </div>
+                            <div>
+                              <h3 className="font-heading font-semibold text-slate-900">{org.name}</h3>
+                              <p className="text-sm text-slate-500">{org.industry || 'No industry'}</p>
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="font-heading font-semibold text-slate-900">{org.name}</h3>
-                            <p className="text-sm text-slate-500">{org.industry || 'No industry'}</p>
+                          <div className="flex flex-col items-end gap-1">
+                            <Badge className={getStatusColor(org.strategic_tier)}>
+                              {getStatusLabel(org.strategic_tier)}
+                            </Badge>
+                            {org.is_at_risk && (
+                              <Badge className="bg-rose-100 text-rose-700 flex items-center gap-1">
+                                <AlertTriangle className="w-3 h-3" />
+                                At Risk
+                              </Badge>
+                            )}
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <Badge className={getStatusColor(org.strategic_tier)}>
-                            {getStatusLabel(org.strategic_tier)}
-                          </Badge>
-                          {org.is_at_risk && (
-                            <Badge className="bg-rose-100 text-rose-700 flex items-center gap-1">
-                              <AlertTriangle className="w-3 h-3" />
-                              At Risk
-                            </Badge>
+                        
+                        {/* Buyer Info */}
+                        <div className="mb-3 p-3 bg-slate-50 rounded-lg">
+                          <p className="text-xs font-medium text-slate-400 uppercase mb-1">Buyer</p>
+                          {buyer ? (
+                            <div className="flex items-center gap-2">
+                              <User className="w-4 h-4 text-ocean-600" />
+                              <span className="text-sm font-medium text-slate-900">{buyer.name}</span>
+                              <Badge variant="secondary" className="text-xs">{buyer.buying_role}</Badge>
+                            </div>
+                          ) : (
+                            <span className="text-sm text-slate-400 italic">No buyer identified</span>
                           )}
                         </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <MapPin className="w-4 h-4" />
-                          <span>{org.region || 'No region'}</span>
+                        
+                        {/* Opportunity Totals */}
+                        <div className="grid grid-cols-3 gap-2 mb-3">
+                          <div className="text-center p-2 bg-emerald-50 rounded-lg">
+                            <p className="text-xs text-emerald-600 font-medium">Deals</p>
+                            <p className="text-lg font-semibold text-emerald-700">{opps.count}</p>
+                          </div>
+                          <div className="text-center p-2 bg-ocean-50 rounded-lg">
+                            <p className="text-xs text-ocean-600 font-medium">Value</p>
+                            <p className="text-lg font-semibold text-ocean-700">
+                              ${opps.total_value >= 1000 ? `${(opps.total_value / 1000).toFixed(0)}K` : opps.total_value}
+                            </p>
+                          </div>
+                          <div className="text-center p-2 bg-amber-50 rounded-lg">
+                            <p className="text-xs text-amber-600 font-medium">Conf</p>
+                            <p className="text-lg font-semibold text-amber-700">{opps.avg_confidence}%</p>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-2 text-slate-500">
-                          <Users className="w-4 h-4" />
-                          <span>{org.company_size || 'Unknown'}</span>
+                        
+                        {/* Region & Size */}
+                        <div className="grid grid-cols-2 gap-3 text-sm mb-3">
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <MapPin className="w-4 h-4" />
+                            <span>{org.region || 'No region'}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-slate-500">
+                            <Users className="w-4 h-4" />
+                            <span>{org.company_size || 'Unknown'}</span>
+                          </div>
                         </div>
-                      </div>
-                      
-                      <div className="mt-4 pt-4 border-t border-slate-100 flex items-center gap-2 text-sm text-slate-500">
-                        <User className="w-4 h-4" />
-                        <span>{getUserName(org.owner_id)}</span>
-                      </div>
-                      
-                      {org.notes && (
-                        <div className="mt-3 flex items-start gap-2 text-sm text-slate-500">
-                          <FileText className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                          <span className="line-clamp-2">{org.notes}</span>
+                        
+                        {/* Google Drive Link - Always visible if present */}
+                        {org.google_drive_link && (
+                          <div className="mb-3 flex items-center gap-2">
+                            <a 
+                              href={org.google_drive_link} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center gap-2 text-sm text-ocean-600 hover:text-ocean-700 bg-ocean-50 px-3 py-1.5 rounded-full hover:bg-ocean-100 transition-colors"
+                            >
+                              <ExternalLink className="w-4 h-4" />
+                              Google Drive
+                            </a>
+                          </div>
+                        )}
+                        
+                        {/* Owner */}
+                        <div className="pt-3 border-t border-slate-100 flex items-center gap-2 text-sm text-slate-500">
+                          <User className="w-4 h-4" />
+                          <span>{getUserName(org.owner_id)}</span>
                         </div>
-                      )}
-                      
-                      {org.google_drive_link && (
-                        <div className="mt-2 flex items-center gap-2 text-sm">
-                          <ExternalLink className="w-4 h-4 text-ocean-600" />
-                          <a 
-                            href={org.google_drive_link} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-ocean-600 hover:text-ocean-700 hover:underline truncate"
-                          >
-                            Google Drive
-                          </a>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                </Link>
-              ))}
+                        
+                        {/* Latest Note Preview */}
+                        {(org.notes_history?.length > 0 || org.notes) && (
+                          <div className="mt-2 flex items-start gap-2 text-sm text-slate-500">
+                            <FileText className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                            <span className="line-clamp-2">
+                              {org.notes_history?.length > 0 
+                                ? org.notes_history[org.notes_history.length - 1].text 
+                                : org.notes}
+                            </span>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
             </div>
           )}
         </motion.div>
