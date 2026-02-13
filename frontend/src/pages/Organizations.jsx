@@ -370,12 +370,10 @@ const Organizations = () => {
                               <span>{org.region}</span>
                             </div>
                           )}
-                          {org.company_size && (
-                            <div className="flex items-center gap-2">
-                              <Users className="w-4 h-4" />
-                              <span>{org.company_size}</span>
-                            </div>
-                          )}
+                          <div className="flex items-center gap-2">
+                            <User className="w-4 h-4" />
+                            <span>{getUserName(org.owner_id)}</span>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
