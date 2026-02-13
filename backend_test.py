@@ -68,19 +68,48 @@ class CompassXAPITester:
         except requests.exceptions.RequestException as e:
             return False, {"error": str(e)}
 
-    def test_demo_login(self):
-        """Test demo login functionality"""
+    def test_jwt_login(self):
+        """Test JWT-based login functionality"""
         print("\n🔐 Testing Authentication...")
         
-        # Test Sales Lead Demo Login
-        success, data = self.make_request('POST', 'auth/demo-login', {'type': 'sales_lead'}, 200)
+        # First ensure users are set up
+        self.make_request('POST', 'auth/setup-users', expect_status=200)
+        
+        # Test Admin Login
+        login_data = {
+            'email': 'brian.clements@compassx.com',
+            'password': 'CompassX2026!'
+        }
+        success, data = self.make_request('POST', 'auth/login', login_data, 200)
         if success and 'user_id' in data:
             self.user_data = data
-            self.log_test("Demo Login (Sales Lead)", True, f"User ID: {data.get('user_id')}")
+            self.log_test("JWT Login (Admin)", True, f"User: {data.get('name')}, Role: {data.get('role')}")
             return True
         else:
-            self.log_test("Demo Login (Sales Lead)", False, f"Response: {data}")
+            self.log_test("JWT Login (Admin)", False, f"Response: {data}")
             return False
+    
+    def test_invalid_login(self):
+        """Test invalid login scenarios"""
+        print("\n🚫 Testing Invalid Login...")
+        
+        # Test unauthorized email
+        login_data = {
+            'email': 'unauthorized@test.com',
+            'password': 'CompassX2026!'
+        }
+        success, data = self.make_request('POST', 'auth/login', login_data, 401)
+        self.log_test("Unauthorized Email", success, "Should reject unauthorized user")
+        
+        # Test wrong password
+        login_data = {
+            'email': 'brian.clements@compassx.com',
+            'password': 'wrongpassword'
+        }
+        success, data = self.make_request('POST', 'auth/login', login_data, 401)
+        self.log_test("Wrong Password", success, "Should reject invalid password")
+        
+        return True
 
     def test_auth_me(self):
         """Test getting current user info"""
