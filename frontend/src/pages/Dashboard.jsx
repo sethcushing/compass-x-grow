@@ -43,25 +43,29 @@ const ACTIVITY_CONFIG = {
 const Dashboard = () => {
   const [data, setData] = useState(null);
   const [organizations, setOrganizations] = useState([]);
+  const [reportsSummary, setReportsSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [dashRes, userRes, orgsRes] = await Promise.all([
+        const [dashRes, userRes, orgsRes, reportsRes] = await Promise.all([
           fetch(`${API}/dashboard/sales`, { credentials: 'include' }),
           fetch(`${API}/auth/me`, { credentials: 'include' }),
-          fetch(`${API}/organizations`, { credentials: 'include' })
+          fetch(`${API}/organizations`, { credentials: 'include' }),
+          fetch(`${API}/reports/summary`, { credentials: 'include' })
         ]);
         
         const dashData = await dashRes.json();
         const userData = await userRes.json();
         const orgsData = await orgsRes.json();
+        const reportsData = reportsRes.ok ? await reportsRes.json() : null;
         
         setData(dashData);
         setUser(userData);
         setOrganizations(orgsData);
+        setReportsSummary(reportsData);
       } catch (error) {
         console.error('Error fetching dashboard:', error);
       } finally {
