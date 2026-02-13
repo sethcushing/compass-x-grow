@@ -580,7 +580,7 @@ const Pipeline = () => {
         >
           <div className="kanban-board overflow-x-auto">
             {stages.map((stage) => {
-              const stageOpps = opportunities.filter(o => o.stage_id === stage.stage_id);
+              const stageOpps = filteredOpportunities.filter(o => o.stage_id === stage.stage_id);
               return (
                 <KanbanColumn
                   key={stage.stage_id}
