@@ -95,7 +95,14 @@ const Dashboard = () => {
     );
   }
 
-  const { metrics, opportunities, activities, stages } = data || {};
+  const { metrics, opportunities, activities, stages, users } = data || {};
+  
+  // Helper to get user name by ID
+  const getUserName = (userId) => {
+    const u = (users || []).find(u => u.user_id === userId);
+    return u?.name || 'Unknown';
+  };
+  
   const upcomingActivities = (activities || [])
     .filter(a => a.status !== 'Completed')
     .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
