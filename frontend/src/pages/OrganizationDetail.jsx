@@ -650,8 +650,12 @@ const OrganizationDetail = () => {
                           <SelectItem value="Call">Call</SelectItem>
                           <SelectItem value="Email">Email</SelectItem>
                           <SelectItem value="Meeting">Meeting</SelectItem>
+                          <SelectItem value="Demo">Demo</SelectItem>
+                          <SelectItem value="Workshop">Workshop</SelectItem>
+                          <SelectItem value="Discovery Session">Discovery Session</SelectItem>
                           <SelectItem value="Follow-up">Follow-up</SelectItem>
                           <SelectItem value="Exec Readout">Exec Readout</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
