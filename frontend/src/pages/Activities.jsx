@@ -378,6 +378,17 @@ const Activities = () => {
                     </div>
                     
                     <div>
+                      <Label>Title *</Label>
+                      <Input
+                        value={newActivity.title}
+                        onChange={(e) => setNewActivity(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="e.g., Discuss Q2 roadmap, Follow up on proposal"
+                        className="mt-1"
+                        data-testid="activity-title-input"
+                      />
+                    </div>
+                    
+                    <div>
                       <Label>Activity Type</Label>
                       <Select
                         value={newActivity.activity_type}
