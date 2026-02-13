@@ -66,8 +66,17 @@ class UserBase(BaseModel):
     email: str
     name: str
     picture: Optional[str] = None
-    role: str = "sales_lead"  # sales_lead, executive, admin
+    role: str = "sales_lead"  # sales_lead, admin
+    password_hash: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
 
 class UserSession(BaseModel):
     model_config = ConfigDict(extra="ignore")
