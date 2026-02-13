@@ -176,8 +176,12 @@ Default password for password login: `CompassX2026!`
 
 ### Opportunities
 - PUT /api/opportunities/{opp_id}/at-risk - Toggle at-risk status with reason
-  - Request: `{ is_at_risk: boolean, at_risk_reason: string | null }`
-  - Response: Full opportunity object
+- PUT /api/opportunities/{opp_id} - Update opportunity including deal builder fields
+  - Deal Builder fields: `deal_start_date`, `deal_end_date`, `num_consultants`, `blended_hourly_rate`, `calculated_value`
+
+### Organizations
+- GET /api/organizations/{org_id}/summary - Returns buyer, opportunity totals, won/lost values
+  - Response includes: `won_count`, `won_value`, `lost_count`, `lost_value`
 
 ### Activities
 - GET /api/activities?org_id=xxx - Filter by client
