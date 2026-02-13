@@ -14,30 +14,54 @@ import {
   Building2,
   ArrowRight,
   CheckCircle2,
-  XCircle
+  XCircle,
+  Phone,
+  Mail,
+  Video,
+  Presentation,
+  FileText,
+  MessageSquare,
+  Users
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
+// Activity type config with colors and icons
+const ACTIVITY_CONFIG = {
+  'Call': { icon: Phone, color: 'bg-blue-100 text-blue-600', border: 'border-l-blue-500' },
+  'Email': { icon: Mail, color: 'bg-purple-100 text-purple-600', border: 'border-l-purple-500' },
+  'Meeting': { icon: Video, color: 'bg-emerald-100 text-emerald-600', border: 'border-l-emerald-500' },
+  'Demo': { icon: Presentation, color: 'bg-orange-100 text-orange-600', border: 'border-l-orange-500' },
+  'Workshop': { icon: Users, color: 'bg-pink-100 text-pink-600', border: 'border-l-pink-500' },
+  'Discovery Session': { icon: MessageSquare, color: 'bg-cyan-100 text-cyan-600', border: 'border-l-cyan-500' },
+  'Follow-up': { icon: Clock, color: 'bg-amber-100 text-amber-600', border: 'border-l-amber-500' },
+  'Exec Readout': { icon: FileText, color: 'bg-indigo-100 text-indigo-600', border: 'border-l-indigo-500' },
+  'Other': { icon: FileText, color: 'bg-slate-100 text-slate-600', border: 'border-l-slate-500' }
+};
+
 const Dashboard = () => {
   const [data, setData] = useState(null);
+  const [organizations, setOrganizations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [dashRes, userRes] = await Promise.all([
+        const [dashRes, userRes, orgsRes] = await Promise.all([
           fetch(`${API}/dashboard/sales`, { credentials: 'include' }),
-          fetch(`${API}/auth/me`, { credentials: 'include' })
+          fetch(`${API}/auth/me`, { credentials: 'include' }),
+          fetch(`${API}/organizations`, { credentials: 'include' })
         ]);
         
         const dashData = await dashRes.json();
         const userData = await userRes.json();
+        const orgsData = await orgsRes.json();
         
         setData(dashData);
         setUser(userData);
+        setOrganizations(orgsData);
       } catch (error) {
         console.error('Error fetching dashboard:', error);
       } finally {
