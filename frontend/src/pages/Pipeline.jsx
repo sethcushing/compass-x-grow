@@ -144,7 +144,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
             {new Intl.NumberFormat('en-US', {
               notation: 'compact',
               maximumFractionDigits: 1
-            }).format(opportunity.estimated_value || 0)}
+            }).format(opportunity.calculated_value || opportunity.estimated_value || 0)}
           </span>
         </div>
         <Badge variant="secondary" className="text-xs bg-slate-100">
