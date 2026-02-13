@@ -186,6 +186,7 @@ class OpportunityUpdate(BaseModel):
     source: Optional[str] = None
     notes: Optional[str] = None
     value_hypothesis: Optional[str] = None
+    owner_id: Optional[str] = None  # Allow changing owner
 
 class ActivityBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
