@@ -31,7 +31,7 @@ import {
   Calendar,
   Building2,
   DollarSign,
-  Sparkles
+  User
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
@@ -39,7 +39,7 @@ import { toast } from 'sonner';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 // Sortable Opportunity Card
-const OpportunityCard = ({ opportunity, stage, organizations, onDragStart }) => {
+const OpportunityCard = ({ opportunity, organizations, users }) => {
   const {
     attributes,
     listeners,
@@ -55,6 +55,7 @@ const OpportunityCard = ({ opportunity, stage, organizations, onDragStart }) => 
   };
 
   const org = organizations.find(o => o.org_id === opportunity.org_id);
+  const owner = users?.find(u => u.user_id === opportunity.owner_id);
   
   const getActivityStatus = () => {
     if (opportunity.is_at_risk) return 'at-risk';
