@@ -703,11 +703,18 @@ async def delete_opportunity(opp_id: str, request: Request):
 # ============== ACTIVITY ENDPOINTS ==============
 
 @api_router.get("/activities")
-async def get_activities(request: Request, opp_id: Optional[str] = None, owner_id: Optional[str] = None, status: Optional[str] = None):
+async def get_activities(request: Request, opp_id: Optional[str] = None, org_id: Optional[str] = None, owner_id: Optional[str] = None, status: Optional[str] = None):
     user = await get_current_user(request)
     query = {}
     if opp_id:
         query["opp_id"] = opp_id
+    if org_id:
+        # Get activities directly linked to org OR linked to org's opportunities
+        org_opps = await db.opportunities.find({"org_id": org_id}, {"opp_id": 1, "_id": 0}).to_list(100)
+        opp_ids = [o["opp_id"] for o in org_opps]
+        query["$or"] = [{"org_id": org_id}]
+        if opp_ids:
+            query["$or"].append({"opp_id": {"$in": opp_ids}})
     if owner_id:
         query["owner_id"] = owner_id
     if status:
@@ -737,11 +744,12 @@ async def create_activity(data: ActivityCreate, request: Request):
     
     await db.activities.insert_one(doc)
     
-    # Update opportunity at-risk status
-    await db.opportunities.update_one(
-        {"opp_id": data.opp_id},
-        {"$set": {"is_at_risk": False, "updated_at": datetime.now(timezone.utc).isoformat()}}
-    )
+    # Update opportunity at-risk status if linked to opp
+    if data.opp_id:
+        await db.opportunities.update_one(
+            {"opp_id": data.opp_id},
+            {"$set": {"is_at_risk": False, "updated_at": datetime.now(timezone.utc).isoformat()}}
+        )
     
     return await db.activities.find_one({"activity_id": activity.activity_id}, {"_id": 0})
 
