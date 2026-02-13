@@ -80,7 +80,6 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/executive" element={<ProtectedRoute><ExecutiveDashboard /></ProtectedRoute>} />
           <Route path="/pipeline" element={<ProtectedRoute><Pipeline /></ProtectedRoute>} />
-          <Route path="/my-pipeline" element={<ProtectedRoute><MyPipeline /></ProtectedRoute>} />
           <Route path="/organizations" element={<ProtectedRoute><Organizations /></ProtectedRoute>} />
           <Route path="/organizations/:orgId" element={<ProtectedRoute><OrganizationDetail /></ProtectedRoute>} />
           <Route path="/contacts" element={<ProtectedRoute><Contacts /></ProtectedRoute>} />
@@ -90,6 +89,7 @@ function App() {
           <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/my-pipeline" element={<Navigate to="/pipeline" replace />} />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" richColors />
