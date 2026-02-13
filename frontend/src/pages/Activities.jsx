@@ -44,6 +44,19 @@ import { toast } from 'sonner';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
+// Activity type config with colors and icons
+const ACTIVITY_CONFIG = {
+  'Call': { icon: Phone, color: 'bg-blue-100 text-blue-600', border: 'border-l-blue-500', bgLight: 'bg-blue-50' },
+  'Email': { icon: Mail, color: 'bg-purple-100 text-purple-600', border: 'border-l-purple-500', bgLight: 'bg-purple-50' },
+  'Meeting': { icon: Video, color: 'bg-emerald-100 text-emerald-600', border: 'border-l-emerald-500', bgLight: 'bg-emerald-50' },
+  'Demo': { icon: Presentation, color: 'bg-orange-100 text-orange-600', border: 'border-l-orange-500', bgLight: 'bg-orange-50' },
+  'Workshop': { icon: Users, color: 'bg-pink-100 text-pink-600', border: 'border-l-pink-500', bgLight: 'bg-pink-50' },
+  'Discovery Session': { icon: MessageSquare, color: 'bg-cyan-100 text-cyan-600', border: 'border-l-cyan-500', bgLight: 'bg-cyan-50' },
+  'Follow-up': { icon: Clock, color: 'bg-amber-100 text-amber-600', border: 'border-l-amber-500', bgLight: 'bg-amber-50' },
+  'Exec Readout': { icon: FileText, color: 'bg-indigo-100 text-indigo-600', border: 'border-l-indigo-500', bgLight: 'bg-indigo-50' },
+  'Other': { icon: FileText, color: 'bg-slate-100 text-slate-600', border: 'border-l-slate-500', bgLight: 'bg-slate-50' }
+};
+
 const Activities = () => {
   const [activities, setActivities] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
@@ -55,6 +68,7 @@ const Activities = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [newActivity, setNewActivity] = useState({
     activity_type: 'Call',
+    title: '',
     org_id: '',
     due_date: '',
     notes: '',
