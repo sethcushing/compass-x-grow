@@ -96,6 +96,7 @@ class OrganizationBase(BaseModel):
     strategic_tier: str = "Active"  # Target, Active, Strategic
     primary_exec_sponsor: Optional[str] = None
     notes: Optional[str] = None
+    owner_id: str  # User who owns this organization
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -108,6 +109,7 @@ class OrganizationCreate(BaseModel):
     strategic_tier: str = "Active"
     primary_exec_sponsor: Optional[str] = None
     notes: Optional[str] = None
+    owner_id: Optional[str] = None  # Optional - defaults to current user
 
 class ContactBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -120,6 +122,7 @@ class ContactBase(BaseModel):
     buying_role: Optional[str] = None  # Decision Maker, Influencer, Champion
     org_id: str
     notes: Optional[str] = None
+    owner_id: str  # User who owns this contact
     created_by: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -133,6 +136,7 @@ class ContactCreate(BaseModel):
     buying_role: Optional[str] = None
     org_id: str
     notes: Optional[str] = None
+    owner_id: Optional[str] = None  # Optional - defaults to current user
 
 class OpportunityBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
