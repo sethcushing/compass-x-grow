@@ -1212,32 +1212,72 @@ const OrganizationDetail = () => {
                 </Dialog>
               </CardHeader>
               <CardContent>
-                {opportunities.length === 0 ? (
-                  <div className="text-center py-8">
-                    <Target className="w-10 h-10 mx-auto text-slate-300 mb-2" />
-                    <p className="text-sm text-slate-500">No opportunities yet</p>
-                    <p className="text-xs text-slate-400 mt-1">Click "Add Opportunity" to create one</p>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {opportunities.map(opp => (
-                      <Link key={opp.opp_id} to={`/opportunities/${opp.opp_id}`}>
-                        <div className="p-3 rounded-xl border border-slate-200 hover:border-ocean-300 transition-colors">
-                          <p className="font-medium text-slate-900">{opp.name}</p>
-                          <div className="flex items-center justify-between mt-2">
-                            <span className="text-sm text-slate-500">{opp.engagement_type}</span>
-                            <span className="font-medium text-ocean-600">
-                              {formatCurrency(opp.estimated_value)}
-                            </span>
+                {/* Pipeline Opportunities */}
+                <div className="mb-6">
+                  <h4 className="text-sm font-medium text-slate-600 mb-3 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-blue-500" />
+                    Pipeline Opportunities ({orgSummary.pipeline_opportunities?.length || 0})
+                  </h4>
+                  {(orgSummary.pipeline_opportunities?.length || 0) === 0 ? (
+                    <div className="text-center py-4 bg-slate-50 rounded-lg">
+                      <p className="text-sm text-slate-400">No pipeline opportunities</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {orgSummary.pipeline_opportunities?.map(opp => {
+                        const stage = stages.find(s => s.stage_id === opp.stage_id);
+                        return (
+                          <Link key={opp.opp_id} to={`/opportunities/${opp.opp_id}`}>
+                            <div className="p-3 rounded-xl border border-blue-200 bg-blue-50/30 hover:border-blue-300 transition-colors">
+                              <p className="font-medium text-slate-900">{opp.name}</p>
+                              <div className="flex items-center justify-between mt-2">
+                                <span className="text-xs text-slate-500">{stage?.name || opp.engagement_type}</span>
+                                <span className="font-medium text-ocean-600">
+                                  {formatCurrency(opp.estimated_value)}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-400 mt-2">
+                                Owner: {getOwnerName(opp.owner_id)}
+                              </p>
+                            </div>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Active Opportunities (Closed Won) */}
+                <div>
+                  <h4 className="text-sm font-medium text-slate-600 mb-3 flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-emerald-500" />
+                    Active Opportunities - Closed Won ({orgSummary.active_opportunities?.length || 0})
+                  </h4>
+                  {(orgSummary.active_opportunities?.length || 0) === 0 ? (
+                    <div className="text-center py-4 bg-slate-50 rounded-lg">
+                      <p className="text-sm text-slate-400">No active (closed won) opportunities</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {orgSummary.active_opportunities?.map(opp => (
+                        <Link key={opp.opp_id} to={`/opportunities/${opp.opp_id}`}>
+                          <div className="p-3 rounded-xl border border-emerald-200 bg-emerald-50/30 hover:border-emerald-300 transition-colors">
+                            <p className="font-medium text-slate-900">{opp.name}</p>
+                            <div className="flex items-center justify-between mt-2">
+                              <Badge className="bg-emerald-100 text-emerald-700 text-xs">Closed Won</Badge>
+                              <span className="font-medium text-emerald-600">
+                                {formatCurrency(opp.estimated_value)}
+                              </span>
+                            </div>
+                            <p className="text-xs text-slate-400 mt-2">
+                              Owner: {getOwnerName(opp.owner_id)}
+                            </p>
                           </div>
-                          <p className="text-xs text-slate-400 mt-2">
-                            Owner: {getOwnerName(opp.owner_id)}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
