@@ -172,6 +172,7 @@ class OpportunityCreate(BaseModel):
     source: Optional[str] = None
     notes: Optional[str] = None
     value_hypothesis: Optional[str] = None
+    owner_id: Optional[str] = None  # Required - owner of this opportunity
 
 class OpportunityUpdate(BaseModel):
     name: Optional[str] = None
