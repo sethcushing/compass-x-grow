@@ -336,7 +336,8 @@ const OpportunityDetail = () => {
           deal_end_date: dealBuilder.deal_end_date || null,
           num_consultants: dealBuilder.num_consultants || null,
           blended_hourly_rate: dealBuilder.blended_hourly_rate || null,
-          calculated_value: calculatedValue || null
+          calculated_value: calculatedValue || null,
+          estimated_value: calculatedValue || null  // Sync estimated_value with calculated
         })
       });
       
@@ -345,10 +346,10 @@ const OpportunityDetail = () => {
       const updated = await response.json();
       setOpportunity(updated);
       setIsDealBuilderOpen(false);
-      toast.success('Deal financials updated');
+      toast.success('Opportunity financials updated');
     } catch (error) {
       console.error('Error updating deal builder:', error);
-      toast.error('Failed to update deal financials');
+      toast.error('Failed to update opportunity financials');
     }
   };
 
