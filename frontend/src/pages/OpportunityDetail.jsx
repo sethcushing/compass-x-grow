@@ -255,6 +255,41 @@ const OpportunityDetail = () => {
     }
   };
 
+  // At-risk handlers
+  const handleOpenAtRiskDialog = () => {
+    setAtRiskReason(opportunity?.at_risk_reason || '');
+    setAtRiskDialogOpen(true);
+  };
+
+  const handleUpdateAtRisk = async (isAtRisk, reason = null) => {
+    try {
+      const response = await fetch(`${API}/opportunities/${oppId}/at-risk`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ is_at_risk: isAtRisk, at_risk_reason: reason })
+      });
+      
+      if (!response.ok) throw new Error('Failed to update');
+      
+      const updated = await response.json();
+      setOpportunity(updated);
+      setAtRiskDialogOpen(false);
+      toast.success(isAtRisk ? 'Marked as at-risk' : 'At-risk status cleared');
+    } catch (error) {
+      console.error('Error updating at-risk status:', error);
+      toast.error('Failed to update at-risk status');
+    }
+  };
+
+  const handleConfirmAtRisk = () => {
+    if (!atRiskReason.trim()) {
+      toast.error('Please provide a reason');
+      return;
+    }
+    handleUpdateAtRisk(true, atRiskReason.trim());
+  };
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
