@@ -87,7 +87,7 @@ const Sidebar = () => {
               <Compass className="w-6 h-6 text-white" />
             </div>
             {!collapsed && (
-              <span className="text-xl font-heading font-semibold text-ocean-950">CompassX</span>
+              <span className="text-xl font-heading font-semibold text-ocean-950">Compass X Grow</span>
             )}
           </Link>
           

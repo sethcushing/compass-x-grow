@@ -250,7 +250,7 @@ const Settings = () => {
                     <Shield className="w-5 h-5" />
                     Team Members
                   </CardTitle>
-                  <CardDescription>Users with access to CompassX CRM</CardDescription>
+                  <CardDescription>Users with access to Compass X Grow CRM</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">

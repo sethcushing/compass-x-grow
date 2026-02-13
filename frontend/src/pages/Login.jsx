@@ -77,7 +77,7 @@ const Login = () => {
             <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center">
               <Compass className="w-6 h-6 text-ocean-950" />
             </div>
-            <span className="text-2xl font-heading font-semibold text-white">CompassX</span>
+            <span className="text-2xl font-heading font-semibold text-white">Compass X Grow</span>
           </div>
           <p className="text-ocean-200 text-lg">Sales Engagement CRM</p>
         </motion.div>
@@ -133,7 +133,7 @@ const Login = () => {
             <div className="w-10 h-10 bg-ocean-950 rounded-full flex items-center justify-center">
               <Compass className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-heading font-semibold text-ocean-950">CompassX</span>
+            <span className="text-2xl font-heading font-semibold text-ocean-950">Compass X Grow</span>
           </div>
 
           <Card className="border-slate-200 shadow-soft">
@@ -226,7 +226,7 @@ const Login = () => {
           </Card>
 
           <p className="text-center text-sm text-slate-500 mt-6">
-            Access restricted to CompassX team members
+            Access restricted to Compass X Grow team members
           </p>
         </motion.div>
       </div>
