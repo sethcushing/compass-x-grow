@@ -191,7 +191,7 @@ const Dashboard = () => {
           </div>
 
           {/* Metrics Grid - Bento Style */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-4">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -288,6 +288,105 @@ const Dashboard = () => {
                   <p className="text-sm text-slate-500 mb-1">At-Risk Deals</p>
                   <p className="text-2xl font-heading font-semibold text-slate-900">
                     {metrics?.at_risk_opportunities || 0}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+
+          {/* Won vs Lost, Active, Pipeline Row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {/* Won */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+            >
+              <Card className="border-slate-200 shadow-soft hover:shadow-hover transition-shadow" data-testid="dashboard-won-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    </div>
+                    <Badge className="bg-emerald-50 text-emerald-700">
+                      {reportsSummary?.won?.count || 0} deals
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-1">Won (Closed)</p>
+                  <p className="text-2xl font-heading font-semibold text-emerald-700">
+                    {formatCurrency(reportsSummary?.won?.value)}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Lost */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Card className="border-slate-200 shadow-soft hover:shadow-hover transition-shadow" data-testid="dashboard-lost-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
+                      <XCircle className="w-5 h-5 text-rose-600" />
+                    </div>
+                    <Badge className="bg-rose-50 text-rose-700">
+                      {reportsSummary?.lost?.count || 0} deals
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-1">Lost (Closed)</p>
+                  <p className="text-2xl font-heading font-semibold text-rose-700">
+                    {formatCurrency(reportsSummary?.lost?.value)}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Active Opportunities (Closed Won) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55 }}
+            >
+              <Card className="border-slate-200 shadow-soft hover:shadow-hover transition-shadow" data-testid="dashboard-active-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-green-600" />
+                    </div>
+                    <Badge className="bg-green-50 text-green-700">
+                      {reportsSummary?.active?.count || 0} deals
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-1">Active (Closed Won)</p>
+                  <p className="text-2xl font-heading font-semibold text-green-700">
+                    {formatCurrency(reportsSummary?.active?.value)}
+                  </p>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Pipeline Opportunities */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+            >
+              <Card className="border-slate-200 shadow-soft hover:shadow-hover transition-shadow" data-testid="dashboard-pipeline-card">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <Badge className="bg-blue-50 text-blue-700">
+                      {reportsSummary?.pipeline?.count || 0} deals
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-slate-500 mb-1">Pipeline (Open)</p>
+                  <p className="text-2xl font-heading font-semibold text-blue-700">
+                    {formatCurrency(reportsSummary?.pipeline?.value)}
                   </p>
                 </CardContent>
               </Card>
