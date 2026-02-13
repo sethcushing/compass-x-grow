@@ -302,6 +302,10 @@ const Pipeline = () => {
       toast.error('Please fill in required fields');
       return;
     }
+    if (!newOpp.owner_id) {
+      toast.error('Please select an owner');
+      return;
+    }
     
     try {
       const response = await fetch(`${API}/opportunities`, {
@@ -326,7 +330,8 @@ const Pipeline = () => {
         estimated_value: 0,
         confidence_level: 50,
         stage_id: stages[0]?.stage_id || '',
-        source: 'Inbound'
+        source: 'Inbound',
+        owner_id: ''
       });
       toast.success('Opportunity created');
     } catch (error) {
