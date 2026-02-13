@@ -37,14 +37,25 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 - ✅ Password change functionality
 - ✅ Settings page with team member list (Admin view)
 - ✅ Role-based access control (Admin, Sales Lead)
+- ✅ Demo users (Alex Thompson, Jordan Pierce) removed
 
 ### Owner Selection Feature (Feb 13, 2026)
-- ✅ Organizations: Owner dropdown in create/edit forms
-- ✅ Contacts: Owner dropdown in create/edit forms
-- ✅ Opportunities: Owner dropdown in create/edit forms
-- ✅ Owner displayed on all entity cards and lists
+- ✅ **Create Forms**: Owner dropdown when creating Organizations, Contacts, Opportunities
+- ✅ **Edit Forms**: Owner dropdown when editing Organizations, Contacts, Opportunities
+- ✅ Owner displayed on all entity cards, lists, and detail pages
 - ✅ My Pipeline: Filtered by logged-in user's owned opportunities
 - ✅ Main Pipeline: Shows all opportunities with owner names
+
+### Add Opportunity from Organization (Feb 13, 2026)
+- ✅ "Add Opportunity" button on Organization detail page
+- ✅ Quick creation form pre-linked to organization
+- ✅ Owner selection required
+
+### Delete Functionality (Feb 13, 2026)
+- ✅ Delete Organizations (with confirmation)
+- ✅ Delete Contacts (with confirmation)
+- ✅ Delete Opportunities (with confirmation, also deletes activities)
+- ✅ Delete buttons visible in detail pages with red styling
 
 ### AI Sales Copilot (Feb 13, 2026)
 - ✅ **Summarize**: Executive summary of opportunity status
@@ -63,38 +74,30 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 - ✅ Performance by Engagement Type table
 
 ### Backend (FastAPI + MongoDB)
-- ✅ Organizations CRUD with strategic tiers + owner_id
-- ✅ Contacts CRUD with buying roles + owner_id
-- ✅ Opportunities CRUD with stage management + owner_id
+- ✅ Organizations CRUD with owner_id support
+- ✅ Contacts CRUD with owner_id support
+- ✅ Opportunities CRUD with owner_id support (create & update)
 - ✅ Activities CRUD with status tracking
 - ✅ Pipeline & Stages management
 - ✅ Main Dashboard API (shows ALL data)
 - ✅ My Pipeline API (shows only user's owned opportunities)
 - ✅ Executive Dashboard API
-- ✅ Analytics API (pipeline by stage, engagement types, by owner, summary)
+- ✅ Analytics API (by stage, engagement type, owner, summary)
 - ✅ AI Sales Copilot endpoints
-- ✅ Stage automation (auto-create activities on stage change)
-- ✅ Delete functionality for all entities
+- ✅ Delete endpoints with proper cascade
 
 ### Frontend (React + Tailwind)
 - ✅ Login page with email/password
-- ✅ Sales Owner Dashboard (shows ALL opportunities with owner names)
+- ✅ Sales Dashboard (shows ALL opportunities with owner names)
 - ✅ My Pipeline view (user's owned engagements only)
 - ✅ Executive Dashboard with charts
 - ✅ Pipeline Kanban board with drag-and-drop
-- ✅ Organizations list & detail views
-- ✅ Contacts list & detail views
-- ✅ Opportunity detail with AI Copilot
+- ✅ Organizations list & detail views with edit/delete
+- ✅ Contacts list & detail views with edit/delete
+- ✅ Opportunity detail with AI Copilot and edit/delete
 - ✅ Activities management with tabs
 - ✅ Reports & Analytics page (enhanced)
 - ✅ Settings page with password change
-- ✅ Responsive sidebar navigation
-
-### Design System
-- Executive Coast theme (Ocean blues, sand backgrounds)
-- Outfit + Public Sans fonts
-- Rounded corners, soft shadows
-- Activity status color indicators
 
 ## Prioritized Backlog
 
@@ -141,14 +144,15 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 - POST /api/auth/login
 - POST /api/auth/logout
 - GET /api/auth/me
-- GET /api/auth/users
+- GET /api/auth/users (returns only 7 authorized users)
 - POST /api/auth/change-password
+- DELETE /api/auth/users/{user_id} (admin only, non-authorized users)
 
 ### CRUD
-- GET/POST /api/organizations, /api/organizations/{id}
-- GET/POST /api/contacts, /api/contacts/{id}
-- GET/POST /api/opportunities, /api/opportunities/{id}
-- GET/POST /api/activities, /api/activities/{id}
+- GET/POST/PUT/DELETE /api/organizations/{id}
+- GET/POST/PUT/DELETE /api/contacts/{id}
+- GET/POST/PUT/DELETE /api/opportunities/{id}
+- GET/POST/PUT/DELETE /api/activities/{id}
 - GET /api/pipelines, /api/pipelines/{id}/stages
 
 ### Dashboard
