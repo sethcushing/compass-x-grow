@@ -14,12 +14,13 @@ Default password for password login: `CompassX2026!`
 ## What's Been Implemented
 
 ### Deal Builder & Opportunity Financials (Feb 13, 2026)
-- ✅ **Deal Builder Card** - New "Opportunity Financials" section on Opportunity Detail page
-- ✅ **Inputs**: Start Date, End Date, Number of Consultants, Blended Hourly Rate
-- ✅ **Live Calculation**: Working Days × 8 hrs × Consultants × Hourly Rate (excludes weekends)
-- ✅ **Dual Display**: Manual Estimate (slate) and Calculated Value (green) shown side by side
-- ✅ **Persistence**: All deal builder fields saved to database
-- ✅ **Edit Mode**: Toggle to enter/update deal financial details
+- ✅ **Deal Builder Card** - Primary way to calculate opportunity value on Opportunity Detail page
+- ✅ **Inputs**: Start Date, End Date, Number of Roles, Blended Hourly Rate
+- ✅ **Live Calculation**: Working Days × 8 hrs (40-hr work week) × Roles × Hourly Rate
+- ✅ **Opportunity Total** - Single primary display (removed dual Manual/Calculated)
+- ✅ **Removed Estimated Value** - No longer manual entry, calculated from Deal Builder
+- ✅ **Sync Values** - Save updates both calculated_value and estimated_value
+- ✅ **Pipeline Cards** - Display calculated_value as primary opportunity value
 
 ### Client Won/Lost Totals (Feb 13, 2026)
 - ✅ **Won Column**: Green box showing total won value and deal count
