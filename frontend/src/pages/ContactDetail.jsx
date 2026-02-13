@@ -37,6 +37,7 @@ const ContactDetail = () => {
   const [contact, setContact] = useState(null);
   const [organization, setOrganization] = useState(null);
   const [opportunities, setOpportunities] = useState([]);
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({});
@@ -47,10 +48,15 @@ const ContactDetail = () => {
 
   const fetchData = async () => {
     try {
-      const contactRes = await fetch(`${API}/contacts/${contactId}`, { credentials: 'include' });
+      const [contactRes, usersRes] = await Promise.all([
+        fetch(`${API}/contacts/${contactId}`, { credentials: 'include' }),
+        fetch(`${API}/auth/users`, { credentials: 'include' })
+      ]);
       const contactData = await contactRes.json();
+      const usersData = await usersRes.json();
       setContact(contactData);
       setEditData(contactData);
+      setUsers(usersData);
       
       if (contactData.org_id) {
         const orgRes = await fetch(`${API}/organizations/${contactData.org_id}`, { credentials: 'include' });
@@ -67,6 +73,11 @@ const ContactDetail = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const getOwnerName = (ownerId) => {
+    const user = users.find(u => u.user_id === ownerId);
+    return user?.name || 'Unassigned';
   };
 
   const handleSave = async () => {
