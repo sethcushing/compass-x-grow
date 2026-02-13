@@ -298,7 +298,7 @@ async def get_current_user(request: Request) -> dict:
         raise HTTPException(status_code=401, detail="Invalid token")
     
     # Get user
-    user = await db.users.find_one({"user_id": session["user_id"]}, {"_id": 0})
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
     if not user:
         raise HTTPException(status_code=401, detail="User not found")
     
@@ -306,38 +306,91 @@ async def get_current_user(request: Request) -> dict:
 
 # ============== AUTH ENDPOINTS ==============
 
-@api_router.post("/auth/session")
-async def exchange_session(request: Request, response: Response):
-    """Exchange session_id for session_token"""
-    body = await request.json()
-    session_id = body.get("session_id")
+@api_router.post("/auth/login")
+async def login(data: LoginRequest, response: Response):
+    """Login with email and password"""
+    email = data.email.lower().strip()
     
-    if not session_id:
-        raise HTTPException(status_code=400, detail="session_id required")
+    # Check if user is in authorized list
+    authorized = next((u for u in AUTHORIZED_USERS if u["email"].lower() == email), None)
+    if not authorized:
+        raise HTTPException(status_code=401, detail="Unauthorized user")
     
-    # Call Emergent Auth to get user data
-    async with httpx.AsyncClient() as client_http:
-        try:
-            resp = await client_http.get(
-                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-                headers={"X-Session-ID": session_id},
-                timeout=10.0
-            )
-            if resp.status_code != 200:
-                raise HTTPException(status_code=401, detail="Invalid session_id")
-            auth_data = resp.json()
-        except Exception as e:
-            logger.error(f"Auth error: {e}")
-            raise HTTPException(status_code=401, detail="Authentication failed")
+    # Get user from database
+    user = await db.users.find_one({"email": email}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials. Please contact admin to set up your account.")
     
-    # Create or update user
-    user_id = f"user_{uuid.uuid4().hex[:12]}"
-    existing_user = await db.users.find_one({"email": auth_data["email"]}, {"_id": 0})
+    # Verify password
+    if not user.get("password_hash") or not verify_password(data.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
     
-    if existing_user:
-        user_id = existing_user["user_id"]
-        await db.users.update_one(
-            {"user_id": user_id},
+    # Create JWT token
+    token = create_access_token({"user_id": user["user_id"], "email": user["email"]})
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=ACCESS_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+    )
+    
+    # Return user without password hash
+    return {
+        "user_id": user["user_id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": user["role"],
+        "picture": user.get("picture")
+    }
+
+@api_router.post("/auth/setup-users")
+async def setup_users():
+    """Initialize authorized users with default password (run once)"""
+    default_password = "CompassX2026!"
+    created = []
+    
+    for auth_user in AUTHORIZED_USERS:
+        existing = await db.users.find_one({"email": auth_user["email"].lower()}, {"_id": 0})
+        if not existing:
+            user_doc = {
+                "user_id": f"user_{uuid.uuid4().hex[:12]}",
+                "email": auth_user["email"].lower(),
+                "name": auth_user["name"],
+                "role": auth_user["role"],
+                "password_hash": get_password_hash(default_password),
+                "picture": None,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+            await db.users.insert_one(user_doc)
+            created.append(auth_user["email"])
+    
+    return {"message": f"Created {len(created)} users", "users": created, "default_password": default_password}
+
+@api_router.post("/auth/change-password")
+async def change_password(data: ChangePasswordRequest, request: Request):
+    """Change user password"""
+    user = await get_current_user(request)
+    
+    # Get full user with password hash
+    full_user = await db.users.find_one({"user_id": user["user_id"]}, {"_id": 0})
+    
+    # Verify current password
+    if not verify_password(data.current_password, full_user.get("password_hash", "")):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Update password
+    new_hash = get_password_hash(data.new_password)
+    await db.users.update_one(
+        {"user_id": user["user_id"]},
+        {"$set": {"password_hash": new_hash}}
+    )
+    
+    return {"message": "Password changed successfully"}
             {"$set": {
                 "name": auth_data["name"],
                 "picture": auth_data.get("picture"),
