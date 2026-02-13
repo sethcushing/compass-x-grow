@@ -127,13 +127,39 @@ const Dashboard = () => {
     return u?.name || 'Unknown';
   };
   
+  // Helper to get org name by ID
+  const getOrgName = (orgId) => {
+    const org = organizations.find(o => o.org_id === orgId);
+    return org?.name || 'Unknown Client';
+  };
+  
+  // Count at-risk clients
+  const atRiskClients = organizations.filter(o => o.is_at_risk).length;
+  
   const upcomingActivities = (activities || [])
     .filter(a => a.status !== 'Completed')
     .sort((a, b) => new Date(a.due_date) - new Date(b.due_date))
     .slice(0, 5);
 
-  const topOpportunities = (opportunities || [])
-    .sort((a, b) => b.estimated_value - a.estimated_value)
+  // Group opportunities by client for "Top Opportunities by Client"
+  const opportunitiesByClient = {};
+  (opportunities || []).forEach(opp => {
+    const orgId = opp.org_id || 'unknown';
+    if (!opportunitiesByClient[orgId]) {
+      opportunitiesByClient[orgId] = {
+        org_id: orgId,
+        org_name: getOrgName(orgId),
+        opportunities: [],
+        total_value: 0
+      };
+    }
+    opportunitiesByClient[orgId].opportunities.push(opp);
+    opportunitiesByClient[orgId].total_value += opp.estimated_value || 0;
+  });
+  
+  // Sort by total value and take top 5 clients
+  const topClientOpportunities = Object.values(opportunitiesByClient)
+    .sort((a, b) => b.total_value - a.total_value)
     .slice(0, 5);
 
   return (
