@@ -75,6 +75,15 @@ const OpportunityDetail = () => {
   const [atRiskDialogOpen, setAtRiskDialogOpen] = useState(false);
   const [atRiskReason, setAtRiskReason] = useState('');
   
+  // Deal Builder state
+  const [dealBuilder, setDealBuilder] = useState({
+    deal_start_date: '',
+    deal_end_date: '',
+    num_consultants: 1,
+    blended_hourly_rate: 0
+  });
+  const [isDealBuilderOpen, setIsDealBuilderOpen] = useState(false);
+  
   // AI Copilot state
   const [aiLoading, setAiLoading] = useState(null);
   const [aiResponse, setAiResponse] = useState(null);
