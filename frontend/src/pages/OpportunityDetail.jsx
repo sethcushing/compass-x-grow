@@ -917,10 +917,10 @@ const OpportunityDetail = () => {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <Label htmlFor="num-consultants">Number of Consultants</Label>
+                          <Label htmlFor="num-roles">Number of Roles</Label>
                           <Input
-                            id="num-consultants"
-                            data-testid="num-consultants"
+                            id="num-roles"
+                            data-testid="num-roles"
                             type="number"
                             min="1"
                             value={dealBuilder.num_consultants}
@@ -946,9 +946,9 @@ const OpportunityDetail = () => {
                       {/* Live Calculation Preview */}
                       <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
                         <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm text-emerald-700">Calculated Value</span>
+                          <span className="text-sm font-medium text-emerald-700">Opportunity Total</span>
                           <span className="text-xs text-emerald-600">
-                            {calculateWorkingDays(dealBuilder.deal_start_date, dealBuilder.deal_end_date)} days × 8 hrs × {dealBuilder.num_consultants} × ${dealBuilder.blended_hourly_rate}/hr
+                            {calculateWorkingDays(dealBuilder.deal_start_date, dealBuilder.deal_end_date)} days × 8 hrs × {dealBuilder.num_consultants} roles × ${dealBuilder.blended_hourly_rate}/hr
                           </span>
                         </div>
                         <p className="text-2xl font-heading font-semibold text-emerald-800">
@@ -966,16 +966,12 @@ const OpportunityDetail = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {/* Display Values */}
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="p-3 bg-slate-50 rounded-lg">
-                          <p className="text-xs text-slate-500">Manual Estimate</p>
-                          <p className="text-lg font-semibold text-slate-900">{formatCurrency(opportunity.estimated_value)}</p>
-                        </div>
-                        <div className="p-3 bg-emerald-50 rounded-lg">
-                          <p className="text-xs text-emerald-600">Calculated Value</p>
-                          <p className="text-lg font-semibold text-emerald-700">{formatCurrency(opportunity.calculated_value)}</p>
-                        </div>
+                      {/* Opportunity Total - Primary Display */}
+                      <div className="p-4 bg-emerald-50 rounded-xl text-center">
+                        <p className="text-xs font-medium text-emerald-600 uppercase mb-1">Opportunity Total</p>
+                        <p className="text-3xl font-heading font-bold text-emerald-700">
+                          {formatCurrency(opportunity.calculated_value || opportunity.estimated_value)}
+                        </p>
                       </div>
                       
                       {/* Deal Builder Details */}
@@ -991,7 +987,7 @@ const OpportunityDetail = () => {
                           </div>
                           <div className="grid grid-cols-2 gap-2">
                             <div>
-                              <p className="text-xs text-slate-500">Consultants</p>
+                              <p className="text-xs text-slate-500">Roles</p>
                               <p className="text-sm font-medium text-slate-700 flex items-center gap-1">
                                 <Users className="w-3 h-3" /> {opportunity.num_consultants || '-'}
                               </p>
@@ -1004,7 +1000,7 @@ const OpportunityDetail = () => {
                         </div>
                       ) : (
                         <p className="text-sm text-slate-400 text-center py-2">
-                          Click Edit to set up deal financials
+                          Click Edit to calculate opportunity value
                         </p>
                       )}
                     </div>
