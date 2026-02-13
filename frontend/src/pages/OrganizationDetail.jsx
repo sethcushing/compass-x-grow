@@ -545,6 +545,48 @@ const OrganizationDetail = () => {
               </div>
             </CardHeader>
             
+            {/* Summary Stats - Buyer, Deals, Value, Confidence */}
+            {!isEditing && (
+              <div className="px-6 pb-4">
+                <div className="grid grid-cols-4 gap-4">
+                  {/* Buyer */}
+                  <div className="p-4 bg-slate-50 rounded-xl">
+                    <p className="text-xs font-medium text-slate-400 uppercase mb-2">Buyer</p>
+                    {orgSummary.buyer ? (
+                      <div>
+                        <p className="font-semibold text-slate-900">{orgSummary.buyer.name}</p>
+                        <p className="text-sm text-slate-500">{orgSummary.buyer.buying_role}</p>
+                      </div>
+                    ) : (
+                      <p className="text-sm text-slate-400 italic">Not identified</p>
+                    )}
+                  </div>
+                  
+                  {/* Deals */}
+                  <div className="p-4 bg-emerald-50 rounded-xl">
+                    <p className="text-xs font-medium text-emerald-600 uppercase mb-2">Deals</p>
+                    <p className="text-2xl font-bold text-emerald-700">{orgSummary.opportunities.count}</p>
+                  </div>
+                  
+                  {/* Value */}
+                  <div className="p-4 bg-ocean-50 rounded-xl">
+                    <p className="text-xs font-medium text-ocean-600 uppercase mb-2">Total Value</p>
+                    <p className="text-2xl font-bold text-ocean-700">
+                      ${orgSummary.opportunities.total_value >= 1000 
+                        ? `${(orgSummary.opportunities.total_value / 1000).toFixed(0)}K` 
+                        : orgSummary.opportunities.total_value.toLocaleString()}
+                    </p>
+                  </div>
+                  
+                  {/* Confidence */}
+                  <div className="p-4 bg-amber-50 rounded-xl">
+                    <p className="text-xs font-medium text-amber-600 uppercase mb-2">Avg Confidence</p>
+                    <p className="text-2xl font-bold text-amber-700">{orgSummary.opportunities.avg_confidence}%</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <CardContent>
               {isEditing ? (
                 <div className="grid grid-cols-2 gap-6">
