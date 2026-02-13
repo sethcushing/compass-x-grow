@@ -546,6 +546,7 @@ const Pipeline = () => {
                   stage={stage}
                   opportunities={stageOpps}
                   organizations={organizations}
+                  users={users}
                 />
               );
             })}
