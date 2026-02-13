@@ -1167,6 +1167,99 @@ async def get_engagement_analytics(request: Request):
     
     return result
 
+@api_router.get("/analytics/by-owner")
+async def get_owner_analytics(request: Request):
+    """Pipeline value by owner"""
+    user = await get_current_user(request)
+    
+    opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
+    users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
+    
+    # Create user lookup
+    user_map = {u["user_id"]: u["name"] for u in users}
+    
+    by_owner = {}
+    for opp in opps:
+        owner_id = opp.get("owner_id", "unassigned")
+        owner_name = user_map.get(owner_id, "Unknown")
+        
+        if owner_id not in by_owner:
+            by_owner[owner_id] = {
+                "owner_id": owner_id,
+                "owner_name": owner_name,
+                "total": 0,
+                "won": 0,
+                "lost": 0,
+                "value": 0,
+                "weighted": 0
+            }
+        
+        by_owner[owner_id]["total"] += 1
+        by_owner[owner_id]["value"] += opp.get("estimated_value", 0)
+        by_owner[owner_id]["weighted"] += opp.get("estimated_value", 0) * opp.get("confidence_level", 0) / 100
+        
+        if "won" in opp.get("stage_id", "").lower():
+            by_owner[owner_id]["won"] += 1
+        elif "lost" in opp.get("stage_id", "").lower():
+            by_owner[owner_id]["lost"] += 1
+    
+    result = []
+    for owner_id, data in by_owner.items():
+        completed = data["won"] + data["lost"]
+        result.append({
+            **data,
+            "win_rate": round(data["won"] / max(completed, 1) * 100, 1)
+        })
+    
+    # Sort by value descending
+    result.sort(key=lambda x: x["value"], reverse=True)
+    return result
+
+@api_router.get("/analytics/summary")
+async def get_analytics_summary(request: Request):
+    """Overall analytics summary"""
+    user = await get_current_user(request)
+    
+    opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
+    activities = await db.activities.find({}, {"_id": 0}).to_list(5000)
+    
+    # Calculate summary metrics
+    total_value = sum(opp.get("estimated_value", 0) for opp in opps)
+    weighted_value = sum(opp.get("estimated_value", 0) * opp.get("confidence_level", 0) / 100 for opp in opps)
+    
+    won_opps = [o for o in opps if "won" in o.get("stage_id", "").lower()]
+    lost_opps = [o for o in opps if "lost" in o.get("stage_id", "").lower()]
+    active_opps = [o for o in opps if "won" not in o.get("stage_id", "").lower() and "lost" not in o.get("stage_id", "").lower()]
+    at_risk_opps = [o for o in active_opps if o.get("is_at_risk")]
+    
+    # Activities metrics
+    now = datetime.now(timezone.utc)
+    completed_activities = [a for a in activities if a.get("status") == "Completed"]
+    overdue_activities = [
+        a for a in activities
+        if a.get("status") == "Planned" and parse_datetime(a.get("due_date", "2099-01-01")) < now
+    ]
+    
+    # Win rate
+    completed_deals = len(won_opps) + len(lost_opps)
+    win_rate = round(len(won_opps) / max(completed_deals, 1) * 100, 1)
+    
+    return {
+        "total_deals": len(opps),
+        "active_deals": len(active_opps),
+        "won_deals": len(won_opps),
+        "lost_deals": len(lost_opps),
+        "at_risk_deals": len(at_risk_opps),
+        "total_pipeline_value": total_value,
+        "weighted_forecast": weighted_value,
+        "won_value": sum(o.get("estimated_value", 0) for o in won_opps),
+        "average_deal_size": total_value / max(len(opps), 1),
+        "win_rate": win_rate,
+        "total_activities": len(activities),
+        "completed_activities": len(completed_activities),
+        "overdue_activities": len(overdue_activities)
+    }
+
 # Include the router in the main app
 app.include_router(api_router)
 
