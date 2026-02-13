@@ -348,7 +348,7 @@ const Dashboard = () => {
               </Card>
             </motion.div>
 
-            {/* Top Opportunities */}
+            {/* Top Opportunities by Client */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -358,7 +358,7 @@ const Dashboard = () => {
               <Card className="border-slate-200 shadow-soft h-full">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-heading">Top Opportunities</CardTitle>
+                    <CardTitle className="text-lg font-heading">Top Opportunities by Client</CardTitle>
                     <Link to="/pipeline">
                       <Button variant="ghost" size="sm" className="text-ocean-600">View pipeline</Button>
                     </Link>
@@ -366,47 +366,79 @@ const Dashboard = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {topOpportunities.length === 0 ? (
+                    {topClientOpportunities.length === 0 ? (
                       <div className="text-center py-8 text-slate-500">
                         <Building2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
                         <p className="text-sm">No opportunities yet</p>
                       </div>
                     ) : (
-                      topOpportunities.map((opp) => {
-                        const stage = stages?.find(s => s.stage_id === opp.stage_id);
+                      topClientOpportunities.map((client) => {
+                        const clientOrg = organizations.find(o => o.org_id === client.org_id);
+                        const isAtRisk = clientOrg?.is_at_risk;
                         return (
-                          <Link
-                            key={opp.opp_id}
-                            to={`/opportunities/${opp.opp_id}`}
-                            className="block"
+                          <div
+                            key={client.org_id}
+                            className={`p-4 rounded-xl border ${isAtRisk ? 'border-amber-300 bg-amber-50/30' : 'border-slate-200'}`}
                           >
-                            <div className="p-4 rounded-xl border border-slate-200 hover:border-ocean-300 hover:shadow-soft transition-all">
-                              <div className="flex items-start justify-between mb-3">
+                            {/* Client Header */}
+                            <div className="flex items-center justify-between mb-3">
+                              <Link to={`/organizations/${client.org_id}`} className="flex items-center gap-3 hover:opacity-80">
+                                <div className="w-10 h-10 bg-ocean-100 rounded-lg flex items-center justify-center">
+                                  <Building2 className="w-5 h-5 text-ocean-600" />
+                                </div>
                                 <div>
-                                  <h4 className="font-medium text-slate-900">{opp.name}</h4>
-                                  <p className="text-sm text-slate-500">{opp.engagement_type}</p>
-                                  <p className="text-xs text-slate-400 mt-1">Owner: {getUserName(opp.owner_id)}</p>
+                                  <h4 className="font-medium text-slate-900">{client.org_name}</h4>
+                                  <p className="text-xs text-slate-500">{client.opportunities.length} opportunities</p>
                                 </div>
-                                <div className="text-right">
+                              </Link>
+                              <div className="text-right flex items-center gap-2">
+                                <div>
                                   <p className="font-heading font-semibold text-ocean-950">
-                                    {formatCurrency(opp.estimated_value)}
+                                    {formatCurrency(client.total_value)}
                                   </p>
-                                  <p className="text-xs text-slate-500">{opp.confidence_level}% confidence</p>
+                                  <p className="text-xs text-slate-500">Total value</p>
                                 </div>
-                              </div>
-                              <div className="flex items-center justify-between">
-                                <Badge variant="secondary" className="bg-slate-100">
-                                  {stage?.name || 'Unknown Stage'}
-                                </Badge>
-                                <div className="flex items-center gap-2">
-                                  <Progress value={opp.confidence_level} className="w-20 h-2" />
-                                  {opp.is_at_risk && (
-                                    <AlertTriangle className="w-4 h-4 text-amber-500" />
-                                  )}
-                                </div>
+                                {isAtRisk && (
+                                  <Badge className="bg-amber-100 text-amber-700 flex items-center gap-1">
+                                    <AlertTriangle className="w-3 h-3" />
+                                    At Risk
+                                  </Badge>
+                                )}
                               </div>
                             </div>
-                          </Link>
+                            
+                            {/* Opportunities List */}
+                            <div className="space-y-2 pl-13">
+                              {client.opportunities.slice(0, 3).map((opp) => {
+                                const stage = stages?.find(s => s.stage_id === opp.stage_id);
+                                return (
+                                  <Link
+                                    key={opp.opp_id}
+                                    to={`/opportunities/${opp.opp_id}`}
+                                    className="block"
+                                  >
+                                    <div className="flex items-center justify-between p-2 rounded-lg bg-white border border-slate-100 hover:border-ocean-300 transition-all">
+                                      <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium text-slate-800 truncate">{opp.name}</p>
+                                        <p className="text-xs text-slate-400">{stage?.name || 'Unknown'}</p>
+                                      </div>
+                                      <div className="text-right flex items-center gap-2">
+                                        <span className="text-sm font-medium text-slate-700">
+                                          {formatCurrency(opp.estimated_value)}
+                                        </span>
+                                        <Progress value={opp.confidence_level} className="w-12 h-1.5" />
+                                      </div>
+                                    </div>
+                                  </Link>
+                                );
+                              })}
+                              {client.opportunities.length > 3 && (
+                                <p className="text-xs text-slate-400 text-center pt-1">
+                                  +{client.opportunities.length - 3} more
+                                </p>
+                              )}
+                            </div>
+                          </div>
                         );
                       })
                     )}
