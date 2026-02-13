@@ -20,6 +20,15 @@ Default password for password login: `CompassX2026!`
 - ✅ **Role sync** - Admin/Sales Lead roles synced from authorized list
 - ✅ **Seth Cushing** is the only admin
 
+### Client Page Enhancements (Feb 13, 2026)
+- ✅ **Notes field** - Add notes when creating/editing clients
+- ✅ **Google Drive Link** - Store and display link to client's Drive folder
+- ✅ Notes and Drive link visible on client cards in list view
+- ✅ "Open Google Drive Folder" link on client detail page
+
+### UI Improvements (Feb 13, 2026)
+- ✅ Changed "Mine" to "My" on Pipeline and Reports page toggles
+
 ### Activity Deletion & Expanded Types (Feb 13, 2026)
 - ✅ **Delete Activities** - DELETE /api/activities/{activity_id} endpoint
 - ✅ Delete buttons on Activities page (Timeline & By Client views)
