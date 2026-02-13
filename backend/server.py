@@ -12,6 +12,8 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import httpx
 from emergentintegrations.llm.chat import LlmChat, UserMessage
+from passlib.context import CryptContext
+from jose import JWTError, jwt
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -23,6 +25,25 @@ db = client[os.environ['DB_NAME']]
 
 # LLM Key
 EMERGENT_LLM_KEY = os.environ.get('EMERGENT_LLM_KEY')
+
+# JWT Configuration
+SECRET_KEY = os.environ.get('JWT_SECRET_KEY', 'compassx-crm-secret-key-2026')
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_DAYS = 7
+
+# Password hashing
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+# Authorized users - ONLY these users can access the system
+AUTHORIZED_USERS = [
+    {"email": "arman.bozorgmanesh@compassx.com", "name": "Arman Bozorgmanesh", "role": "sales_lead"},
+    {"email": "brian.clements@compassx.com", "name": "Brian Clements", "role": "admin"},
+    {"email": "jamiee@compassx.com", "name": "Jamie Eigner", "role": "admin"},
+    {"email": "kyleh@compassx.com", "name": "Kyle Heppenstall", "role": "admin"},
+    {"email": "randyc@compassx.com", "name": "Randy Chiu", "role": "admin"},
+    {"email": "reynoldk@compassx.com", "name": "Ray Khacharoutian", "role": "sales_lead"},
+    {"email": "seth.cushing@compassx.com", "name": "Seth Cushing", "role": "admin"},
+]
 
 # Create the main app
 app = FastAPI()
