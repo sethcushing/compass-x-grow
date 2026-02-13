@@ -391,105 +391,6 @@ async def change_password(data: ChangePasswordRequest, request: Request):
     )
     
     return {"message": "Password changed successfully"}
-            {"$set": {
-                "name": auth_data["name"],
-                "picture": auth_data.get("picture"),
-                "updated_at": datetime.now(timezone.utc).isoformat()
-            }}
-        )
-    else:
-        user_doc = {
-            "user_id": user_id,
-            "email": auth_data["email"],
-            "name": auth_data["name"],
-            "picture": auth_data.get("picture"),
-            "role": "sales_lead",
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        await db.users.insert_one(user_doc)
-    
-    # Create session
-    session_token = auth_data.get("session_token", f"sess_{uuid.uuid4().hex}")
-    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
-    
-    session_doc = {
-        "session_id": f"sid_{uuid.uuid4().hex[:12]}",
-        "user_id": user_id,
-        "session_token": session_token,
-        "expires_at": expires_at.isoformat(),
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.user_sessions.insert_one(session_doc)
-    
-    # Set cookie
-    response.set_cookie(
-        key="session_token",
-        value=session_token,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/",
-        max_age=7*24*60*60
-    )
-    
-    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-    return user
-
-@api_router.post("/auth/demo-login")
-async def demo_login(request: Request, response: Response):
-    """Create demo user session for testing"""
-    body = await request.json()
-    demo_type = body.get("type", "sales_lead")  # sales_lead, executive, admin
-    
-    demo_users = {
-        "sales_lead": {"name": "Alex Thompson", "email": "alex@compassx.demo", "role": "sales_lead"},
-        "executive": {"name": "Jordan Pierce", "email": "jordan@compassx.demo", "role": "executive"},
-        "admin": {"name": "Casey Morgan", "email": "casey@compassx.demo", "role": "admin"}
-    }
-    
-    demo_data = demo_users.get(demo_type, demo_users["sales_lead"])
-    
-    # Find or create demo user
-    user_id = f"demo_{demo_type}"
-    existing = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-    
-    if not existing:
-        user_doc = {
-            "user_id": user_id,
-            "email": demo_data["email"],
-            "name": demo_data["name"],
-            "picture": None,
-            "role": demo_data["role"],
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-        await db.users.insert_one(user_doc)
-    
-    # Create session
-    session_token = f"demo_sess_{uuid.uuid4().hex}"
-    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
-    
-    session_doc = {
-        "session_id": f"sid_{uuid.uuid4().hex[:12]}",
-        "user_id": user_id,
-        "session_token": session_token,
-        "expires_at": expires_at.isoformat(),
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.user_sessions.insert_one(session_doc)
-    
-    # Set cookie
-    response.set_cookie(
-        key="session_token",
-        value=session_token,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/",
-        max_age=7*24*60*60
-    )
-    
-    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-    return user
 
 @api_router.get("/auth/me")
 async def get_me(request: Request):
@@ -497,17 +398,26 @@ async def get_me(request: Request):
     user = await get_current_user(request)
     return user
 
+@api_router.get("/auth/users")
+async def get_users(request: Request):
+    """Get all users (admin only)"""
+    user = await get_current_user(request)
+    if user["role"] != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
+    return users
+
 @api_router.post("/auth/logout")
 async def logout(request: Request, response: Response):
     """Logout and clear session"""
-    session_token = request.cookies.get("session_token")
-    if session_token:
-        await db.user_sessions.delete_one({"session_token": session_token})
-    
     response.delete_cookie(
         key="session_token",
         path="/",
         secure=True,
+        samesite="none"
+    )
+    return {"message": "Logged out"}
         samesite="none"
     )
     return {"message": "Logged out"}
