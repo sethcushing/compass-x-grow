@@ -445,6 +445,24 @@ const OpportunityDetail = () => {
                           className="mt-1"
                         />
                       </div>
+                      <div>
+                        <Label>Owner</Label>
+                        <Select
+                          value={editData.owner_id || ''}
+                          onValueChange={(value) => setEditData(prev => ({ ...prev, owner_id: value }))}
+                        >
+                          <SelectTrigger data-testid="edit-opp-owner-select" className="mt-1">
+                            <SelectValue placeholder="Select owner" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {users.map(user => (
+                              <SelectItem key={user.user_id} value={user.user_id}>
+                                {user.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                       <div className="col-span-2">
                         <Label>Notes</Label>
                         <Textarea
