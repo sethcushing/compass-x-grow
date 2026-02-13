@@ -301,6 +301,69 @@ const OpportunityDetail = () => {
     handleUpdateAtRisk(true, atRiskReason.trim());
   };
 
+  // Deal Builder functions
+  const calculateWorkingDays = (startDate, endDate) => {
+    if (!startDate || !endDate) return 0;
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    let count = 0;
+    const current = new Date(start);
+    while (current <= end) {
+      const dayOfWeek = current.getDay();
+      if (dayOfWeek !== 0 && dayOfWeek !== 6) count++;
+      current.setDate(current.getDate() + 1);
+    }
+    return count;
+  };
+
+  const calculateDealValue = () => {
+    const { deal_start_date, deal_end_date, num_consultants, blended_hourly_rate } = dealBuilder;
+    const workingDays = calculateWorkingDays(deal_start_date, deal_end_date);
+    const hoursPerDay = 8;
+    return workingDays * hoursPerDay * (num_consultants || 0) * (blended_hourly_rate || 0);
+  };
+
+  const handleSaveDealBuilder = async () => {
+    const calculatedValue = calculateDealValue();
+    
+    try {
+      const response = await fetch(`${API}/opportunities/${oppId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          deal_start_date: dealBuilder.deal_start_date || null,
+          deal_end_date: dealBuilder.deal_end_date || null,
+          num_consultants: dealBuilder.num_consultants || null,
+          blended_hourly_rate: dealBuilder.blended_hourly_rate || null,
+          calculated_value: calculatedValue || null
+        })
+      });
+      
+      if (!response.ok) throw new Error('Failed to update');
+      
+      const updated = await response.json();
+      setOpportunity(updated);
+      setIsDealBuilderOpen(false);
+      toast.success('Deal financials updated');
+    } catch (error) {
+      console.error('Error updating deal builder:', error);
+      toast.error('Failed to update deal financials');
+    }
+  };
+
+  // Initialize deal builder from opportunity data
+  useEffect(() => {
+    if (opportunity) {
+      setDealBuilder({
+        deal_start_date: opportunity.deal_start_date?.split('T')[0] || '',
+        deal_end_date: opportunity.deal_end_date?.split('T')[0] || '',
+        num_consultants: opportunity.num_consultants || 1,
+        blended_hourly_rate: opportunity.blended_hourly_rate || 0
+      });
+    }
+  }, [opportunity]);
+
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
