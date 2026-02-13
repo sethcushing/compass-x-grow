@@ -3,10 +3,24 @@
 ## Original Problem Statement
 Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, purpose-built for Tech, Data, and AI Consulting & Advisory firms. Manages client conversations, opportunities, advisory engagements, and AI/Data/Platform sales cycles pre-SOW.
 
+## User Management (Updated Feb 11, 2026)
+**Access restricted to 7 authorized CompassX team members:**
+
+| Name | Role | Email |
+|------|------|-------|
+| Arman Bozorgmanesh | Sales Lead | arman.bozorgmanesh@compassx.com |
+| Brian Clements | Admin | brian.clements@compassx.com |
+| Jamie Eigner | Admin | jamiee@compassx.com |
+| Kyle Heppenstall | Admin | kyleh@compassx.com |
+| Randy Chiu | Admin | randyc@compassx.com |
+| Ray Khacharoutian | Sales Lead | reynoldk@compassx.com |
+| Seth Cushing | Admin | seth.cushing@compassx.com |
+
+**Default Password:** `CompassX2026!` (Users should change on first login)
+
 ## User Personas
-1. **Sales/Engagement Lead** - Manages opportunities, owns client relationships, drives deal progression
-2. **Executive/Partner** - Views pipeline health, reviews forecasts, coaches deals
-3. **Admin (Light)** - Manages pipelines, adjusts stages, controls automation rules
+1. **Sales Lead** - Manages opportunities, owns client relationships, drives deal progression
+2. **Admin** - Full access including team member management + all Sales Lead capabilities
 
 ## Core Requirements
 - Pipeline-first (deals, not contacts)
@@ -17,8 +31,14 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 
 ## What's Been Implemented (Feb 11, 2026)
 
+### Authentication & User Management
+- ✅ JWT-based authentication (replaced Google OAuth)
+- ✅ Whitelist-only access (7 authorized users)
+- ✅ Password change functionality
+- ✅ Settings page with team member list (Admin view)
+- ✅ Role-based access control (Admin, Sales Lead)
+
 ### Backend (FastAPI + MongoDB)
-- ✅ User authentication (Emergent Google OAuth + Demo accounts)
 - ✅ Organizations CRUD with strategic tiers
 - ✅ Contacts CRUD with buying roles
 - ✅ Opportunities CRUD with stage management
@@ -32,7 +52,7 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 - ✅ Sample data seeding
 
 ### Frontend (React + Tailwind)
-- ✅ Login page with Google Auth + Demo account toggle
+- ✅ Login page with email/password
 - ✅ Sales Owner Dashboard (Bento grid layout)
 - ✅ Executive Dashboard with charts
 - ✅ Pipeline Kanban board with drag-and-drop
@@ -41,6 +61,7 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 - ✅ Opportunity detail with AI Copilot
 - ✅ Activities management with tabs
 - ✅ Reports & Analytics page
+- ✅ Settings page with password change
 - ✅ Responsive sidebar navigation
 
 ### Design System
@@ -52,24 +73,20 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 ## Prioritized Backlog
 
 ### P0 (Next Priority)
-- [ ] Drag-and-drop stage updates in Kanban (currently view only)
 - [ ] Activity notifications/reminders
+- [ ] Drag-and-drop stage updates in Kanban
 
 ### P1 (Important)
 - [ ] At-risk detection automation (7-day no activity flag)
 - [ ] Contact communication history
-- [ ] Pipeline stage customization (Admin)
 - [ ] Bulk import (Organizations, Contacts)
 
 ### P2 (Nice to Have)
 - [ ] Email integration
 - [ ] Calendar sync
 - [ ] Document attachments
-- [ ] Team collaboration features
-- [ ] Custom fields
 
 ## Next Tasks
-1. Enhance Kanban drag-drop to update opportunity stages
-2. Add real-time at-risk flagging automation
-3. Implement activity reminders/notifications
-4. Add search & filtering to all list views
+1. Add real-time at-risk flagging automation
+2. Implement activity reminders/notifications
+3. Add search & filtering to all list views
