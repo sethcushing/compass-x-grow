@@ -750,6 +750,15 @@ const OrganizationDetail = () => {
                             })}
                           </p>
                         </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleDeleteActivity(activity.activity_id)}
+                          className="text-rose-600 hover:text-rose-700 hover:bg-rose-50"
+                          data-testid={`delete-activity-${activity.activity_id}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
                     );
                   })}
