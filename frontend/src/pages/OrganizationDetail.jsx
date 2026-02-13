@@ -304,6 +304,25 @@ const OrganizationDetail = () => {
     }
   };
 
+  const handleDeleteActivity = async (activityId) => {
+    if (!window.confirm('Are you sure you want to delete this activity?')) return;
+    
+    try {
+      const response = await fetch(`${API}/activities/${activityId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      
+      if (!response.ok) throw new Error('Failed to delete');
+      
+      setActivities(prev => prev.filter(a => a.activity_id !== activityId));
+      toast.success('Activity deleted');
+    } catch (error) {
+      console.error('Error deleting activity:', error);
+      toast.error('Failed to delete activity');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Current': return 'bg-emerald-100 text-emerald-700';
