@@ -625,19 +625,20 @@ const Pipeline = () => {
                     <Label htmlFor="opp-stage">Initial Stage</Label>
                     <Select
                       value={newOpp.stage_id}
-                    onValueChange={(value) => setNewOpp(prev => ({ ...prev, stage_id: value }))}
-                  >
-                    <SelectTrigger data-testid="opp-stage-select" className="mt-1">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {stages.filter(s => !s.name.includes('Closed')).map(stage => (
-                        <SelectItem key={stage.stage_id} value={stage.stage_id}>
-                          {stage.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                      onValueChange={(value) => setNewOpp(prev => ({ ...prev, stage_id: value }))}
+                    >
+                      <SelectTrigger data-testid="opp-stage-select" className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {stages.filter(s => !s.name.includes('Closed')).map(stage => (
+                          <SelectItem key={stage.stage_id} value={stage.stage_id}>
+                            {stage.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 
                 <Button
