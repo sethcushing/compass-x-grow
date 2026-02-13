@@ -1248,12 +1248,19 @@ async def get_owner_analytics(request: Request):
     return result
 
 @api_router.get("/analytics/summary")
-async def get_analytics_summary(request: Request):
+async def get_analytics_summary(request: Request, owner_id: Optional[str] = None):
     """Overall analytics summary"""
     user = await get_current_user(request)
     
-    opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
-    activities = await db.activities.find({}, {"_id": 0}).to_list(5000)
+    query = {} if not owner_id else {"owner_id": owner_id}
+    opps = await db.opportunities.find(query, {"_id": 0}).to_list(2000)
+    
+    # For activities, filter by opp_ids if owner filter applied
+    if owner_id:
+        opp_ids = [o["opp_id"] for o in opps]
+        activities = await db.activities.find({"opp_id": {"$in": opp_ids}}, {"_id": 0}).to_list(5000)
+    else:
+        activities = await db.activities.find({}, {"_id": 0}).to_list(5000)
     
     # Calculate summary metrics
     total_value = sum(opp.get("estimated_value", 0) for opp in opps)
