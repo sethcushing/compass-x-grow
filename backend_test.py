@@ -434,6 +434,17 @@ class CompassXAPITester:
             if not test_func():
                 failures.append(test_func.__name__)
         
+        # Run CRUD tests
+        for test_func in crud_tests:
+            try:
+                result = test_func()
+                # Some tests return IDs, others return boolean
+                if result is None or result == False:
+                    failures.append(test_func.__name__)
+            except Exception as e:
+                self.log_test(test_func.__name__, False, f"Exception: {str(e)}")
+                failures.append(test_func.__name__)
+        
         # AI Tests (may fail due to LLM key issues)
         try:
             if not self.test_ai_copilot():
