@@ -95,7 +95,8 @@ class OrganizationBase(BaseModel):
     region: Optional[str] = None
     strategic_tier: str = "Active"  # Target, Active, Strategic
     primary_exec_sponsor: Optional[str] = None
-    notes: Optional[str] = None
+    notes: Optional[str] = None  # Legacy single note field
+    notes_history: Optional[List[dict]] = None  # Running tally of notes [{text, created_at, created_by}]
     google_drive_link: Optional[str] = None
     owner_id: str  # User who owns this organization
     created_by: str
