@@ -548,7 +548,9 @@ async def create_opportunity(data: OpportunityCreate, request: Request):
     else:
         opp_data["target_close_date"] = None
     
-    opp = OpportunityBase(**opp_data, owner_id=user["user_id"])
+    # Use owner_id from request or default to current user
+    owner_id = opp_data.pop("owner_id", None) or user["user_id"]
+    opp = OpportunityBase(**opp_data, owner_id=owner_id)
     doc = opp.model_dump()
     doc["created_at"] = doc["created_at"].isoformat()
     doc["updated_at"] = doc["updated_at"].isoformat()
