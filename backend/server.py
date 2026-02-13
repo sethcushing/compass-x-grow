@@ -454,6 +454,100 @@ async def logout(request: Request, response: Response):
     )
     return {"message": "Logged out"}
 
+@api_router.post("/auth/google/session")
+async def google_oauth_session(request: Request, response: Response):
+    """
+    Exchange Google OAuth session_id for app session
+    REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
+    """
+    body = await request.json()
+    session_id = body.get("session_id")
+    
+    if not session_id:
+        raise HTTPException(status_code=400, detail="session_id required")
+    
+    # Call Emergent Auth to get user data
+    async with httpx.AsyncClient() as client:
+        try:
+            auth_response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": session_id}
+            )
+            
+            if auth_response.status_code != 200:
+                logger.error(f"Emergent Auth error: {auth_response.text}")
+                raise HTTPException(status_code=401, detail="Invalid session")
+            
+            auth_data = auth_response.json()
+        except httpx.RequestError as e:
+            logger.error(f"Emergent Auth request error: {e}")
+            raise HTTPException(status_code=500, detail="Authentication service unavailable")
+    
+    email = auth_data.get("email", "").lower().strip()
+    name = auth_data.get("name", "")
+    picture = auth_data.get("picture", "")
+    emergent_session_token = auth_data.get("session_token", "")
+    
+    # Check if email is in authorized list
+    authorized = next((u for u in AUTHORIZED_USERS if u["email"].lower() == email), None)
+    if not authorized:
+        raise HTTPException(status_code=403, detail="Email not authorized. Access is restricted to CompassX team members.")
+    
+    # Check if user exists, create if not
+    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    
+    if existing_user:
+        # Update existing user with latest info from Google
+        await db.users.update_one(
+            {"email": email},
+            {"$set": {
+                "name": name or existing_user.get("name", authorized["name"]),
+                "picture": picture,
+                "role": authorized["role"],  # Sync role from authorized list
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        user_id = existing_user["user_id"]
+    else:
+        # Create new user
+        user_id = f"user_{uuid.uuid4().hex[:12]}"
+        user_doc = {
+            "user_id": user_id,
+            "email": email,
+            "name": name or authorized["name"],
+            "picture": picture,
+            "role": authorized["role"],
+            "password_hash": None,  # Google OAuth users don't have password
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user_doc)
+    
+    # Create JWT token for our app
+    token = create_access_token({"user_id": user_id, "email": email})
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=ACCESS_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+    )
+    
+    # Get updated user
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
+    
+    return {
+        "user_id": user["user_id"],
+        "email": user["email"],
+        "name": user["name"],
+        "role": user["role"],
+        "picture": user.get("picture")
+    }
+
 # ============== ORGANIZATION ENDPOINTS ==============
 
 @api_router.get("/organizations")
