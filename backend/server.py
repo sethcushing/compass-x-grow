@@ -714,7 +714,7 @@ async def delete_contact(contact_id: str, request: Request):
 
 @api_router.get("/organizations/{org_id}/summary")
 async def get_organization_summary(org_id: str, request: Request):
-    """Get summary data for an organization including buyer and opportunity totals"""
+    """Get summary data for an organization including buyer, opportunity totals, and won/lost values"""
     user = await get_current_user(request)
     
     # Get buyer (contact with buying_role of Decision Maker or Champion)
@@ -723,18 +723,28 @@ async def get_organization_summary(org_id: str, request: Request):
         {"_id": 0, "name": 1, "title": 1, "buying_role": 1, "contact_id": 1}
     )
     
-    # Get opportunity totals
-    opps = await db.opportunities.find({"org_id": org_id}, {"_id": 0, "estimated_value": 1, "confidence_level": 1}).to_list(100)
+    # Get all opportunities for this organization
+    opps = await db.opportunities.find({"org_id": org_id}, {"_id": 0, "estimated_value": 1, "confidence_level": 1, "stage_id": 1}).to_list(100)
     opp_count = len(opps)
     total_value = sum(o.get("estimated_value", 0) or 0 for o in opps)
     avg_confidence = round(sum(o.get("confidence_level", 0) or 0 for o in opps) / opp_count, 1) if opp_count > 0 else 0
+    
+    # Calculate won and lost values
+    won_opps = [o for o in opps if "won" in o.get("stage_id", "").lower()]
+    lost_opps = [o for o in opps if "lost" in o.get("stage_id", "").lower()]
+    won_value = sum(o.get("estimated_value", 0) or 0 for o in won_opps)
+    lost_value = sum(o.get("estimated_value", 0) or 0 for o in lost_opps)
     
     return {
         "buyer": buyer,
         "opportunities": {
             "count": opp_count,
             "total_value": total_value,
-            "avg_confidence": avg_confidence
+            "avg_confidence": avg_confidence,
+            "won_count": len(won_opps),
+            "won_value": won_value,
+            "lost_count": len(lost_opps),
+            "lost_value": lost_value
         }
     }
 
