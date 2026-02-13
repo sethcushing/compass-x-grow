@@ -82,6 +82,10 @@ const Organizations = () => {
       toast.error('Organization name is required');
       return;
     }
+    if (!newOrg.owner_id) {
+      toast.error('Please select an owner');
+      return;
+    }
 
     try {
       const response = await fetch(`${API}/organizations`, {
