@@ -388,6 +388,25 @@ const OpportunityDetail = () => {
                   >
                     <Edit2 className="w-4 h-4 mr-2" /> Edit
                   </Button>
+                  {opportunity.is_at_risk ? (
+                    <Button
+                      data-testid="clear-at-risk-btn"
+                      variant="outline"
+                      onClick={() => handleUpdateAtRisk(false)}
+                      className="rounded-full text-emerald-600 hover:bg-emerald-50"
+                    >
+                      <ShieldCheck className="w-4 h-4 mr-2" /> Clear At-Risk
+                    </Button>
+                  ) : (
+                    <Button
+                      data-testid="mark-at-risk-btn"
+                      variant="outline"
+                      onClick={handleOpenAtRiskDialog}
+                      className="rounded-full text-amber-600 hover:bg-amber-50"
+                    >
+                      <ShieldAlert className="w-4 h-4 mr-2" /> Mark At-Risk
+                    </Button>
+                  )}
                   <Button
                     data-testid="delete-opp-btn"
                     variant="outline"
@@ -403,12 +422,23 @@ const OpportunityDetail = () => {
 
           {/* At-Risk Banner */}
           {opportunity.is_at_risk && (
-            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-600" />
-              <div>
-                <p className="font-medium text-amber-800">This opportunity is at risk</p>
-                <p className="text-sm text-amber-600">No scheduled activity. Add one to keep this deal moving.</p>
+            <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
+                <div>
+                  <p className="font-medium text-amber-800">This opportunity is at risk</p>
+                  <p className="text-sm text-amber-600">{opportunity.at_risk_reason || 'No reason provided'}</p>
+                </div>
               </div>
+              <Button
+                data-testid="edit-at-risk-reason-btn"
+                variant="ghost"
+                size="sm"
+                onClick={handleOpenAtRiskDialog}
+                className="text-amber-700 hover:bg-amber-100"
+              >
+                <Edit2 className="w-4 h-4" />
+              </Button>
             </div>
           )}
 
