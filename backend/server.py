@@ -159,6 +159,12 @@ class OpportunityBase(BaseModel):
     value_hypothesis: Optional[str] = None
     is_at_risk: bool = False
     at_risk_reason: Optional[str] = None  # User-provided reason for at-risk status
+    # Deal Builder fields
+    deal_start_date: Optional[datetime] = None
+    deal_end_date: Optional[datetime] = None
+    num_consultants: Optional[int] = None
+    blended_hourly_rate: Optional[float] = None
+    calculated_value: Optional[float] = None  # Calculated from deal builder
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     stage_entered_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
@@ -177,6 +183,12 @@ class OpportunityCreate(BaseModel):
     notes: Optional[str] = None
     value_hypothesis: Optional[str] = None
     owner_id: Optional[str] = None  # Required - owner of this opportunity
+    # Deal Builder fields
+    deal_start_date: Optional[str] = None
+    deal_end_date: Optional[str] = None
+    num_consultants: Optional[int] = None
+    blended_hourly_rate: Optional[float] = None
+    calculated_value: Optional[float] = None
 
 class OpportunityUpdate(BaseModel):
     name: Optional[str] = None
@@ -193,6 +205,12 @@ class OpportunityUpdate(BaseModel):
     owner_id: Optional[str] = None  # Allow changing owner
     is_at_risk: Optional[bool] = None
     at_risk_reason: Optional[str] = None
+    # Deal Builder fields
+    deal_start_date: Optional[str] = None
+    deal_end_date: Optional[str] = None
+    num_consultants: Optional[int] = None
+    blended_hourly_rate: Optional[float] = None
+    calculated_value: Optional[float] = None
 
 class OpportunityAtRiskUpdate(BaseModel):
     is_at_risk: bool
