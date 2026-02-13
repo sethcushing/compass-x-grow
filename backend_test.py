@@ -409,15 +409,23 @@ class CompassXAPITester:
         # Data Setup
         self.test_seed_data()
         
-        # Core Business Logic Tests
+        # Core Business Logic Tests  
         backend_tests = [
             self.test_organizations,
             self.test_contacts,
             self.test_pipelines_and_stages,
             self.test_opportunities,
-            self.test_activities,
             self.test_dashboard,
             self.test_analytics,
+        ]
+        
+        # CRUD Creation Tests
+        print("\n🔨 Testing CRUD Operations...")
+        crud_tests = [
+            self.test_create_organization,
+            self.test_create_contact, 
+            self.test_create_opportunity,
+            self.test_create_activity
         ]
         
         # Run tests and track failures
