@@ -7,7 +7,6 @@ import { Toaster } from "@/components/ui/sonner";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Pipeline from "@/pages/Pipeline";
-import MyPipeline from "@/pages/MyPipeline";
 import Organizations from "@/pages/Organizations";
 import OrganizationDetail from "@/pages/OrganizationDetail";
 import Contacts from "@/pages/Contacts";
