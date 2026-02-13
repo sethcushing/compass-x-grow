@@ -405,10 +405,39 @@ async def get_me(request: Request):
 
 @api_router.get("/auth/users")
 async def get_users(request: Request):
-    """Get all users"""
+    """Get all users - only returns authorized users"""
     user = await get_current_user(request)
-    users = await db.users.find({}, {"_id": 0, "password_hash": 0}).to_list(100)
+    # Only return users that are in the authorized list
+    authorized_emails = [u["email"].lower() for u in AUTHORIZED_USERS]
+    users = await db.users.find(
+        {"email": {"$in": authorized_emails}},
+        {"_id": 0, "password_hash": 0}
+    ).to_list(100)
     return users
+
+@api_router.delete("/auth/users/{user_id}")
+async def delete_user(user_id: str, request: Request):
+    """Delete a user (admin only)"""
+    current_user = await get_current_user(request)
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Don't allow deleting yourself
+    if current_user["user_id"] == user_id:
+        raise HTTPException(status_code=400, detail="Cannot delete yourself")
+    
+    # Check if user exists
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Don't allow deleting authorized users
+    authorized_emails = [u["email"].lower() for u in AUTHORIZED_USERS]
+    if user.get("email", "").lower() in authorized_emails:
+        raise HTTPException(status_code=400, detail="Cannot delete authorized users")
+    
+    await db.users.delete_one({"user_id": user_id})
+    return {"message": "User deleted"}
 
 @api_router.post("/auth/logout")
 async def logout(request: Request, response: Response):
