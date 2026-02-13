@@ -250,33 +250,52 @@ def parse_datetime(dt_str):
         return dt
     return dt_str
 
+def verify_password(plain_password: str, hashed_password: str) -> bool:
+    """Verify a password against its hash"""
+    return pwd_context.verify(plain_password, hashed_password)
+
+def get_password_hash(password: str) -> str:
+    """Hash a password"""
+    return pwd_context.hash(password)
+
+def create_access_token(data: dict) -> str:
+    """Create JWT access token"""
+    to_encode = data.copy()
+    expire = datetime.now(timezone.utc) + timedelta(days=ACCESS_TOKEN_EXPIRE_DAYS)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def decode_token(token: str) -> dict:
+    """Decode and verify JWT token"""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None
+
 async def get_current_user(request: Request) -> dict:
-    """Get current user from session token"""
+    """Get current user from JWT token"""
     # Check cookie first
-    session_token = request.cookies.get("session_token")
+    token = request.cookies.get("session_token")
     
     # Fallback to Authorization header
-    if not session_token:
+    if not token:
         auth_header = request.headers.get("Authorization")
         if auth_header and auth_header.startswith("Bearer "):
-            session_token = auth_header.split(" ")[1]
+            token = auth_header.split(" ")[1]
     
-    if not session_token:
+    if not token:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
-    # Find session
-    session = await db.user_sessions.find_one({"session_token": session_token}, {"_id": 0})
-    if not session:
-        raise HTTPException(status_code=401, detail="Invalid session")
+    # Decode JWT token
+    payload = decode_token(token)
+    if not payload:
+        raise HTTPException(status_code=401, detail="Invalid token")
     
-    # Check expiry
-    expires_at = session.get("expires_at")
-    if isinstance(expires_at, str):
-        expires_at = datetime.fromisoformat(expires_at)
-    if expires_at.tzinfo is None:
-        expires_at = expires_at.replace(tzinfo=timezone.utc)
-    if expires_at < datetime.now(timezone.utc):
-        raise HTTPException(status_code=401, detail="Session expired")
+    user_id = payload.get("user_id")
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Invalid token")
     
     # Get user
     user = await db.users.find_one({"user_id": session["user_id"]}, {"_id": 0})
