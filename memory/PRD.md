@@ -13,6 +13,19 @@ Default password for password login: `CompassX2026!`
 
 ## What's Been Implemented
 
+### Dashboard Enhancements (Feb 13, 2026)
+- ✅ **Top Opportunities by Client** - Grouped view showing clients with total value and individual deals
+- ✅ **At-Risk Clients Badge** - Shows count of at-risk clients in At-Risk Deals metric card
+- ✅ **Color-coded Activities** - Activities in dashboard use type-specific colors and icons
+
+### Activities Enhancements (Feb 13, 2026)
+- ✅ **Title Field** - Activities now have title as main content (type shown as badge)
+- ✅ **Color-coded Cards** - Each activity type has unique color border:
+  - Call: Blue, Email: Purple, Meeting: Emerald, Demo: Orange
+  - Workshop: Pink, Discovery Session: Cyan, Follow-up: Amber
+  - Exec Readout: Indigo, Other: Slate
+- ✅ **Type-specific Icons** - Phone, Mail, Video, Presentation, Users, MessageSquare, Clock, FileText
+
 ### Client Page Redesign (Feb 13, 2026)
 - ✅ **Buyer Section** - Shows identified buyer (Decision Maker/Champion) or "No buyer identified"
 - ✅ **Opportunity Totals** - Shows deal count, total value, avg confidence on client cards
