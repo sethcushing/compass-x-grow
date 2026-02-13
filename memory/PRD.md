@@ -193,7 +193,12 @@ Default password for password login: `CompassX2026!`
 
 ### Organizations
 - GET /api/organizations/{org_id}/summary - Returns buyer, opportunity totals, won/lost values
-  - Response includes: `won_count`, `won_value`, `lost_count`, `lost_value`
+  - Response includes: `won_count`, `won_value`, `lost_count`, `lost_value`, `pipeline_count`, `pipeline_value`
+  - Returns `active_opportunities` array (Closed Won) and `pipeline_opportunities` array (Open)
+
+### Reports
+- GET /api/reports/summary - Dashboard metrics endpoint
+  - Returns `won`, `lost`, `active`, `pipeline` objects with count and value
 
 ### Activities
 - GET /api/activities?org_id=xxx - Filter by client
