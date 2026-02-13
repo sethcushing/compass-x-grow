@@ -1148,11 +1148,12 @@ async def seed_data(request: Request):
 # ============== ANALYTICS ENDPOINTS ==============
 
 @api_router.get("/analytics/pipeline")
-async def get_pipeline_analytics(request: Request):
+async def get_pipeline_analytics(request: Request, owner_id: Optional[str] = None):
     """Pipeline value by stage"""
     user = await get_current_user(request)
     
-    opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
+    query = {} if not owner_id else {"owner_id": owner_id}
+    opps = await db.opportunities.find(query, {"_id": 0}).to_list(2000)
     stages = await db.stages.find({}, {"_id": 0}).sort("order", 1).to_list(20)
     
     result = []
@@ -1169,11 +1170,12 @@ async def get_pipeline_analytics(request: Request):
     return result
 
 @api_router.get("/analytics/engagement-types")
-async def get_engagement_analytics(request: Request):
+async def get_engagement_analytics(request: Request, owner_id: Optional[str] = None):
     """Win rate by engagement type"""
     user = await get_current_user(request)
     
-    opps = await db.opportunities.find({}, {"_id": 0}).to_list(2000)
+    query = {} if not owner_id else {"owner_id": owner_id}
+    opps = await db.opportunities.find(query, {"_id": 0}).to_list(2000)
     
     by_type = {}
     for opp in opps:
