@@ -297,6 +297,25 @@ const Contacts = () => {
                   </div>
                   
                   <div>
+                    <Label htmlFor="contact-owner">Owner *</Label>
+                    <Select
+                      value={newContact.owner_id}
+                      onValueChange={(value) => setNewContact(prev => ({ ...prev, owner_id: value }))}
+                    >
+                      <SelectTrigger data-testid="contact-owner-select" className="mt-1">
+                        <SelectValue placeholder="Select owner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.map(user => (
+                          <SelectItem key={user.user_id} value={user.user_id}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
                     <Label htmlFor="contact-notes">Notes</Label>
                     <Textarea
                       id="contact-notes"
