@@ -190,13 +190,12 @@ const Activities = () => {
   };
 
   const getActivityIcon = (type) => {
-    switch (type) {
-      case 'Call': return Phone;
-      case 'Meeting': return Video;
-      case 'Email': return Mail;
-      case 'Demo': case 'Workshop': return Presentation;
-      default: return FileText;
-    }
+    const config = ACTIVITY_CONFIG[type] || ACTIVITY_CONFIG['Other'];
+    return config.icon;
+  };
+  
+  const getActivityConfig = (type) => {
+    return ACTIVITY_CONFIG[type] || ACTIVITY_CONFIG['Other'];
   };
 
   const getStatusColor = (status) => {
