@@ -326,6 +326,37 @@ const OrganizationDetail = () => {
     }
   };
 
+  const handleAddNote = async () => {
+    if (!newNote.trim()) {
+      toast.error('Please enter a note');
+      return;
+    }
+    
+    try {
+      const response = await fetch(`${API}/organizations/${orgId}/notes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ text: newNote.trim() })
+      });
+      
+      if (!response.ok) throw new Error('Failed to add note');
+      
+      const noteEntry = await response.json();
+      
+      // Update local state
+      setOrganization(prev => ({
+        ...prev,
+        notes_history: [...(prev.notes_history || []), noteEntry]
+      }));
+      setNewNote('');
+      toast.success('Note added');
+    } catch (error) {
+      console.error('Error adding note:', error);
+      toast.error('Failed to add note');
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'Current': return 'bg-emerald-100 text-emerald-700';
