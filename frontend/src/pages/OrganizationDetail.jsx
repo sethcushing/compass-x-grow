@@ -649,7 +649,22 @@ const OrganizationDetail = () => {
               
               {!isEditing && organization.notes && (
                 <div className="mt-6 p-4 bg-slate-50 rounded-xl">
+                  <p className="text-sm font-medium text-slate-700 mb-1">Notes</p>
                   <p className="text-sm text-slate-600">{organization.notes}</p>
+                </div>
+              )}
+              
+              {!isEditing && organization.google_drive_link && (
+                <div className="mt-4 flex items-center gap-2">
+                  <ExternalLink className="w-5 h-5 text-ocean-600" />
+                  <a 
+                    href={organization.google_drive_link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-ocean-600 hover:text-ocean-700 hover:underline font-medium"
+                  >
+                    Open Google Drive Folder
+                  </a>
                 </div>
               )}
             </CardContent>
