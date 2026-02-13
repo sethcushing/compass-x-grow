@@ -418,9 +418,6 @@ async def logout(request: Request, response: Response):
         samesite="none"
     )
     return {"message": "Logged out"}
-        samesite="none"
-    )
-    return {"message": "Logged out"}
 
 # ============== ORGANIZATION ENDPOINTS ==============
 
