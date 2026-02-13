@@ -8,6 +8,13 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 
 ## What's Been Implemented
 
+### Activity Deletion & Expanded Types (Feb 13, 2026)
+- ✅ **Delete Activities** - DELETE /api/activities/{activity_id} endpoint
+- ✅ Delete buttons on Activities page (Timeline & By Client views)
+- ✅ Delete buttons on Client/Organization detail page
+- ✅ Delete confirmation dialog
+- ✅ **Expanded Activity Types**: Call, Email, Meeting, Demo, Workshop, Discovery Session, Follow-up, Exec Readout, Other
+
 ### Naming & Terminology Changes (Feb 13, 2026)
 - ✅ "Organizations" → "Clients" throughout the app
 - ✅ "Strategic Tier" → "Client Status" with values: **Current, Future, Return**
@@ -47,9 +54,9 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 ```
 {
   activity_id,
-  activity_type,
+  activity_type: "Call" | "Email" | "Meeting" | "Demo" | "Workshop" | "Discovery Session" | "Follow-up" | "Exec Readout" | "Other",
   opp_id (optional),
-  org_id (optional - NEW),
+  org_id (optional),
   due_date,
   owner_id,
   status,
@@ -74,6 +81,7 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 ### Activities
 - GET /api/activities?org_id=xxx - Filter by client
 - POST /api/activities - Now supports org_id without opp_id
+- DELETE /api/activities/{activity_id} - Delete an activity
 
 ### Organizations
 - GET /api/organizations - Returns is_at_risk flag
@@ -82,11 +90,14 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 ## Prioritized Backlog
 
 ### P1 (Important)
+- [ ] Advanced Reporting: Sales cycle duration and win/loss analysis charts
 - [ ] Activity notifications/reminders
 - [ ] Bulk import for Clients/Contacts
 - [ ] Contact communication history
 
 ### P2 (Nice to Have)
+- [ ] Automation Rules: Auto-create follow-up activities on stage change
+- [ ] Advanced At-Risk Logic: Flag individual Opportunities without scheduled activities
 - [ ] Email integration
 - [ ] Calendar sync
 - [ ] Document attachments
