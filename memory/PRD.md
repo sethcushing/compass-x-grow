@@ -62,6 +62,8 @@ Default password for password login: `CompassX2026!`
 - ✅ **Google Drive Link** - Prominent clickable button on cards and card-style link on detail page
 - ✅ **Notes Running Tally** - Add notes with input field, displayed with author & timestamp
 - ✅ Activity deletion now working correctly
+- ✅ **Separated Opportunities** - Pipeline Opportunities and Active Opportunities (Closed Won) shown in separate sections
+- ✅ **Visual Distinction** - Pipeline opps have blue border, Active opps have green border with "Closed Won" badge
 
 ### App Rebranding (Feb 13, 2026)
 - ✅ Changed app name from "CompassX" to "**Compass X Grow**"
