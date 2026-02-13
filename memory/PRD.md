@@ -13,6 +13,20 @@ Default password for password login: `CompassX2026!`
 
 ## What's Been Implemented
 
+### Deal Builder & Opportunity Financials (Feb 13, 2026)
+- ✅ **Deal Builder Card** - New "Opportunity Financials" section on Opportunity Detail page
+- ✅ **Inputs**: Start Date, End Date, Number of Consultants, Blended Hourly Rate
+- ✅ **Live Calculation**: Working Days × 8 hrs × Consultants × Hourly Rate (excludes weekends)
+- ✅ **Dual Display**: Manual Estimate (slate) and Calculated Value (green) shown side by side
+- ✅ **Persistence**: All deal builder fields saved to database
+- ✅ **Edit Mode**: Toggle to enter/update deal financial details
+
+### Client Won/Lost Totals (Feb 13, 2026)
+- ✅ **Won Column**: Green box showing total won value and deal count
+- ✅ **Lost Column**: Rose box showing total lost value and deal count
+- ✅ **6-Column Summary Grid**: Buyer, Deals, Total Value, Avg Confidence, Won, Lost
+- ✅ **Calculated from Stage**: Won/Lost based on stage_id containing "won" or "lost"
+
 ### At-Risk Deals Feature (Feb 13, 2026)
 - ✅ **Mark Opportunities as At-Risk** - Manual toggle with reason (PUT /api/opportunities/{opp_id}/at-risk)
 - ✅ **At-Risk Reason Field** - Store and display why a deal is at risk
