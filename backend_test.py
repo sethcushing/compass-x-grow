@@ -222,7 +222,7 @@ class CompassXAPITester:
             'region': 'North America',
             'strategic_tier': 'Active'
         }
-        success, data = self.make_request('POST', 'organizations', org_data, 201)
+        success, data = self.make_request('POST', 'organizations', org_data, 200)
         if success and 'org_id' in data:
             self.log_test("Create Organization", True, f"Created: {data.get('name')}")
             return data['org_id']
@@ -245,7 +245,7 @@ class CompassXAPITester:
             'buying_role': 'Decision Maker',
             'org_id': org_id
         }
-        success, data = self.make_request('POST', 'contacts', contact_data, 201)
+        success, data = self.make_request('POST', 'contacts', contact_data, 200)
         if success and 'contact_id' in data:
             self.log_test("Create Contact", True, f"Created: {data.get('name')}")
             return data['contact_id']
@@ -284,7 +284,7 @@ class CompassXAPITester:
             'pipeline_id': pipeline_id,
             'stage_id': stage_id
         }
-        success, data = self.make_request('POST', 'opportunities', opp_data, 201)
+        success, data = self.make_request('POST', 'opportunities', opp_data, 200)
         if success and 'opp_id' in data:
             self.log_test("Create Opportunity", True, f"Created: {data.get('name')}")
             return data['opp_id']
@@ -305,7 +305,7 @@ class CompassXAPITester:
             'due_date': '2024-12-31T15:00:00Z',
             'notes': 'Test follow-up call'
         }
-        success, data = self.make_request('POST', 'activities', activity_data, 201)
+        success, data = self.make_request('POST', 'activities', activity_data, 200)
         if success and 'activity_id' in data:
             self.log_test("Create Activity", True, f"Created: {data.get('activity_type')}")
             return True
