@@ -1,4 +1,4 @@
-# CompassX Sales Engagement CRM - Product Requirements Document
+# Compass X Grow Sales Engagement CRM - Product Requirements Document
 
 ## Original Problem Statement
 Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting firms.
@@ -13,18 +13,23 @@ Default password for password login: `CompassX2026!`
 
 ## What's Been Implemented
 
+### Client Page Redesign (Feb 13, 2026)
+- ✅ **Buyer Section** - Shows identified buyer (Decision Maker/Champion) or "No buyer identified"
+- ✅ **Opportunity Totals** - Shows deal count, total value, avg confidence on client cards
+- ✅ **Google Drive Link** - Prominent clickable button on cards and card-style link on detail page
+- ✅ **Notes Running Tally** - Add notes with input field, displayed with author & timestamp
+- ✅ Activity deletion now working correctly
+
+### App Rebranding (Feb 13, 2026)
+- ✅ Changed app name from "CompassX" to "**Compass X Grow**"
+- ✅ Updated login page, sidebar, and settings
+
 ### Google OAuth Authentication (Feb 13, 2026)
 - ✅ **Google OAuth** via Emergent-managed Auth
 - ✅ **Email Whitelisting** - Only 7 authorized CompassX emails can login
 - ✅ **Both auth methods** - Password login + Google OAuth on same page
 - ✅ **Role sync** - Admin/Sales Lead roles synced from authorized list
 - ✅ **Seth Cushing** is the only admin
-
-### Client Page Enhancements (Feb 13, 2026)
-- ✅ **Notes field** - Add notes when creating/editing clients
-- ✅ **Google Drive Link** - Store and display link to client's Drive folder
-- ✅ Notes and Drive link visible on client cards in list view
-- ✅ "Open Google Drive Folder" link on client detail page
 
 ### UI Improvements (Feb 13, 2026)
 - ✅ Changed "Mine" to "My" on Pipeline and Reports page toggles
