@@ -1,0 +1,69 @@
+{
+  "summary": "Iteration 13 - Deal Builder UI updates verified: 'Number of Roles' replaces 'Number of Consultants', 'Opportunity Total' is now the single primary display (removed dual Manual/Calculated), 'Estimated Value' field removed from Create Opportunity dialog and edit mode, Pipeline cards show calculated_value as primary value.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "OpportunityDetail Key Metrics shows 'Opportunity Total' label (green emerald box) with calculated_value",
+    "OpportunityDetail Opportunity Financials card shows single 'OPPORTUNITY TOTAL' display (not dual Manual/Calculated)",
+    "OpportunityDetail view mode shows: Engagement Period, Roles count, Hourly Rate",
+    "Deal Builder edit mode shows 'Number of Roles' label (renamed from 'Number of Consultants')",
+    "Deal Builder edit mode has data-testid='num-roles' (updated from 'num-consultants')",
+    "Deal Builder calculation formula shows 'X days × 8 hrs × Y roles × $Z/hr' (uses 'roles' not 'consultants')",
+    "Deal Builder live calculation preview shows 'Opportunity Total' label",
+    "Deal Builder save updates both calculated_value and estimated_value (synced)",
+    "Deal Builder save shows 'Opportunity financials updated' success toast",
+    "Create Opportunity dialog does NOT have 'Estimated Value' field (removed)",
+    "OpportunityDetail edit mode does NOT have 'Estimated Value' input (removed)",
+    "Pipeline cards show calculated_value as primary value (e.g., 201.6K for $201,600 calculated)",
+    "Pipeline column totals use calculated_value (e.g., 'Solution Direction Aligned: 2 deals · $382K')"
+  ],
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": [],
+  "success_rate": {
+    "backend": "N/A (frontend-only testing)",
+    "frontend": "100% - All 13 tests passed"
+  },
+  "test_credentials": {
+    "email": "brian.clements@compassx.com",
+    "password": "CompassX2026!"
+  },
+  "seed_data_creation": "Updated 'PO Transformation Solution Owner' opportunity: start_date=2026-02-01, end_date=2026-03-31, num_consultants=3, blended_hourly_rate=200, calculated_value=$201,600",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Iteration 13 Deal Builder UI updates verified: 1) Label 'Number of Consultants' renamed to 'Number of Roles' with data-testid='num-roles'. 2) Formula text shows 'roles' instead of 'consultants'. 3) 'Opportunity Total' is now the single primary display in Key Metrics (green box) and Opportunity Financials card view mode - removed dual 'Manual Estimate'/'Calculated Value' display. 4) 'Estimated Value' field completely removed from Create Opportunity dialog and opportunity edit mode. 5) Deal Builder save syncs both calculated_value AND estimated_value. 6) Pipeline cards display calculated_value || estimated_value as primary value. 7) Working calculation: 42 working days × 8 hrs × 3 roles × $200/hr = $201,600",
+  "verified_features": {
+    "number_of_roles_label": "Working - Label shows 'Number of Roles' not 'Number of Consultants'",
+    "formula_text_uses_roles": "Working - Formula shows 'X days × 8 hrs × Y roles × $Z/hr'",
+    "opportunity_total_single_display": "Working - Single 'Opportunity Total' in Key Metrics and Financials card, not dual display",
+    "estimated_value_removed_create_dialog": "Working - No 'Estimated Value' field in Create Opportunity dialog",
+    "estimated_value_removed_edit_mode": "Working - No 'Estimated Value' field in opportunity edit mode",
+    "deal_builder_syncs_both_values": "Working - Save updates both calculated_value and estimated_value",
+    "pipeline_cards_use_calculated_value": "Working - Cards show calculated_value as primary (201.6K for $201,600)"
+  },
+  "ui_element_details": {
+    "key_metrics": {
+      "opportunity_total_label": "Opportunity Total",
+      "background_class": "bg-emerald-50",
+      "value_color": "text-emerald-700"
+    },
+    "opportunity_financials_view": {
+      "title": "OPPORTUNITY TOTAL (uppercase)",
+      "value_class": "text-3xl font-heading font-bold text-emerald-700",
+      "details_shown": ["Engagement Period", "Roles", "Hourly Rate"]
+    },
+    "deal_builder_edit": {
+      "roles_label": "Number of Roles",
+      "roles_testid": "num-roles",
+      "calculation_preview_label": "Opportunity Total"
+    }
+  }
+}
