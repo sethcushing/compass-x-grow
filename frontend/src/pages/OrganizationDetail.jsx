@@ -910,7 +910,7 @@ const OrganizationDetail = () => {
                           <Icon className={`w-5 h-5 ${getActivityStatusColor(activity.status)}`} />
                         </div>
                         <div className="flex-1">
-                          <p className="font-medium text-slate-900">{activity.activity_type}</p>
+                          <p className="font-medium text-slate-900">{activity.title || activity.activity_type}</p>
                           <p className="text-sm text-slate-500">{activity.notes || 'No notes'}</p>
                         </div>
                         <div className="text-right">
