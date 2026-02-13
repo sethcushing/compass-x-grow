@@ -13,6 +13,17 @@ Default password for password login: `CompassX2026!`
 
 ## What's Been Implemented
 
+### At-Risk Deals Feature (Feb 13, 2026)
+- ✅ **Mark Opportunities as At-Risk** - Manual toggle with reason (PUT /api/opportunities/{opp_id}/at-risk)
+- ✅ **At-Risk Reason Field** - Store and display why a deal is at risk
+- ✅ **Dashboard At-Risk Deals Count** - Fourth metric card shows at-risk opportunities count
+- ✅ **Pipeline At-Risk UI** - Dropdown menu on cards to mark/clear at-risk status
+- ✅ **At-Risk Dialog** - Enter reason when marking as at-risk
+- ✅ **Visual Indicators** - Amber border and reason text on at-risk cards
+- ✅ **OpportunityDetail Banner** - Prominent at-risk banner with reason and edit button
+- ✅ **Toggle Buttons** - "Mark At-Risk" (amber) / "Clear At-Risk" (green) on detail page
+- ✅ **Executive View Removed** - Sidebar link and route removed per user request
+
 ### Dashboard Enhancements (Feb 13, 2026)
 - ✅ **Top Opportunities by Client** - Grouped view showing clients with total value and individual deals
 - ✅ **At-Risk Clients Badge** - Shows count of at-risk clients in At-Risk Deals metric card
@@ -79,8 +90,8 @@ Default password for password login: `CompassX2026!`
 - ✅ Search functionality across activities
 
 ### Pipeline & Reports
-- ✅ All/Mine toggle on Pipeline page
-- ✅ All/Mine toggle on Reports page with filtered analytics
+- ✅ All/My toggle on Pipeline page
+- ✅ All/My toggle on Reports page with filtered analytics
 - ✅ Owner selection on all entities
 
 ### AI Sales Copilot
@@ -89,11 +100,37 @@ Default password for password login: `CompassX2026!`
 
 ## Database Schema Updates
 
+### Opportunities Collection
+```
+{
+  opp_id,
+  name,
+  org_id,
+  primary_contact_id,
+  engagement_type,
+  estimated_value,
+  confidence_level,
+  owner_id,
+  pipeline_id,
+  stage_id,
+  target_close_date,
+  source,
+  notes,
+  value_hypothesis,
+  is_at_risk: boolean,      // NEW
+  at_risk_reason: string,   // NEW
+  created_at,
+  updated_at,
+  stage_entered_at
+}
+```
+
 ### Activities Collection
 ```
 {
   activity_id,
   activity_type: "Call" | "Email" | "Meeting" | "Demo" | "Workshop" | "Discovery Session" | "Follow-up" | "Exec Readout" | "Other",
+  title,
   opp_id (optional),
   org_id (optional),
   due_date,
@@ -117,6 +154,11 @@ Default password for password login: `CompassX2026!`
 
 ## API Endpoints
 
+### Opportunities
+- PUT /api/opportunities/{opp_id}/at-risk - Toggle at-risk status with reason
+  - Request: `{ is_at_risk: boolean, at_risk_reason: string | null }`
+  - Response: Full opportunity object
+
 ### Activities
 - GET /api/activities?org_id=xxx - Filter by client
 - POST /api/activities - Now supports org_id without opp_id
@@ -136,7 +178,7 @@ Default password for password login: `CompassX2026!`
 
 ### P2 (Nice to Have)
 - [ ] Automation Rules: Auto-create follow-up activities on stage change
-- [ ] Advanced At-Risk Logic: Flag individual Opportunities without scheduled activities
+- [ ] Advanced At-Risk Logic: Auto-flag Opportunities without scheduled future activities
 - [ ] Email integration
 - [ ] Calendar sync
 - [ ] Document attachments
