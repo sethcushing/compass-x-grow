@@ -466,16 +466,19 @@ const Organizations = () => {
                         {/* Google Drive Link - Always visible if present */}
                         {org.google_drive_link && (
                           <div className="mb-3 flex items-center gap-2">
-                            <a 
-                              href={org.google_drive_link} 
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              onClick={(e) => e.stopPropagation()}
-                              className="flex items-center gap-2 text-sm text-ocean-600 hover:text-ocean-700 bg-ocean-50 px-3 py-1.5 rounded-full hover:bg-ocean-100 transition-colors"
+                            <Button 
+                              variant="ghost"
+                              size="sm"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                window.open(org.google_drive_link, '_blank', 'noopener,noreferrer');
+                              }}
+                              className="flex items-center gap-2 text-sm text-ocean-600 hover:text-ocean-700 bg-ocean-50 px-3 py-1.5 rounded-full hover:bg-ocean-100 transition-colors h-auto"
                             >
                               <ExternalLink className="w-4 h-4" />
                               Google Drive
-                            </a>
+                            </Button>
                           </div>
                         )}
                         
