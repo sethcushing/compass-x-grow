@@ -185,6 +185,8 @@ const Pipeline = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [organizations, setOrganizations] = useState([]);
   const [users, setUsers] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [viewMode, setViewMode] = useState('all'); // 'all' or 'mine'
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeId, setActiveId] = useState(null);
@@ -206,10 +208,11 @@ const Pipeline = () => {
 
   const fetchData = async () => {
     try {
-      const [pipelinesRes, orgsRes, usersRes] = await Promise.all([
+      const [pipelinesRes, orgsRes, usersRes, meRes] = await Promise.all([
         fetch(`${API}/pipelines`, { credentials: 'include' }),
         fetch(`${API}/organizations`, { credentials: 'include' }),
-        fetch(`${API}/auth/users`, { credentials: 'include' })
+        fetch(`${API}/auth/users`, { credentials: 'include' }),
+        fetch(`${API}/auth/me`, { credentials: 'include' })
       ]);
       
       const pipelines = await pipelinesRes.json();
@@ -219,6 +222,11 @@ const Pipeline = () => {
       if (usersRes.ok) {
         const usersData = await usersRes.json();
         setUsers(usersData);
+      }
+      
+      if (meRes.ok) {
+        const meData = await meRes.json();
+        setCurrentUser(meData);
       }
       
       if (pipelines.length > 0) {
@@ -246,6 +254,11 @@ const Pipeline = () => {
       setLoading(false);
     }
   };
+
+  // Filter opportunities based on view mode
+  const filteredOpportunities = viewMode === 'mine' && currentUser
+    ? opportunities.filter(opp => opp.owner_id === currentUser.user_id)
+    : opportunities;
 
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
