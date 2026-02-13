@@ -39,26 +39,28 @@ Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, 
 - ✅ Role-based access control (Admin, Sales Lead)
 
 ### Backend (FastAPI + MongoDB)
-- ✅ Organizations CRUD with strategic tiers
-- ✅ Contacts CRUD with buying roles
-- ✅ Opportunities CRUD with stage management
-- ✅ Activities CRUD with status tracking
+- ✅ Organizations CRUD with strategic tiers + owner_id
+- ✅ Contacts CRUD with buying roles + owner_id
+- ✅ Opportunities CRUD with stage management + owner_id
+- ✅ Activities CRUD with status tracking + owner_id
 - ✅ Pipeline & Stages management
-- ✅ Sales Dashboard API (metrics, activities, opportunities by owner)
+- ✅ Main Dashboard API (shows ALL data, not filtered by user)
+- ✅ My Pipeline API (shows only user's owned opportunities)
 - ✅ Executive Dashboard API (all pipeline data, forecasts)
 - ✅ Analytics API (pipeline by stage, engagement types)
 - ✅ AI Sales Copilot (summarize, suggest activity, draft email, value hypothesis)
 - ✅ Stage automation (auto-create activities on stage change)
-- ✅ Sample data seeding
+- ✅ Delete functionality for organizations, contacts, opportunities
 
 ### Frontend (React + Tailwind)
 - ✅ Login page with email/password
-- ✅ Sales Owner Dashboard (Bento grid layout)
+- ✅ Sales Owner Dashboard (shows ALL opportunities with owner names)
+- ✅ My Pipeline view (user's owned engagements only)
 - ✅ Executive Dashboard with charts
 - ✅ Pipeline Kanban board with drag-and-drop
-- ✅ Organizations list & detail views
-- ✅ Contacts list & detail views
-- ✅ Opportunity detail with AI Copilot
+- ✅ Organizations list & detail views with delete
+- ✅ Contacts list & detail views with delete
+- ✅ Opportunity detail with AI Copilot and delete
 - ✅ Activities management with tabs
 - ✅ Reports & Analytics page
 - ✅ Settings page with password change
