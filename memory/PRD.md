@@ -1,70 +1,90 @@
 # CompassX Sales Engagement CRM - Product Requirements Document
 
 ## Original Problem Statement
-Build a clean, modern, pipeline-driven CRM application modeled after Pipedrive, purpose-built for Tech, Data, and AI Consulting & Advisory firms.
+Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting firms.
 
 ## User Management
-**Access restricted to 7 authorized CompassX team members:**
-
-| Name | Role | Email |
-|------|------|-------|
-| Arman Bozorgmanesh | Sales Lead | arman.bozorgmanesh@compassx.com |
-| Brian Clements | Admin | brian.clements@compassx.com |
-| Jamie Eigner | Admin | jamiee@compassx.com |
-| Kyle Heppenstall | Admin | kyleh@compassx.com |
-| Randy Chiu | Admin | randyc@compassx.com |
-| Ray Khacharoutian | Sales Lead | reynoldk@compassx.com |
-| Seth Cushing | Admin | seth.cushing@compassx.com |
-
-**Default Password:** `CompassX2026!`
+**7 authorized CompassX team members** with password `CompassX2026!`
 
 ## What's Been Implemented
 
-### Navigation & Views
-- ✅ **My Pipeline page removed** - replaced with toggle on Pipeline page
-- ✅ **All/Mine Toggle** on Pipeline page - filters by logged-in user's owned opportunities
-- ✅ **All/Mine Toggle** on Reports page - filters analytics by owner
-- ✅ Cleaner sidebar with 6 main nav items
+### Naming & Terminology Changes (Feb 13, 2026)
+- ✅ "Organizations" → "Clients" throughout the app
+- ✅ "Strategic Tier" → "Client Status" with values: **Current, Future, Return**
+- ✅ Sidebar updated to show "Clients" instead of "Organizations"
 
-### Owner Selection & Management
-- ✅ Owner dropdown on create forms (Organizations, Contacts, Opportunities)
-- ✅ Owner dropdown on edit forms (all entities)
-- ✅ Add Opportunity directly from Organization detail page
-- ✅ Delete functionality for all entities
+### At-Risk Detection (Feb 13, 2026)
+- ✅ Clients marked "At Risk" if no activity in 7 days
+- ✅ At-Risk badge displays on client cards and detail pages
+- ✅ Automatic calculation based on activities (direct + via opportunities)
+
+### Client Page Enhancements (Feb 13, 2026)
+- ✅ **Create Contact** directly from client detail page
+- ✅ **Create Activity** directly from client detail page (linked to org_id)
+- ✅ **Create Opportunity** from client detail page
+- ✅ Activities section shows all client activities (direct + via opportunities)
+
+### Activities Page Enhancements (Feb 13, 2026)
+- ✅ **Timeline / By Client** toggle view
+- ✅ Timeline: Activities sorted by date with tabs (Upcoming, Overdue, Completed)
+- ✅ By Client: Activities grouped by client organization
+- ✅ **Create Activity** with client selection
+- ✅ Activities can be linked directly to org_id (not just opportunities)
+- ✅ Search functionality across activities
+
+### Pipeline & Reports
+- ✅ All/Mine toggle on Pipeline page
+- ✅ All/Mine toggle on Reports page with filtered analytics
+- ✅ Owner selection on all entities
 
 ### AI Sales Copilot
-- ✅ Summarize: Executive summary of opportunity
-- ✅ Suggest Activity: AI-recommended next steps
-- ✅ Draft Email: Follow-up email generation
-- ✅ Value Hypothesis: Structured value proposition
+- ✅ Summarize, Suggest Activity, Draft Email, Value Hypothesis
+- ✅ Powered by GPT-5.2 via Emergent LLM Key
 
-### Reports & Analytics
-- ✅ Summary metrics with owner filtering
-- ✅ Pipeline by Stage chart
-- ✅ Pipeline by Owner chart
-- ✅ Deals by Engagement Type
-- ✅ Performance tables
+## Database Schema Updates
 
-### Backend Features
-- ✅ JWT authentication (7 authorized users only)
-- ✅ Owner-filtered analytics endpoints
-- ✅ Delete with cascade (activities deleted with opportunities)
-- ✅ Demo users removed (Alex Thompson, Jordan Pierce)
+### Activities Collection
+```
+{
+  activity_id,
+  activity_type,
+  opp_id (optional),
+  org_id (optional - NEW),
+  due_date,
+  owner_id,
+  status,
+  notes
+}
+```
+
+### Organizations Collection
+```
+{
+  org_id,
+  name,
+  industry,
+  strategic_tier (Current/Future/Return),
+  owner_id,
+  is_at_risk (calculated)
+}
+```
 
 ## API Endpoints
 
-### Analytics (with owner filtering)
-- GET /api/analytics/pipeline?owner_id=xxx
-- GET /api/analytics/engagement-types?owner_id=xxx
-- GET /api/analytics/summary?owner_id=xxx
-- GET /api/analytics/by-owner
+### Activities
+- GET /api/activities?org_id=xxx - Filter by client
+- POST /api/activities - Now supports org_id without opp_id
+
+### Organizations
+- GET /api/organizations - Returns is_at_risk flag
+- GET /api/organizations/{id} - Returns is_at_risk flag
 
 ## Prioritized Backlog
 
 ### P1 (Important)
-- [ ] At-risk detection automation
 - [ ] Activity notifications/reminders
-- [ ] Bulk import
+- [ ] Bulk import for Clients/Contacts
+- [ ] Contact communication history
 
 ### P2 (Nice to Have)
 - [ ] Email integration
