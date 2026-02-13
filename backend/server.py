@@ -1522,6 +1522,48 @@ async def get_owner_analytics(request: Request):
     result.sort(key=lambda x: x["value"], reverse=True)
     return result
 
+@api_router.get("/reports/summary")
+async def get_reports_summary(request: Request, owner_id: Optional[str] = None):
+    """Dashboard reports summary - Won vs Lost, Active, Pipeline counts and values"""
+    user = await get_current_user(request)
+    
+    query = {} if not owner_id else {"owner_id": owner_id}
+    opps = await db.opportunities.find(query, {"_id": 0}).to_list(2000)
+    
+    # Categorize opportunities
+    won_opps = [o for o in opps if "won" in o.get("stage_id", "").lower()]
+    lost_opps = [o for o in opps if "lost" in o.get("stage_id", "").lower()]
+    pipeline_opps = [o for o in opps if "won" not in o.get("stage_id", "").lower() and "lost" not in o.get("stage_id", "").lower()]
+    
+    # Calculate values
+    won_value = sum(o.get("estimated_value", 0) or 0 for o in won_opps)
+    lost_value = sum(o.get("estimated_value", 0) or 0 for o in lost_opps)
+    pipeline_value = sum(o.get("estimated_value", 0) or 0 for o in pipeline_opps)
+    total_value = sum(o.get("estimated_value", 0) or 0 for o in opps)
+    
+    return {
+        "won": {
+            "count": len(won_opps),
+            "value": won_value
+        },
+        "lost": {
+            "count": len(lost_opps),
+            "value": lost_value
+        },
+        "active": {
+            "count": len(won_opps),  # Active = Closed Won
+            "value": won_value
+        },
+        "pipeline": {
+            "count": len(pipeline_opps),
+            "value": pipeline_value
+        },
+        "total": {
+            "count": len(opps),
+            "value": total_value
+        }
+    }
+
 @api_router.get("/analytics/summary")
 async def get_analytics_summary(request: Request, owner_id: Optional[str] = None):
     """Overall analytics summary"""
