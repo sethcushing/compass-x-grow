@@ -234,6 +234,11 @@ const Pipeline = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [activeId, setActiveId] = useState(null);
   
+  // At-risk dialog state
+  const [atRiskDialogOpen, setAtRiskDialogOpen] = useState(false);
+  const [selectedOppForRisk, setSelectedOppForRisk] = useState(null);
+  const [atRiskReason, setAtRiskReason] = useState('');
+  
   const [newOpp, setNewOpp] = useState({
     name: '',
     org_id: '',
