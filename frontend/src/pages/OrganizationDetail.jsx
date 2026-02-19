@@ -590,9 +590,11 @@ const OrganizationDetail = () => {
                   <div className="p-4 bg-ocean-50 rounded-xl" data-testid="client-total-value">
                     <p className="text-xs font-medium text-ocean-600 uppercase mb-2">Total Value</p>
                     <p className="text-2xl font-bold text-ocean-700">
-                      ${orgSummary.opportunities.total_value >= 1000 
-                        ? `${(orgSummary.opportunities.total_value / 1000).toFixed(0)}K` 
-                        : orgSummary.opportunities.total_value.toLocaleString()}
+                      ${orgSummary.opportunities.total_value >= 1000000 
+                        ? `${(orgSummary.opportunities.total_value / 1000000).toFixed(2)}M`
+                        : orgSummary.opportunities.total_value >= 1000 
+                          ? `${(orgSummary.opportunities.total_value / 1000).toFixed(0)}K` 
+                          : orgSummary.opportunities.total_value.toLocaleString()}
                     </p>
                   </div>
                   
@@ -600,9 +602,11 @@ const OrganizationDetail = () => {
                   <div className="p-4 bg-blue-50 rounded-xl" data-testid="client-pipeline-value">
                     <p className="text-xs font-medium text-blue-600 uppercase mb-2">Pipeline</p>
                     <p className="text-2xl font-bold text-blue-700">
-                      ${(orgSummary.opportunities.pipeline_value || 0) >= 1000 
-                        ? `${((orgSummary.opportunities.pipeline_value || 0) / 1000).toFixed(0)}K` 
-                        : (orgSummary.opportunities.pipeline_value || 0).toLocaleString()}
+                      ${(orgSummary.opportunities.pipeline_value || 0) >= 1000000 
+                        ? `${((orgSummary.opportunities.pipeline_value || 0) / 1000000).toFixed(2)}M`
+                        : (orgSummary.opportunities.pipeline_value || 0) >= 1000 
+                          ? `${((orgSummary.opportunities.pipeline_value || 0) / 1000).toFixed(0)}K` 
+                          : (orgSummary.opportunities.pipeline_value || 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-blue-500">{orgSummary.opportunities.pipeline_count || 0} deals</p>
                   </div>
@@ -611,9 +615,11 @@ const OrganizationDetail = () => {
                   <div className="p-4 bg-green-50 rounded-xl" data-testid="client-won-value">
                     <p className="text-xs font-medium text-green-600 uppercase mb-2">Won</p>
                     <p className="text-2xl font-bold text-green-700">
-                      ${(orgSummary.opportunities.won_value || 0) >= 1000 
-                        ? `${((orgSummary.opportunities.won_value || 0) / 1000).toFixed(0)}K` 
-                        : (orgSummary.opportunities.won_value || 0).toLocaleString()}
+                      ${(orgSummary.opportunities.won_value || 0) >= 1000000 
+                        ? `${((orgSummary.opportunities.won_value || 0) / 1000000).toFixed(2)}M`
+                        : (orgSummary.opportunities.won_value || 0) >= 1000 
+                          ? `${((orgSummary.opportunities.won_value || 0) / 1000).toFixed(0)}K` 
+                          : (orgSummary.opportunities.won_value || 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-green-500">{orgSummary.opportunities.won_count || 0} deals</p>
                   </div>
@@ -622,9 +628,11 @@ const OrganizationDetail = () => {
                   <div className="p-4 bg-rose-50 rounded-xl" data-testid="client-lost-value">
                     <p className="text-xs font-medium text-rose-600 uppercase mb-2">Lost</p>
                     <p className="text-2xl font-bold text-rose-700">
-                      ${(orgSummary.opportunities.lost_value || 0) >= 1000 
-                        ? `${((orgSummary.opportunities.lost_value || 0) / 1000).toFixed(0)}K` 
-                        : (orgSummary.opportunities.lost_value || 0).toLocaleString()}
+                      ${(orgSummary.opportunities.lost_value || 0) >= 1000000 
+                        ? `${((orgSummary.opportunities.lost_value || 0) / 1000000).toFixed(2)}M`
+                        : (orgSummary.opportunities.lost_value || 0) >= 1000 
+                          ? `${((orgSummary.opportunities.lost_value || 0) / 1000).toFixed(0)}K` 
+                          : (orgSummary.opportunities.lost_value || 0).toLocaleString()}
                     </p>
                     <p className="text-xs text-rose-500">{orgSummary.opportunities.lost_count || 0} deals</p>
                   </div>
