@@ -1275,10 +1275,10 @@ async def seed_data(request: Request):
     try:
         user = await get_current_user(request)
         default_owner = user["user_id"]
-    except:
-        # Fallback to first authorized user
+    except Exception:
+        # Fallback to first admin user
         first_user = await db.users.find_one(
-            {"email": {"$in": [u["email"].lower() for u in AUTHORIZED_USERS]}}, 
+            {"role": "admin"}, 
             {"_id": 0}
         )
         default_owner = first_user["user_id"] if first_user else "system"
