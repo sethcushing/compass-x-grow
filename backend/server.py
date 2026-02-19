@@ -1268,9 +1268,9 @@ Keep it concise and compelling."""
 
 # ============== SEED DATA ENDPOINT ==============
 
-@api_router.post("/seed")
+@api_router.api_route("/seed", methods=["GET", "POST"])
 async def seed_data(request: Request):
-    """Seed sample data for demo"""
+    """Seed sample data for demo - call this after setup-admin"""
     # Get current user if authenticated
     try:
         user = await get_current_user(request)
