@@ -7,10 +7,11 @@ FROM node:20-alpine AS frontend-builder
 WORKDIR /app/frontend
 
 # Copy package files first for better caching
-COPY frontend/package.json frontend/yarn.lock ./
+COPY frontend/package.json ./
+COPY frontend/yarn.lock* ./
 
-# Install dependencies
-RUN yarn install --frozen-lockfile --production=false
+# Install dependencies (generate lock file if missing)
+RUN yarn install --production=false
 
 # Copy frontend source
 COPY frontend/ ./
