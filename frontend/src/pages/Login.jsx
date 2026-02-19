@@ -37,12 +37,12 @@ const Login = () => {
         body: JSON.stringify(formData)
       });
 
-      const data = await response.json();
-      
       if (!response.ok) {
-        throw new Error(data.detail || 'Login failed');
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Login failed');
       }
 
+      const data = await response.json();
       toast.success(`Welcome back, ${data.name.split(' ')[0]}!`);
       navigate('/dashboard', { replace: true, state: { user: data } });
     } catch (error) {
