@@ -282,6 +282,13 @@ const OrganizationDetail = () => {
         owner_id: ''
       });
       toast.success('Contact created');
+      
+      // Refresh org summary to update buyer info
+      const summaryRes = await fetch(`${API}/organizations/${orgId}/summary`, { credentials: 'include' });
+      if (summaryRes.ok) {
+        const summaryData = await summaryRes.json();
+        setOrgSummary(summaryData);
+      }
     } catch (error) {
       console.error('Error creating contact:', error);
       toast.error('Failed to create contact');
