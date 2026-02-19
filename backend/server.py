@@ -350,6 +350,18 @@ async def get_current_user(request: Request) -> dict:
     
     return user
 
+# ============== HEALTH ENDPOINT ==============
+
+@api_router.get("/health")
+async def health_check():
+    """Health check endpoint for container orchestration"""
+    try:
+        # Check MongoDB connection
+        await db.command("ping")
+        return {"status": "healthy", "database": "connected"}
+    except Exception as e:
+        return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
+
 # ============== AUTH ENDPOINTS ==============
 
 @api_router.post("/auth/login")
@@ -357,15 +369,10 @@ async def login(data: LoginRequest, response: Response):
     """Login with email and password"""
     email = data.email.lower().strip()
     
-    # Check if user is in authorized list
-    authorized = next((u for u in AUTHORIZED_USERS if u["email"].lower() == email), None)
-    if not authorized:
-        raise HTTPException(status_code=401, detail="Unauthorized user")
-    
     # Get user from database
     user = await db.users.find_one({"email": email}, {"_id": 0})
     if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials. Please contact admin to set up your account.")
+        raise HTTPException(status_code=401, detail="Invalid credentials")
     
     # Verify password
     if not user.get("password_hash") or not verify_password(data.password, user["password_hash"]):
@@ -394,28 +401,29 @@ async def login(data: LoginRequest, response: Response):
         "picture": user.get("picture")
     }
 
-@api_router.post("/auth/setup-users")
-async def setup_users():
-    """Initialize authorized users with default password (run once)"""
+@api_router.post("/auth/setup-admin")
+async def setup_admin():
+    """Initialize default admin user (run once on first deployment)"""
     default_password = "CompassX2026!"
-    created = []
     
-    for auth_user in AUTHORIZED_USERS:
-        existing = await db.users.find_one({"email": auth_user["email"].lower()}, {"_id": 0})
-        if not existing:
-            user_doc = {
-                "user_id": f"user_{uuid.uuid4().hex[:12]}",
-                "email": auth_user["email"].lower(),
-                "name": auth_user["name"],
-                "role": auth_user["role"],
-                "password_hash": get_password_hash(default_password),
-                "picture": None,
-                "created_at": datetime.now(timezone.utc).isoformat()
-            }
-            await db.users.insert_one(user_doc)
-            created.append(auth_user["email"])
+    # Check if admin already exists
+    existing = await db.users.find_one({"email": DEFAULT_ADMIN["email"].lower()}, {"_id": 0})
+    if existing:
+        return {"message": "Admin user already exists", "email": DEFAULT_ADMIN["email"]}
     
-    return {"message": f"Created {len(created)} users", "users": created, "default_password": default_password}
+    # Create admin user
+    user_doc = {
+        "user_id": f"user_{uuid.uuid4().hex[:12]}",
+        "email": DEFAULT_ADMIN["email"].lower(),
+        "name": DEFAULT_ADMIN["name"],
+        "role": DEFAULT_ADMIN["role"],
+        "password_hash": get_password_hash(default_password),
+        "picture": None,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(user_doc)
+    
+    return {"message": "Admin user created", "email": DEFAULT_ADMIN["email"], "default_password": default_password}
 
 @api_router.post("/auth/change-password")
 async def change_password(data: ChangePasswordRequest, request: Request):
