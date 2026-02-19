@@ -401,7 +401,7 @@ async def login(data: LoginRequest, response: Response):
         "picture": user.get("picture")
     }
 
-@api_router.post("/auth/setup-admin")
+@api_router.api_route("/auth/setup-admin", methods=["GET", "POST"])
 async def setup_admin():
     """Initialize default admin user (run once on first deployment)"""
     default_password = "CompassX2026!"
