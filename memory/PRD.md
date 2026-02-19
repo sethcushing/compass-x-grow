@@ -3,15 +3,44 @@
 ## Original Problem Statement
 Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting firms.
 
-## User Management
-**7 authorized CompassX team members** - Access via Google OAuth or password login
+## User Management & Authentication
+**Admin:** Seth Cushing (seth.cushing@compassx.com) - Password: `CompassX2026!`
 
-**Admin:** Seth Cushing (seth.cushing@compassx.com)
-**Sales Leads:** Arman, Brian, Jamie, Kyle, Randy, Ray
+**Authentication:** Password-based JWT login only (Google OAuth removed)
 
-Default password for password login: `CompassX2026!`
+**Admin Capabilities:**
+- Add new users (name, email, password, role)
+- Edit existing users (name, email, role)
+- Reset user passwords
+- Delete users (cannot delete self)
+
+**User Roles:**
+- `admin` - Full access including user management
+- `sales_lead` - Standard CRM access
+
+## Deployment
+**Dockerfile:** `/app/Dockerfile` - Multi-stage build for Koyeb deployment
+- Frontend: React build served via nginx on port 8000
+- Backend: FastAPI on port 8001 (internal)
+- Nginx: Proxies `/api/*` to backend, serves static files
+
+**Environment Variables (set at runtime):**
+- `MONGO_URL` - MongoDB connection string
+- `JWT_SECRET` - Secret for JWT tokens
+
+**Health Check:** `GET /api/health` - Returns database connection status
 
 ## What's Been Implemented
+
+### User Management (Feb 19, 2026)
+- ✅ **Admin User Management** - Settings page shows User Management section for admins
+- ✅ **Add User** - Create new users with name, email, password, role
+- ✅ **Edit User** - Update user name, email, role
+- ✅ **Reset Password** - Admin can reset any user's password
+- ✅ **Delete User** - Admin can delete users (with confirmation)
+- ✅ **Self-Protection** - Admin cannot delete their own account
+- ✅ **Role-Based Access** - Non-admins get 403 on user management endpoints
+- ✅ **Google OAuth Removed** - Login page only shows email/password form
 
 ### Deal Builder & Opportunity Financials (Feb 13, 2026)
 - ✅ **Deal Builder Card** - Primary way to calculate opportunity value on Opportunity Detail page
