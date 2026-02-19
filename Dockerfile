@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y \
 
 # Copy backend requirements and install
 COPY backend/requirements.txt ./backend/
-RUN pip install --no-cache-dir -r backend/requirements.txt
+RUN pip install --no-cache-dir --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/ -r backend/requirements.txt
 
 # Copy backend source
 COPY backend/ ./backend/
