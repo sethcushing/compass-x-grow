@@ -78,6 +78,20 @@ class UserSession(BaseModel):
     expires_at: datetime
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class UserCreate(BaseModel):
+    name: str
+    email: str
+    password: str
+    role: str = "sales_lead"  # sales_lead, admin
+
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    role: Optional[str] = None
+
+class UserPasswordReset(BaseModel):
+    new_password: str
+
 class OrganizationBase(BaseModel):
     model_config = ConfigDict(extra="ignore")
     org_id: str = Field(default_factory=lambda: f"org_{uuid.uuid4().hex[:12]}")
