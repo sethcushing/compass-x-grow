@@ -1617,6 +1617,9 @@ async def get_analytics_summary(request: Request, owner_id: Optional[str] = None
     completed_deals = len(won_opps) + len(lost_opps)
     win_rate = round(len(won_opps) / max(completed_deals, 1) * 100, 1)
     
+    # Average confidence
+    avg_confidence = round(sum(o.get("confidence_level", 0) or 0 for o in opps) / max(len(opps), 1), 1)
+    
     return {
         "total_deals": len(opps),
         "active_deals": len(active_opps),
@@ -1624,7 +1627,7 @@ async def get_analytics_summary(request: Request, owner_id: Optional[str] = None
         "lost_deals": len(lost_opps),
         "at_risk_deals": len(at_risk_opps),
         "total_pipeline_value": total_value,
-        "weighted_forecast": weighted_value,
+        "avg_confidence": avg_confidence,
         "won_value": sum(o.get("estimated_value", 0) for o in won_opps),
         "average_deal_size": total_value / max(len(opps), 1),
         "win_rate": win_rate,
