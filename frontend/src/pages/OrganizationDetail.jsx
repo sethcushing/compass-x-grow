@@ -586,8 +586,8 @@ const OrganizationDetail = () => {
                     <p className="text-2xl font-bold text-emerald-700">{orgSummary.opportunities.count}</p>
                   </div>
                   
-                  {/* Value */}
-                  <div className="p-4 bg-ocean-50 rounded-xl">
+                  {/* Total Value */}
+                  <div className="p-4 bg-ocean-50 rounded-xl" data-testid="client-total-value">
                     <p className="text-xs font-medium text-ocean-600 uppercase mb-2">Total Value</p>
                     <p className="text-2xl font-bold text-ocean-700">
                       ${orgSummary.opportunities.total_value >= 1000 
@@ -596,10 +596,15 @@ const OrganizationDetail = () => {
                     </p>
                   </div>
                   
-                  {/* Confidence */}
-                  <div className="p-4 bg-amber-50 rounded-xl">
-                    <p className="text-xs font-medium text-amber-600 uppercase mb-2">Avg Confidence</p>
-                    <p className="text-2xl font-bold text-amber-700">{orgSummary.opportunities.avg_confidence}%</p>
+                  {/* Pipeline Value */}
+                  <div className="p-4 bg-blue-50 rounded-xl" data-testid="client-pipeline-value">
+                    <p className="text-xs font-medium text-blue-600 uppercase mb-2">Pipeline</p>
+                    <p className="text-2xl font-bold text-blue-700">
+                      ${(orgSummary.opportunities.pipeline_value || 0) >= 1000 
+                        ? `${((orgSummary.opportunities.pipeline_value || 0) / 1000).toFixed(0)}K` 
+                        : (orgSummary.opportunities.pipeline_value || 0).toLocaleString()}
+                    </p>
+                    <p className="text-xs text-blue-500">{orgSummary.opportunities.pipeline_count || 0} deals</p>
                   </div>
                   
                   {/* Won Value */}
