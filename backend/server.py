@@ -1031,10 +1031,10 @@ async def get_sales_dashboard(request: Request):
     
     # Calculate metrics
     total_value = sum(opp.get("estimated_value", 0) for opp in all_opps)
-    weighted_value = sum(
-        opp.get("estimated_value", 0) * opp.get("confidence_level", 0) / 100
-        for opp in all_opps
-    )
+    
+    # Average confidence across all pipeline opportunities
+    pipeline_opps = [opp for opp in all_opps if "won" not in opp.get("stage_id", "").lower() and "lost" not in opp.get("stage_id", "").lower()]
+    avg_confidence = round(sum(opp.get("confidence_level", 0) or 0 for opp in pipeline_opps) / max(len(pipeline_opps), 1), 1)
     
     overdue_activities = [
         a for a in all_activities
@@ -1052,7 +1052,7 @@ async def get_sales_dashboard(request: Request):
         "metrics": {
             "total_opportunities": len(all_opps),
             "total_value": total_value,
-            "weighted_forecast": weighted_value,
+            "avg_confidence": avg_confidence,
             "overdue_activities": len(overdue_activities),
             "at_risk_opportunities": len(at_risk_opps)
         }
