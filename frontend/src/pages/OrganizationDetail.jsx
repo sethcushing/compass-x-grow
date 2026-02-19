@@ -164,6 +164,13 @@ const OrganizationDetail = () => {
       setOrganization(updated);
       setIsEditing(false);
       toast.success('Client updated');
+      
+      // Refresh org summary to update header
+      const summaryRes = await fetch(`${API}/organizations/${orgId}/summary`, { credentials: 'include' });
+      if (summaryRes.ok) {
+        const summaryData = await summaryRes.json();
+        setOrgSummary(summaryData);
+      }
     } catch (error) {
       console.error('Error updating:', error);
       toast.error('Failed to update');
