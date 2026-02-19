@@ -1,0 +1,48 @@
+# Dependencies
+node_modules
+frontend/node_modules
+backend/__pycache__
+backend/*.pyc
+.venv
+venv
+
+# Build artifacts
+frontend/build
+*.egg-info
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+
+# Environment files (will be set at runtime)
+# .env files are intentionally NOT ignored for build args
+
+# Logs
+*.log
+logs/
+
+# Test files
+test_reports/
+*.test.js
+*.spec.js
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Emergent platform files
+.emergent
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Memory/docs (not needed in production)
+memory/
