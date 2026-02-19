@@ -223,13 +223,13 @@ const Dashboard = () => {
               <Card className="border-slate-200 shadow-soft hover:shadow-hover transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 bg-secondary/30 rounded-xl flex items-center justify-center">
-                      <DollarSign className="w-5 h-5 text-ocean-700" />
+                    <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+                      <Target className="w-5 h-5 text-amber-600" />
                     </div>
                   </div>
-                  <p className="text-sm text-slate-500 mb-1">Weighted Forecast</p>
+                  <p className="text-sm text-slate-500 mb-1">Avg Confidence</p>
                   <p className="text-2xl font-heading font-semibold text-slate-900">
-                    {formatCurrency(metrics?.weighted_forecast)}
+                    {metrics?.avg_confidence || 0}%
                   </p>
                 </CardContent>
               </Card>
