@@ -454,15 +454,117 @@ async def get_me(request: Request):
 
 @api_router.get("/auth/users")
 async def get_users(request: Request):
-    """Get all users - only returns authorized users"""
+    """Get all users from database"""
     user = await get_current_user(request)
-    # Only return users that are in the authorized list
-    authorized_emails = [u["email"].lower() for u in AUTHORIZED_USERS]
     users = await db.users.find(
-        {"email": {"$in": authorized_emails}},
+        {},
         {"_id": 0, "password_hash": 0}
     ).to_list(100)
     return users
+
+@api_router.post("/auth/users")
+async def create_user(data: UserCreate, request: Request):
+    """Create a new user (admin only)"""
+    current_user = await get_current_user(request)
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    email = data.email.lower().strip()
+    
+    # Check if user already exists
+    existing = await db.users.find_one({"email": email}, {"_id": 0})
+    if existing:
+        raise HTTPException(status_code=400, detail="User with this email already exists")
+    
+    # Validate role
+    if data.role not in ["admin", "sales_lead"]:
+        raise HTTPException(status_code=400, detail="Role must be 'admin' or 'sales_lead'")
+    
+    # Validate password
+    if len(data.password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    
+    # Create user
+    user_doc = {
+        "user_id": f"user_{uuid.uuid4().hex[:12]}",
+        "email": email,
+        "name": data.name.strip(),
+        "role": data.role,
+        "password_hash": get_password_hash(data.password),
+        "picture": None,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(user_doc)
+    
+    return {
+        "user_id": user_doc["user_id"],
+        "email": user_doc["email"],
+        "name": user_doc["name"],
+        "role": user_doc["role"]
+    }
+
+@api_router.put("/auth/users/{user_id}")
+async def update_user(user_id: str, data: UserUpdate, request: Request):
+    """Update a user (admin only)"""
+    current_user = await get_current_user(request)
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Check if user exists
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    update_data = {}
+    
+    if data.name:
+        update_data["name"] = data.name.strip()
+    
+    if data.email:
+        email = data.email.lower().strip()
+        # Check if email already exists for another user
+        existing = await db.users.find_one({"email": email, "user_id": {"$ne": user_id}}, {"_id": 0})
+        if existing:
+            raise HTTPException(status_code=400, detail="Email already in use by another user")
+        update_data["email"] = email
+    
+    if data.role:
+        if data.role not in ["admin", "sales_lead"]:
+            raise HTTPException(status_code=400, detail="Role must be 'admin' or 'sales_lead'")
+        update_data["role"] = data.role
+    
+    if update_data:
+        update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+        await db.users.update_one({"user_id": user_id}, {"$set": update_data})
+    
+    return await db.users.find_one({"user_id": user_id}, {"_id": 0, "password_hash": 0})
+
+@api_router.post("/auth/users/{user_id}/reset-password")
+async def reset_user_password(user_id: str, data: UserPasswordReset, request: Request):
+    """Reset a user's password (admin only)"""
+    current_user = await get_current_user(request)
+    if current_user.get("role") != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+    
+    # Check if user exists
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Validate password
+    if len(data.new_password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    
+    # Update password
+    await db.users.update_one(
+        {"user_id": user_id},
+        {"$set": {
+            "password_hash": get_password_hash(data.new_password),
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {"message": "Password reset successfully"}
 
 @api_router.delete("/auth/users/{user_id}")
 async def delete_user(user_id: str, request: Request):
@@ -480,11 +582,6 @@ async def delete_user(user_id: str, request: Request):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
-    # Don't allow deleting authorized users
-    authorized_emails = [u["email"].lower() for u in AUTHORIZED_USERS]
-    if user.get("email", "").lower() in authorized_emails:
-        raise HTTPException(status_code=400, detail="Cannot delete authorized users")
-    
     await db.users.delete_one({"user_id": user_id})
     return {"message": "User deleted"}
 
@@ -498,26 +595,6 @@ async def logout(request: Request, response: Response):
         samesite="none"
     )
     return {"message": "Logged out"}
-
-@api_router.post("/auth/google/session")
-async def google_oauth_session(request: Request, response: Response):
-    """
-    Exchange Google OAuth session_id for app session
-    REMINDER: DO NOT HARDCODE THE URL, OR ADD ANY FALLBACKS OR REDIRECT URLS, THIS BREAKS THE AUTH
-    """
-    body = await request.json()
-    session_id = body.get("session_id")
-    
-    if not session_id:
-        raise HTTPException(status_code=400, detail="session_id required")
-    
-    # Call Emergent Auth to get user data
-    async with httpx.AsyncClient() as client:
-        try:
-            auth_response = await client.get(
-                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
-                headers={"X-Session-ID": session_id}
-            )
             
             if auth_response.status_code != 200:
                 logger.error(f"Emergent Auth error: {auth_response.text}")
