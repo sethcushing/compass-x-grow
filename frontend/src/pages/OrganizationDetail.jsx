@@ -227,6 +227,13 @@ const OrganizationDetail = () => {
         owner_id: ''
       });
       toast.success('Opportunity created');
+      
+      // Refresh org summary to update pipeline/active sections
+      const summaryRes = await fetch(`${API}/organizations/${orgId}/summary`, { credentials: 'include' });
+      if (summaryRes.ok) {
+        const summaryData = await summaryRes.json();
+        setOrgSummary(summaryData);
+      }
     } catch (error) {
       console.error('Error creating opportunity:', error);
       toast.error('Failed to create opportunity');
