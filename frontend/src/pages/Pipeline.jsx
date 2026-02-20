@@ -619,14 +619,14 @@ const Pipeline = () => {
                     max="100"
                     value={newOpp.confidence_level}
                     onChange={(e) => setNewOpp(prev => ({ ...prev, confidence_level: parseInt(e.target.value) || 0 }))}
-                    className="mt-1"
+                    className="mt-1 bg-white/5 border-white/10 text-white"
                   />
                 </div>
                 
                 <Button
                   data-testid="submit-opportunity-btn"
                   onClick={handleCreateOpp}
-                  className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                  className="w-full bg-gradient-to-r from-secondary to-yellow-400 text-slate-900 font-semibold rounded-full hover:shadow-lg"
                 >
                   Create Opportunity
                 </Button>
@@ -641,7 +641,7 @@ const Pipeline = () => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="kanban-board overflow-x-auto">
+          <div className="flex gap-4 p-6 overflow-x-auto">
             {stages.map((stage) => {
               const stageOpps = filteredOpportunities.filter(o => o.stage_id === stage.stage_id);
               return (
@@ -659,8 +659,8 @@ const Pipeline = () => {
           
           <DragOverlay>
             {activeOpp && (
-              <div className="kanban-card shadow-lg rotate-3">
-                <h4 className="font-medium text-sm text-slate-900">{activeOpp.name}</h4>
+              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 shadow-2xl rotate-3">
+                <h4 className="font-medium text-sm text-white">{activeOpp.name}</h4>
               </div>
             )}
           </DragOverlay>
@@ -668,15 +668,15 @@ const Pipeline = () => {
         
         {/* At-Risk Dialog */}
         <Dialog open={atRiskDialogOpen} onOpenChange={setAtRiskDialogOpen}>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md bg-slate-900 border-white/10">
             <DialogHeader>
-              <DialogTitle className="font-heading flex items-center gap-2">
+              <DialogTitle className="font-bold text-white flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-amber-500" />
                 Mark as At-Risk
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-4">
-              <div className="p-3 bg-slate-50 rounded-lg">
+              <div className="p-3 bg-white/5 rounded-lg">
                 <p className="text-sm text-white/70">
                   <strong className="text-white">{selectedOppForRisk?.name}</strong>
                 </p>
