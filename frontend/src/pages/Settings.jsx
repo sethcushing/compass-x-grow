@@ -275,12 +275,12 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex">
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900 flex">
         <Sidebar activePage="settings" />
         <main className="flex-1 p-8">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-slate-200 rounded w-32"></div>
-            <div className="h-64 bg-slate-200 rounded"></div>
+            <div className="h-8 bg-white/10 rounded w-32"></div>
+            <div className="h-64 bg-white/5 rounded-2xl"></div>
           </div>
         </main>
       </div>
