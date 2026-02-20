@@ -94,12 +94,14 @@ const AppRouter = () => {
 
 function App() {
   return (
-    <div className="App font-body">
-      <BrowserRouter>
-        <AppRouter />
-      </BrowserRouter>
-      <Toaster position="top-right" richColors />
-    </div>
+    <ThemeProvider>
+      <div className="App font-body">
+        <BrowserRouter>
+          <AppRouter />
+        </BrowserRouter>
+        <Toaster position="top-right" richColors />
+      </div>
+    </ThemeProvider>
   );
 }
 
