@@ -38,6 +38,16 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 
 ## What's Been Implemented
 
+### Dark/Light Mode Toggle & Glassmorphic UI (Feb 20, 2026)
+- ✅ **Theme Toggle** - Added Dark/Light mode toggle in sidebar
+- ✅ **Theme Context** - Created `/context/ThemeContext.jsx` to manage theme state
+- ✅ **LocalStorage Persistence** - Theme preference is saved and persists across sessions
+- ✅ **Glassmorphic Reports Page** - Beautiful charts with glass effect cards, responsive to theme
+- ✅ **Glassmorphic Client Detail Page** - Colorful metric boxes with glass effect
+- ✅ **Dashboard Theme Support** - All metric cards support both light and dark modes
+- ✅ **CSS Variables** - Separate color palettes for light and dark modes
+- ✅ **Gradient Mesh Background** - Subtle gradient mesh in dark mode
+
 ### Light Mode UI Conversion (Feb 20, 2026)
 - ✅ **Full Light Mode Conversion** - Converted entire application from dark glassmorphic theme to clean light mode
 - ✅ **Login Page** - Light background with subtle gradients, clean card design
