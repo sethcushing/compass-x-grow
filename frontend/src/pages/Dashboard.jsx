@@ -21,6 +21,7 @@ import {
   Users
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useTheme } from '@/context/ThemeContext';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
