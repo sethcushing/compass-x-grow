@@ -372,6 +372,37 @@ async def health_check():
     except Exception as e:
         return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
 
+@api_router.get("/debug/status")
+async def debug_status():
+    """Debug endpoint to check system status"""
+    result = {
+        "database": "unknown",
+        "users_count": 0,
+        "admin_exists": False,
+        "env_vars": {
+            "MONGO_URL": "set" if os.environ.get("MONGO_URL") else "missing",
+            "DB_NAME": os.environ.get("DB_NAME", "not set"),
+            "JWT_SECRET_KEY": "set" if os.environ.get("JWT_SECRET_KEY") else "using default"
+        }
+    }
+    
+    try:
+        await db.command("ping")
+        result["database"] = "connected"
+        
+        # Check users
+        user_count = await db.users.count_documents({})
+        result["users_count"] = user_count
+        
+        # Check if admin exists
+        admin = await db.users.find_one({"email": "seth.cushing@compassx.com"}, {"_id": 0, "user_id": 1})
+        result["admin_exists"] = admin is not None
+        
+    except Exception as e:
+        result["database"] = f"error: {str(e)}"
+    
+    return result
+
 # ============== AUTH ENDPOINTS ==============
 
 @api_router.post("/auth/login")
