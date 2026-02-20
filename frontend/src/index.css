@@ -41,14 +41,14 @@ code {
 @layer base {
     :root {
         --background: 210 40% 98%;
-        --foreground: 210 50% 10%;
+        --foreground: 215 25% 15%;
         --card: 0 0% 100%;
-        --card-foreground: 210 50% 10%;
+        --card-foreground: 215 25% 15%;
         --popover: 0 0% 100%;
-        --popover-foreground: 210 50% 10%;
-        --primary: 200 85% 15%;
+        --popover-foreground: 215 25% 15%;
+        --primary: 200 85% 25%;
         --primary-foreground: 0 0% 100%;
-        --secondary: 197 75% 73%;
+        --secondary: 197 75% 60%;
         --secondary-foreground: 200 85% 15%;
         --muted: 210 40% 96%;
         --muted-foreground: 215 16% 47%;
@@ -58,10 +58,10 @@ code {
         --destructive-foreground: 0 0% 98%;
         --border: 214 32% 91%;
         --input: 214 32% 91%;
-        --ring: 200 85% 15%;
-        --chart-1: 200 85% 15%;
+        --ring: 200 85% 35%;
+        --chart-1: 200 85% 25%;
         --chart-2: 195 74% 44%;
-        --chart-3: 197 75% 73%;
+        --chart-3: 197 75% 60%;
         --chart-4: 43 96% 51%;
         --chart-5: 27 96% 49%;
         --radius: 0.75rem;
