@@ -252,7 +252,7 @@ const Dashboard = () => {
           {/* Won/Lost/Active/Pipeline Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              <Card className="p-6" data-testid="dashboard-won-card">
+              <GlassCard className="p-6" data-testid="dashboard-won-card">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
                     <CheckCircle2 className="w-6 h-6 text-emerald-600" />
@@ -267,7 +267,7 @@ const Dashboard = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-              <Card className="p-6" data-testid="dashboard-lost-card">
+              <GlassCard className="p-6" data-testid="dashboard-lost-card">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center">
                     <XCircle className="w-6 h-6 text-rose-600" />
@@ -282,7 +282,7 @@ const Dashboard = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-              <Card className="p-6" data-testid="dashboard-active-card">
+              <GlassCard className="p-6" data-testid="dashboard-active-card">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                     <CheckCircle2 className="w-6 h-6 text-green-600" />
@@ -297,7 +297,7 @@ const Dashboard = () => {
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <Card className="p-6" data-testid="dashboard-pipeline-card">
+              <GlassCard className="p-6" data-testid="dashboard-pipeline-card">
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
                     <TrendingUp className="w-6 h-6 text-blue-600" />
@@ -316,7 +316,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Upcoming Activities */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-              <Card className="p-6">
+              <GlassCard className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-lg font-semibold text-slate-800">Upcoming Activities</h2>
                   <Link to="/activities" className="text-ocean-600 text-sm hover:text-ocean-700 transition-colors">
@@ -355,7 +355,7 @@ const Dashboard = () => {
 
             {/* Top Opportunities by Client */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-              <Card className="p-6">
+              <GlassCard className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-lg font-semibold text-slate-800">Top Opportunities by Client</h2>
                   <Link to="/pipeline" className="text-ocean-600 text-sm hover:text-ocean-700 transition-colors">
