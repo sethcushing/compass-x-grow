@@ -156,7 +156,7 @@ const Dashboard = () => {
     .slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-slate-950 gradient-mesh' : 'bg-slate-50'}`}>
       <Sidebar />
       
       <main className="flex-1 p-8 overflow-auto">
@@ -168,10 +168,10 @@ const Dashboard = () => {
           {/* Header */}
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-slate-800">
+              <h1 className="text-3xl font-bold text-slate-800 dark:text-white">
                 Welcome back, {user?.name?.split(' ')[0] || 'there'}
               </h1>
-              <p className="text-slate-500 mt-1">Here's what's happening with your pipeline</p>
+              <p className="text-slate-500 dark:text-slate-400 mt-1">Here's what's happening with your pipeline</p>
             </div>
             <Link to="/pipeline">
               <Button className="bg-ocean-600 hover:bg-ocean-700 text-white font-semibold rounded-xl shadow-lg shadow-ocean-600/20 transition-all">
@@ -184,64 +184,68 @@ const Dashboard = () => {
           {/* Top Metrics Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <Card className="p-6">
+              <GlassCard className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-ocean-100 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-ocean-600" />
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-ocean-500/20' : 'bg-ocean-100'}`}>
+                    <TrendingUp className={`w-6 h-6 ${theme === 'dark' ? 'text-ocean-400' : 'text-ocean-600'}`} />
                   </div>
-                  <Badge className="bg-emerald-100 text-emerald-700 border-0">
+                  <Badge className={`border-0 ${theme === 'dark' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'}`}>
                     {metrics?.total_opportunities || 0} deals
                   </Badge>
                 </div>
-                <p className="text-slate-500 text-sm mb-1">Total Pipeline</p>
-                <p className="text-2xl font-bold text-slate-800">{formatCurrency(metrics?.total_value)}</p>
-              </Card>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Total Pipeline</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{formatCurrency(metrics?.total_value)}</p>
+              </GlassCard>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-              <Card className="p-6">
+              <GlassCard className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                    <Target className="w-6 h-6 text-amber-600" />
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${theme === 'dark' ? 'bg-amber-500/20' : 'bg-amber-100'}`}>
+                    <Target className={`w-6 h-6 ${theme === 'dark' ? 'text-amber-400' : 'text-amber-600'}`} />
                   </div>
                 </div>
-                <p className="text-slate-500 text-sm mb-1">Avg Confidence</p>
-                <p className="text-2xl font-bold text-slate-800">{metrics?.avg_confidence || 0}%</p>
-              </Card>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Avg Confidence</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{metrics?.avg_confidence || 0}%</p>
+              </GlassCard>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <Card className={`p-6 ${metrics?.overdue_activities > 0 ? 'ring-2 ring-red-200' : ''}`}>
+              <GlassCard className={`p-6 ${metrics?.overdue_activities > 0 ? (theme === 'dark' ? 'ring-2 ring-red-500/50' : 'ring-2 ring-red-200') : ''}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    metrics?.overdue_activities > 0 ? 'bg-red-100' : 'bg-slate-100'
+                    metrics?.overdue_activities > 0 
+                      ? (theme === 'dark' ? 'bg-red-500/20' : 'bg-red-100') 
+                      : (theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100')
                   }`}>
-                    <Clock className={`w-6 h-6 ${metrics?.overdue_activities > 0 ? 'text-red-600' : 'text-slate-500'}`} />
+                    <Clock className={`w-6 h-6 ${metrics?.overdue_activities > 0 ? (theme === 'dark' ? 'text-red-400' : 'text-red-600') : 'text-slate-500'}`} />
                   </div>
                   {metrics?.overdue_activities > 0 && (
-                    <Badge className="bg-red-100 text-red-700 border-0">Action Needed</Badge>
+                    <Badge className={`border-0 ${theme === 'dark' ? 'bg-red-500/20 text-red-400' : 'bg-red-100 text-red-700'}`}>Action Needed</Badge>
                   )}
                 </div>
-                <p className="text-slate-500 text-sm mb-1">Overdue Activities</p>
-                <p className="text-2xl font-bold text-slate-800">{metrics?.overdue_activities || 0}</p>
-              </Card>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">Overdue Activities</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{metrics?.overdue_activities || 0}</p>
+              </GlassCard>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-              <Card className={`p-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'ring-2 ring-amber-200' : ''}`}>
+              <GlassCard className={`p-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? (theme === 'dark' ? 'ring-2 ring-amber-500/50' : 'ring-2 ring-amber-200') : ''}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    (metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'bg-amber-100' : 'bg-slate-100'
+                    (metrics?.at_risk_opportunities > 0 || atRiskClients > 0) 
+                      ? (theme === 'dark' ? 'bg-amber-500/20' : 'bg-amber-100') 
+                      : (theme === 'dark' ? 'bg-slate-700' : 'bg-slate-100')
                   }`}>
-                    <AlertTriangle className={`w-6 h-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'text-amber-600' : 'text-slate-500'}`} />
+                    <AlertTriangle className={`w-6 h-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? (theme === 'dark' ? 'text-amber-400' : 'text-amber-600') : 'text-slate-500'}`} />
                   </div>
                   {atRiskClients > 0 && (
-                    <Badge className="bg-rose-100 text-rose-700 border-0">{atRiskClients} clients</Badge>
+                    <Badge className={`border-0 ${theme === 'dark' ? 'bg-rose-500/20 text-rose-400' : 'bg-rose-100 text-rose-700'}`}>{atRiskClients} clients</Badge>
                   )}
                 </div>
-                <p className="text-slate-500 text-sm mb-1">At-Risk Deals</p>
-                <p className="text-2xl font-bold text-slate-800">{metrics?.at_risk_opportunities || 0}</p>
-              </Card>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mb-1">At-Risk Deals</p>
+                <p className="text-2xl font-bold text-slate-800 dark:text-white">{metrics?.at_risk_opportunities || 0}</p>
+              </GlassCard>
             </motion.div>
           </div>
 
