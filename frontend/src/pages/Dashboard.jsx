@@ -263,7 +263,7 @@ const Dashboard = () => {
                 </div>
                 <p className="text-slate-500 text-sm mb-1">Won (Closed)</p>
                 <p className="text-2xl font-bold text-emerald-600">{formatCurrency(reportsSummary?.won?.value)}</p>
-              </Card>
+              </GlassCard>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
@@ -278,7 +278,7 @@ const Dashboard = () => {
                 </div>
                 <p className="text-slate-500 text-sm mb-1">Lost (Closed)</p>
                 <p className="text-2xl font-bold text-rose-600">{formatCurrency(reportsSummary?.lost?.value)}</p>
-              </Card>
+              </GlassCard>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
@@ -293,7 +293,7 @@ const Dashboard = () => {
                 </div>
                 <p className="text-slate-500 text-sm mb-1">Active (Closed Won)</p>
                 <p className="text-2xl font-bold text-green-600">{formatCurrency(reportsSummary?.active?.value)}</p>
-              </Card>
+              </GlassCard>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
@@ -308,7 +308,7 @@ const Dashboard = () => {
                 </div>
                 <p className="text-slate-500 text-sm mb-1">Pipeline (Open)</p>
                 <p className="text-2xl font-bold text-blue-600">{formatCurrency(reportsSummary?.pipeline?.value)}</p>
-              </Card>
+              </GlassCard>
             </motion.div>
           </div>
 
@@ -350,7 +350,7 @@ const Dashboard = () => {
                     })
                   )}
                 </div>
-              </Card>
+              </GlassCard>
             </motion.div>
 
             {/* Top Opportunities by Client */}
@@ -402,7 +402,7 @@ const Dashboard = () => {
                     ))
                   )}
                 </div>
-              </Card>
+              </GlassCard>
             </motion.div>
           </div>
         </motion.div>
