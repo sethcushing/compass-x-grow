@@ -462,12 +462,12 @@ const OrganizationDetail = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-slate-50">
+      <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-slate-950 gradient-mesh' : 'bg-slate-50'}`}>
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 w-48 bg-slate-200 rounded"></div>
-            <div className="h-64 bg-slate-200 rounded-xl"></div>
+            <div className={`h-8 w-48 rounded ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`}></div>
+            <div className={`h-64 rounded-xl ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-200'}`}></div>
           </div>
         </main>
       </div>
@@ -476,17 +476,17 @@ const OrganizationDetail = () => {
 
   if (!organization) {
     return (
-      <div className="flex min-h-screen bg-slate-50">
+      <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-slate-950' : 'bg-slate-50'}`}>
         <Sidebar />
         <main className="flex-1 p-8">
-          <p className="text-slate-500">Client not found</p>
+          <p className="text-slate-500 dark:text-slate-400">Client not found</p>
         </main>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className={`flex min-h-screen ${theme === 'dark' ? 'bg-slate-950 gradient-mesh' : 'bg-slate-50'}`}>
       <Sidebar />
       <main className="flex-1 p-8 overflow-auto">
         <motion.div
@@ -500,7 +500,7 @@ const OrganizationDetail = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate('/organizations')}
-              className="rounded-full"
+              className="rounded-full text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Clients
@@ -508,11 +508,13 @@ const OrganizationDetail = () => {
           </div>
 
           {/* Client Details */}
-          <Card className="border-slate-200 shadow-soft mb-6">
+          <GlassCard className="mb-6" glow>
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-ocean-100 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-8 h-8 text-ocean-600" />
+                <div className={`w-16 h-16 rounded-xl flex items-center justify-center ${
+                  theme === 'dark' ? 'bg-ocean-500/20 ring-1 ring-ocean-500/30' : 'bg-ocean-100'
+                }`}>
+                  <Building2 className={`w-8 h-8 ${theme === 'dark' ? 'text-ocean-400' : 'text-ocean-600'}`} />
                 </div>
                 <div>
                   {isEditing ? (
@@ -522,7 +524,7 @@ const OrganizationDetail = () => {
                       className="text-2xl font-heading font-semibold"
                     />
                   ) : (
-                    <h1 className="text-2xl font-heading font-semibold text-slate-900">
+                    <h1 className="text-2xl font-heading font-semibold text-slate-900 dark:text-white">
                       {organization.name}
                     </h1>
                   )}
@@ -531,12 +533,12 @@ const OrganizationDetail = () => {
                       {getStatusLabel(organization.strategic_tier)}
                     </Badge>
                     {organization.is_at_risk && (
-                      <Badge className="bg-rose-100 text-rose-700 flex items-center gap-1">
+                      <Badge className="bg-rose-100 dark:bg-rose-500/20 text-rose-700 dark:text-rose-400 flex items-center gap-1">
                         <AlertTriangle className="w-3 h-3" />
                         At Risk
                       </Badge>
                     )}
-                    <span className="text-sm text-slate-500">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">
                       Owner: {getOwnerName(organization.owner_id)}
                     </span>
                   </div>
@@ -559,7 +561,7 @@ const OrganizationDetail = () => {
                         setIsEditing(false);
                         setEditData(organization);
                       }}
-                      className="rounded-full"
+                      className="rounded-full dark:border-slate-700 dark:text-slate-300"
                     >
                       <X className="w-4 h-4 mr-2" /> Cancel
                     </Button>
@@ -570,7 +572,7 @@ const OrganizationDetail = () => {
                       data-testid="edit-org-btn"
                       variant="outline"
                       onClick={() => setIsEditing(true)}
-                      className="rounded-full"
+                      className="rounded-full dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                     >
                       <Edit2 className="w-4 h-4 mr-2" /> Edit
                     </Button>
@@ -578,7 +580,7 @@ const OrganizationDetail = () => {
                       data-testid="delete-org-btn"
                       variant="outline"
                       onClick={handleDelete}
-                      className="rounded-full text-red-600 hover:bg-red-50"
+                      className="rounded-full text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 dark:border-slate-700"
                     >
                       <Trash2 className="w-4 h-4 mr-2" /> Delete
                     </Button>
@@ -592,12 +594,12 @@ const OrganizationDetail = () => {
               <div className="px-6 pb-4">
                 <div className="grid grid-cols-6 gap-4">
                   {/* Buyer */}
-                  <div className="p-4 bg-slate-50 rounded-xl">
+                  <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-slate-800/50 border border-slate-700/50' : 'bg-slate-50'}`}>
                     <p className="text-xs font-medium text-slate-400 uppercase mb-2">Buyer</p>
                     {orgSummary.buyer ? (
                       <div>
-                        <p className="font-semibold text-slate-900">{orgSummary.buyer.name}</p>
-                        <p className="text-sm text-slate-500">{orgSummary.buyer.buying_role}</p>
+                        <p className="font-semibold text-slate-900 dark:text-white">{orgSummary.buyer.name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">{orgSummary.buyer.buying_role}</p>
                       </div>
                     ) : (
                       <p className="text-sm text-slate-400 italic">Not identified</p>
@@ -605,15 +607,15 @@ const OrganizationDetail = () => {
                   </div>
                   
                   {/* Deals */}
-                  <div className="p-4 bg-emerald-50 rounded-xl">
-                    <p className="text-xs font-medium text-emerald-600 uppercase mb-2">Deals</p>
-                    <p className="text-2xl font-bold text-emerald-700">{orgSummary.opportunities.count}</p>
+                  <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-emerald-50'}`}>
+                    <p className={`text-xs font-medium uppercase mb-2 ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-600'}`}>Deals</p>
+                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-emerald-400' : 'text-emerald-700'}`}>{orgSummary.opportunities.count}</p>
                   </div>
                   
                   {/* Total Value */}
-                  <div className="p-4 bg-ocean-50 rounded-xl" data-testid="client-total-value">
-                    <p className="text-xs font-medium text-ocean-600 uppercase mb-2">Total Value</p>
-                    <p className="text-2xl font-bold text-ocean-700">
+                  <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-ocean-500/10 border border-ocean-500/20' : 'bg-ocean-50'}`} data-testid="client-total-value">
+                    <p className={`text-xs font-medium uppercase mb-2 ${theme === 'dark' ? 'text-ocean-400' : 'text-ocean-600'}`}>Total Value</p>
+                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-ocean-400' : 'text-ocean-700'}`}>
                       ${orgSummary.opportunities.total_value >= 1000000 
                         ? `${(orgSummary.opportunities.total_value / 1000000).toFixed(2)}M`
                         : orgSummary.opportunities.total_value >= 1000 
