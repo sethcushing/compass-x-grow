@@ -288,9 +288,15 @@ const Settings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900 flex">
+      {/* Background effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-ocean-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+      </div>
+      
       <Sidebar activePage="settings" />
-      <main className="flex-1 p-8 overflow-auto">
+      <main className="flex-1 p-8 overflow-auto relative">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -298,38 +304,38 @@ const Settings = () => {
         >
           {/* Header */}
           <div>
-            <h1 className="text-2xl font-heading font-semibold text-slate-900">Settings</h1>
-            <p className="text-slate-500 mt-1">Manage your account and preferences</p>
+            <h1 className="text-2xl font-bold text-white">Settings</h1>
+            <p className="text-white/50 mt-1">Manage your account and preferences</p>
           </div>
 
           {/* Profile Card */}
-          <Card className="border-slate-200 shadow-soft" data-testid="profile-card">
+          <Card className="bg-white/5 backdrop-blur-xl border-white/10" data-testid="profile-card">
             <CardHeader>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-ocean-100 rounded-xl flex items-center justify-center">
-                  <User className="w-5 h-5 text-ocean-600" />
+                <div className="w-10 h-10 bg-gradient-to-br from-ocean-400/20 to-ocean-600/10 rounded-xl flex items-center justify-center">
+                  <User className="w-5 h-5 text-ocean-400" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg">Profile</CardTitle>
-                  <CardDescription>Your account information</CardDescription>
+                  <CardTitle className="text-lg text-white">Profile</CardTitle>
+                  <CardDescription className="text-white/50">Your account information</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-slate-500 text-sm">Name</Label>
-                  <p className="font-medium text-slate-900">{user?.name}</p>
+                  <Label className="text-white/50 text-sm">Name</Label>
+                  <p className="font-medium text-white">{user?.name}</p>
                 </div>
                 <div>
-                  <Label className="text-slate-500 text-sm">Email</Label>
-                  <p className="font-medium text-slate-900">{user?.email}</p>
+                  <Label className="text-white/50 text-sm">Email</Label>
+                  <p className="font-medium text-white">{user?.email}</p>
                 </div>
               </div>
               <div>
-                <Label className="text-slate-500 text-sm">Role</Label>
+                <Label className="text-white/50 text-sm">Role</Label>
                 <div className="mt-1">
-                  <Badge className={user?.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-ocean-100 text-ocean-700'}>
+                  <Badge className={user?.role === 'admin' ? 'bg-purple-500/20 text-purple-400 border-0' : 'bg-ocean-500/20 text-ocean-400 border-0'}>
                     {user?.role === 'admin' ? <Shield className="w-3 h-3 mr-1" /> : null}
                     {user?.role === 'admin' ? 'Administrator' : 'Sales Lead'}
                   </Badge>
