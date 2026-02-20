@@ -19,7 +19,7 @@ code {
     font-family: 'JetBrains Mono', source-code-pro, Menlo, Monaco, Consolas, monospace;
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar - Light Mode */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -36,6 +36,19 @@ code {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #94A3B8;
+}
+
+/* Dark Mode Scrollbar */
+.dark ::-webkit-scrollbar-track {
+    background: #1E293B;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #475569;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #64748B;
 }
 
 @layer base {
@@ -66,6 +79,33 @@ code {
         --chart-5: 27 96% 49%;
         --radius: 0.75rem;
     }
+
+    .dark {
+        --background: 222 47% 11%;
+        --foreground: 210 40% 98%;
+        --card: 222 47% 14%;
+        --card-foreground: 210 40% 98%;
+        --popover: 222 47% 14%;
+        --popover-foreground: 210 40% 98%;
+        --primary: 197 75% 60%;
+        --primary-foreground: 222 47% 11%;
+        --secondary: 217 33% 25%;
+        --secondary-foreground: 210 40% 98%;
+        --muted: 217 33% 17%;
+        --muted-foreground: 215 20% 65%;
+        --accent: 43 96% 51%;
+        --accent-foreground: 222 47% 11%;
+        --destructive: 0 84% 60%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 217 33% 25%;
+        --input: 217 33% 25%;
+        --ring: 197 75% 60%;
+        --chart-1: 197 75% 60%;
+        --chart-2: 195 74% 44%;
+        --chart-3: 200 85% 40%;
+        --chart-4: 43 96% 51%;
+        --chart-5: 27 96% 49%;
+    }
 }
 
 @layer base {
@@ -75,6 +115,34 @@ code {
     body {
         @apply bg-background text-foreground;
     }
+}
+
+/* Glassmorphic Cards */
+.glass-card {
+    @apply bg-white/80 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10;
+}
+
+.glass-card-dark {
+    @apply bg-slate-900/80 backdrop-blur-xl border border-white/10;
+}
+
+/* Gradient backgrounds */
+.gradient-mesh {
+    background: 
+        radial-gradient(at 40% 20%, hsla(197, 75%, 60%, 0.15) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, hsla(43, 96%, 51%, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, hsla(200, 85%, 25%, 0.1) 0px, transparent 50%),
+        radial-gradient(at 80% 50%, hsla(197, 75%, 73%, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, hsla(200, 85%, 25%, 0.1) 0px, transparent 50%);
+}
+
+.dark .gradient-mesh {
+    background: 
+        radial-gradient(at 40% 20%, hsla(197, 75%, 60%, 0.08) 0px, transparent 50%),
+        radial-gradient(at 80% 0%, hsla(43, 96%, 51%, 0.05) 0px, transparent 50%),
+        radial-gradient(at 0% 50%, hsla(200, 85%, 40%, 0.06) 0px, transparent 50%),
+        radial-gradient(at 80% 50%, hsla(197, 75%, 73%, 0.05) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, hsla(200, 85%, 40%, 0.06) 0px, transparent 50%);
 }
 
 /* Kanban specific styles */
@@ -94,6 +162,10 @@ code {
     padding: 1rem;
 }
 
+.dark .kanban-column {
+    background: rgba(30, 41, 59, 0.5);
+}
+
 .kanban-card {
     background: white;
     border: 1px solid #E2E8F0;
@@ -104,9 +176,18 @@ code {
     transition: all 0.2s ease;
 }
 
+.dark .kanban-card {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
 .kanban-card:hover {
     box-shadow: 0 4px 20px -2px rgba(2, 48, 71, 0.1);
     transform: translateY(-2px);
+}
+
+.dark .kanban-card:hover {
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
 }
 
 .kanban-card.dragging {
@@ -135,11 +216,20 @@ code {
     padding: 1rem;
 }
 
+.dark .ai-response {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(251, 191, 36, 0.05) 100%);
+    border-color: rgba(251, 191, 36, 0.3);
+}
+
 /* Glass effect */
 .glass {
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass {
+    background: rgba(15, 23, 42, 0.8);
 }
 
 /* Animation classes */
@@ -158,6 +248,15 @@ code {
 .stagger-3 { animation-delay: 0.3s; }
 .stagger-4 { animation-delay: 0.4s; }
 .stagger-5 { animation-delay: 0.5s; }
+
+/* Glow effects for dark mode */
+.dark .glow-primary {
+    box-shadow: 0 0 20px rgba(142, 202, 230, 0.15);
+}
+
+.dark .glow-accent {
+    box-shadow: 0 0 20px rgba(255, 183, 3, 0.15);
+}
 
 @layer base {
     [data-debug-wrapper="true"] {
