@@ -78,47 +78,47 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-3 mb-2 transition-all hover:bg-white/10 ${isDragging ? 'opacity-50 scale-105' : ''} ${
-        status === 'at-risk' ? 'ring-1 ring-amber-500/50' : ''
+      className={`bg-white border border-slate-200 rounded-xl p-3 mb-2 transition-all hover:shadow-md hover:border-slate-300 ${isDragging ? 'opacity-50 scale-105 shadow-lg' : ''} ${
+        status === 'at-risk' ? 'ring-2 ring-amber-200' : ''
       }`}
     >
       <div className="flex items-start gap-2">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab p-1 hover:bg-white/10 rounded"
+          className="cursor-grab p-1 hover:bg-slate-100 rounded"
         >
-          <GripVertical className="w-4 h-4 text-white/40" />
+          <GripVertical className="w-4 h-4 text-slate-400" />
         </div>
         <div className="flex-1 min-w-0">
           <Link to={`/opportunities/${opportunity.opp_id}`}>
-            <h4 className="font-medium text-sm text-white hover:text-secondary truncate transition-colors">
+            <h4 className="font-medium text-sm text-slate-700 hover:text-ocean-600 truncate transition-colors">
               {opportunity.name}
             </h4>
           </Link>
           <div className="flex items-center gap-1 mt-1">
-            <Building2 className="w-3 h-3 text-white/40" />
-            <span className="text-xs text-white/50 truncate">{org?.name || 'Unknown'}</span>
+            <Building2 className="w-3 h-3 text-slate-400" />
+            <span className="text-xs text-slate-500 truncate">{org?.name || 'Unknown'}</span>
           </div>
           <div className="flex items-center gap-1 mt-1">
-            <User className="w-3 h-3 text-white/40" />
-            <span className="text-xs text-white/50 truncate">{owner?.name || 'Unassigned'}</span>
+            <User className="w-3 h-3 text-slate-400" />
+            <span className="text-xs text-slate-500 truncate">{owner?.name || 'Unassigned'}</span>
           </div>
         </div>
         
         {/* Actions Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-white/10">
-              <MoreHorizontal className="w-4 h-4 text-white/40" />
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-slate-100">
+              <MoreHorizontal className="w-4 h-4 text-slate-400" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-slate-800 border-white/10">
+          <DropdownMenuContent align="end" className="bg-white border-slate-200">
             {opportunity.is_at_risk ? (
               <DropdownMenuItem
                 data-testid={`clear-at-risk-${opportunity.opp_id}`}
                 onClick={() => onToggleAtRisk(opportunity, false)}
-                className="text-emerald-400 focus:bg-white/10 focus:text-emerald-400"
+                className="text-emerald-600 focus:bg-emerald-50 focus:text-emerald-700"
               >
                 <ShieldCheck className="w-4 h-4 mr-2" />
                 Clear At-Risk Status
@@ -127,7 +127,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
               <DropdownMenuItem
                 data-testid={`mark-at-risk-${opportunity.opp_id}`}
                 onClick={() => onToggleAtRisk(opportunity, true)}
-                className="text-amber-400 focus:bg-white/10 focus:text-amber-400"
+                className="text-amber-600 focus:bg-amber-50 focus:text-amber-700"
               >
                 <ShieldAlert className="w-4 h-4 mr-2" />
                 Mark as At-Risk
@@ -139,21 +139,21 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
       
       <div className="mt-3 flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <DollarSign className="w-3 h-3 text-secondary" />
-          <span className="text-sm font-medium text-white">
+          <DollarSign className="w-3 h-3 text-ocean-600" />
+          <span className="text-sm font-medium text-slate-700">
             {new Intl.NumberFormat('en-US', {
               notation: 'compact',
               maximumFractionDigits: 1
             }).format(opportunity.calculated_value || opportunity.estimated_value || 0)}
           </span>
         </div>
-        <Badge className="text-xs bg-white/10 text-white/70 border-0">
+        <Badge className="text-xs bg-slate-100 text-slate-600 border-0">
           {opportunity.confidence_level}%
         </Badge>
       </div>
 
       {opportunity.is_at_risk && (
-        <div className="mt-2 flex items-center gap-1 text-amber-400">
+        <div className="mt-2 flex items-center gap-1 text-amber-600">
           <AlertTriangle className="w-3 h-3" />
           <span className="text-xs truncate" title={opportunity.at_risk_reason || 'At Risk'}>
             {opportunity.at_risk_reason || 'At Risk'}
@@ -162,7 +162,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
       )}
       
       {opportunity.target_close_date && (
-        <div className="mt-2 flex items-center gap-1 text-white/40">
+        <div className="mt-2 flex items-center gap-1 text-slate-400">
           <Calendar className="w-3 h-3" />
           <span className="text-xs">
             {new Date(opportunity.target_close_date).toLocaleDateString('en-US', { 
@@ -181,15 +181,15 @@ const KanbanColumn = ({ stage, opportunities, organizations, users, onToggleAtRi
   const totalValue = opportunities.reduce((sum, o) => sum + (o.estimated_value || 0), 0);
   
   return (
-    <div className="w-80 flex-shrink-0 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
+    <div className="w-80 flex-shrink-0 bg-slate-100 border border-slate-200 rounded-2xl p-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-white text-sm">{stage.name}</h3>
-          <p className="text-xs text-white/40 mt-0.5">
+          <h3 className="font-semibold text-slate-700 text-sm">{stage.name}</h3>
+          <p className="text-xs text-slate-500 mt-0.5">
             {opportunities.length} deals · ${(totalValue / 1000).toFixed(0)}K
           </p>
         </div>
-        <Badge className="bg-secondary/20 text-secondary border-0">
+        <Badge className="bg-ocean-100 text-ocean-700 border-0">
           {stage.win_probability}%
         </Badge>
       </div>
@@ -309,12 +309,10 @@ const Pipeline = () => {
   // Handle at-risk toggle
   const handleToggleAtRisk = (opportunity, markAsAtRisk) => {
     if (markAsAtRisk) {
-      // Open dialog to get reason
       setSelectedOppForRisk(opportunity);
       setAtRiskReason('');
       setAtRiskDialogOpen(true);
     } else {
-      // Clear at-risk status directly
       updateAtRiskStatus(opportunity.opp_id, false, null);
     }
   };
@@ -361,21 +359,16 @@ const Pipeline = () => {
     
     if (!over) return;
     
-    // Find the opportunity being dragged
     const draggedOpp = opportunities.find(o => o.opp_id === active.id);
     if (!draggedOpp) return;
     
-    // Find which stage the card was dropped in
-    // The over.id could be another card or a droppable area
     let targetStageId = null;
     
-    // Check if dropped on another opportunity
     const targetOpp = opportunities.find(o => o.opp_id === over.id);
     if (targetOpp) {
       targetStageId = targetOpp.stage_id;
     }
     
-    // If no stage change, do nothing
     if (!targetStageId || targetStageId === draggedOpp.stage_id) return;
     
     try {
@@ -388,7 +381,6 @@ const Pipeline = () => {
       
       if (!response.ok) throw new Error('Failed to update');
       
-      // Update local state
       setOpportunities(prev => prev.map(o => 
         o.opp_id === active.id ? { ...o, stage_id: targetStageId } : o
       ));
@@ -446,14 +438,14 @@ const Pipeline = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900">
+      <div className="flex min-h-screen bg-slate-50">
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="animate-pulse">
-            <div className="h-8 w-48 bg-white/10 rounded mb-6"></div>
+            <div className="h-8 w-48 bg-slate-200 rounded mb-6"></div>
             <div className="flex gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-80 h-96 bg-white/5 rounded-xl"></div>
+                <div key={i} className="w-80 h-96 bg-slate-100 rounded-xl"></div>
               ))}
             </div>
           </div>
@@ -463,32 +455,26 @@ const Pipeline = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900">
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-ocean-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-      </div>
-      
+    <div className="flex min-h-screen bg-slate-50">
       <Sidebar />
-      <main className="flex-1 overflow-hidden relative">
+      <main className="flex-1 overflow-hidden">
         {/* Header */}
-        <div className="bg-slate-900/50 backdrop-blur-xl border-b border-white/10 px-8 py-4 flex items-center justify-between">
+        <div className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div>
-              <h1 className="text-2xl font-bold text-white">Sales Pipeline</h1>
-              <p className="text-sm text-white/50">Drag deals between stages to update progress</p>
+              <h1 className="text-2xl font-bold text-slate-800">Sales Pipeline</h1>
+              <p className="text-sm text-slate-500">Drag deals between stages to update progress</p>
             </div>
             
             {/* View Toggle */}
-            <div className="flex items-center bg-white/10 backdrop-blur rounded-full p-1">
+            <div className="flex items-center bg-slate-100 rounded-full p-1">
               <button
                 data-testid="pipeline-view-all"
                 onClick={() => setViewMode('all')}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   viewMode === 'all' 
-                    ? 'bg-white/20 text-white' 
-                    : 'text-white/50 hover:text-white'
+                    ? 'bg-white text-slate-800 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 All
@@ -498,8 +484,8 @@ const Pipeline = () => {
                 onClick={() => setViewMode('mine')}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   viewMode === 'mine' 
-                    ? 'bg-white/20 text-white' 
-                    : 'text-white/50 hover:text-white'
+                    ? 'bg-white text-slate-800 shadow-sm' 
+                    : 'text-slate-500 hover:text-slate-700'
                 }`}
               >
                 My
@@ -509,29 +495,29 @@ const Pipeline = () => {
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button data-testid="create-opportunity-btn" className="bg-gradient-to-r from-secondary to-yellow-400 text-slate-900 font-semibold rounded-full hover:shadow-lg hover:shadow-secondary/25">
+              <Button data-testid="create-opportunity-btn" className="bg-ocean-600 hover:bg-ocean-700 text-white font-semibold rounded-full shadow-lg shadow-ocean-600/20">
                 <Plus className="w-4 h-4 mr-2" /> New Opportunity
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg bg-slate-900 border-white/10 text-white">
+            <DialogContent className="sm:max-w-lg bg-white">
               <DialogHeader>
-                <DialogTitle className="font-bold text-white">Create Opportunity</DialogTitle>
+                <DialogTitle className="font-bold text-slate-800">Create Opportunity</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div>
-                  <Label htmlFor="opp-name" className="text-white/70">Opportunity Name *</Label>
+                  <Label htmlFor="opp-name" className="text-slate-600">Opportunity Name *</Label>
                   <Input
                     id="opp-name"
                     data-testid="opp-name-input"
                     value={newOpp.name}
                     onChange={(e) => setNewOpp(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="e.g., Acme Data Platform Modernization"
-                    className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                    className="mt-1"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="opp-org" className="text-white/70">Organization *</Label>
+                  <Label htmlFor="opp-org" className="text-slate-600">Organization *</Label>
                   <Select
                     value={newOpp.org_id}
                     onValueChange={(value) => setNewOpp(prev => ({ ...prev, org_id: value }))}
@@ -550,7 +536,7 @@ const Pipeline = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="opp-owner">Owner *</Label>
+                  <Label htmlFor="opp-owner" className="text-slate-600">Owner *</Label>
                   <Select
                     value={newOpp.owner_id}
                     onValueChange={(value) => setNewOpp(prev => ({ ...prev, owner_id: value }))}
@@ -570,7 +556,7 @@ const Pipeline = () => {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="opp-type">Engagement Type</Label>
+                    <Label htmlFor="opp-type" className="text-slate-600">Engagement Type</Label>
                     <Select
                       value={newOpp.engagement_type}
                       onValueChange={(value) => setNewOpp(prev => ({ ...prev, engagement_type: value }))}
@@ -590,7 +576,7 @@ const Pipeline = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="opp-stage">Initial Stage</Label>
+                    <Label htmlFor="opp-stage" className="text-slate-600">Initial Stage</Label>
                     <Select
                       value={newOpp.stage_id}
                       onValueChange={(value) => setNewOpp(prev => ({ ...prev, stage_id: value }))}
@@ -610,7 +596,7 @@ const Pipeline = () => {
                 </div>
                 
                 <div>
-                  <Label htmlFor="opp-confidence">Confidence (%)</Label>
+                  <Label htmlFor="opp-confidence" className="text-slate-600">Confidence (%)</Label>
                   <Input
                     id="opp-confidence"
                     data-testid="opp-confidence-input"
@@ -619,14 +605,14 @@ const Pipeline = () => {
                     max="100"
                     value={newOpp.confidence_level}
                     onChange={(e) => setNewOpp(prev => ({ ...prev, confidence_level: parseInt(e.target.value) || 0 }))}
-                    className="mt-1 bg-white/5 border-white/10 text-white"
+                    className="mt-1"
                   />
                 </div>
                 
                 <Button
                   data-testid="submit-opportunity-btn"
                   onClick={handleCreateOpp}
-                  className="w-full bg-gradient-to-r from-secondary to-yellow-400 text-slate-900 font-semibold rounded-full hover:shadow-lg"
+                  className="w-full bg-ocean-600 hover:bg-ocean-700 text-white font-semibold rounded-full"
                 >
                   Create Opportunity
                 </Button>
@@ -659,8 +645,8 @@ const Pipeline = () => {
           
           <DragOverlay>
             {activeOpp && (
-              <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-3 shadow-2xl rotate-3">
-                <h4 className="font-medium text-sm text-white">{activeOpp.name}</h4>
+              <div className="bg-white border border-slate-300 rounded-xl p-3 shadow-2xl rotate-3">
+                <h4 className="font-medium text-sm text-slate-700">{activeOpp.name}</h4>
               </div>
             )}
           </DragOverlay>
@@ -668,28 +654,28 @@ const Pipeline = () => {
         
         {/* At-Risk Dialog */}
         <Dialog open={atRiskDialogOpen} onOpenChange={setAtRiskDialogOpen}>
-          <DialogContent className="sm:max-w-md bg-slate-900 border-white/10">
+          <DialogContent className="sm:max-w-md bg-white">
             <DialogHeader>
-              <DialogTitle className="font-bold text-white flex items-center gap-2">
+              <DialogTitle className="font-bold text-slate-800 flex items-center gap-2">
                 <AlertTriangle className="w-5 h-5 text-amber-500" />
                 Mark as At-Risk
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4 mt-4">
-              <div className="p-3 bg-white/5 rounded-lg">
-                <p className="text-sm text-white/70">
-                  <strong className="text-white">{selectedOppForRisk?.name}</strong>
+              <div className="p-3 bg-slate-50 rounded-lg">
+                <p className="text-sm text-slate-600">
+                  <strong className="text-slate-800">{selectedOppForRisk?.name}</strong>
                 </p>
               </div>
               <div>
-                <Label htmlFor="at-risk-reason" className="text-white/70">Reason for At-Risk Status *</Label>
+                <Label htmlFor="at-risk-reason" className="text-slate-600">Reason for At-Risk Status *</Label>
                 <Textarea
                   id="at-risk-reason"
                   data-testid="at-risk-reason-input"
                   value={atRiskReason}
                   onChange={(e) => setAtRiskReason(e.target.value)}
                   placeholder="e.g., Budget concerns, Decision maker left, Competitor threat..."
-                  className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
+                  className="mt-1"
                   rows={3}
                 />
               </div>
@@ -698,7 +684,7 @@ const Pipeline = () => {
               <Button
                 variant="outline"
                 onClick={() => setAtRiskDialogOpen(false)}
-                className="rounded-full border-white/20 text-white hover:bg-white/10"
+                className="rounded-full"
               >
                 Cancel
               </Button>
