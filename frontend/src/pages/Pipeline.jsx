@@ -446,14 +446,14 @@ const Pipeline = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-slate-50">
+      <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900">
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="animate-pulse">
-            <div className="h-8 w-48 bg-slate-200 rounded mb-6"></div>
+            <div className="h-8 w-48 bg-white/10 rounded mb-6"></div>
             <div className="flex gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-80 h-96 bg-slate-200 rounded-xl"></div>
+                <div key={i} className="w-80 h-96 bg-white/5 rounded-xl"></div>
               ))}
             </div>
           </div>
@@ -463,26 +463,32 @@ const Pipeline = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900">
+      {/* Background effects */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-ocean-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
+      </div>
+      
       <Sidebar />
-      <main className="flex-1 overflow-hidden">
+      <main className="flex-1 overflow-hidden relative">
         {/* Header */}
-        <div className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+        <div className="bg-slate-900/50 backdrop-blur-xl border-b border-white/10 px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div>
-              <h1 className="text-2xl font-heading font-semibold text-slate-900">Sales Pipeline</h1>
-              <p className="text-sm text-slate-500">Drag deals between stages to update progress</p>
+              <h1 className="text-2xl font-bold text-white">Sales Pipeline</h1>
+              <p className="text-sm text-white/50">Drag deals between stages to update progress</p>
             </div>
             
             {/* View Toggle */}
-            <div className="flex items-center bg-slate-100 rounded-full p-1">
+            <div className="flex items-center bg-white/10 backdrop-blur rounded-full p-1">
               <button
                 data-testid="pipeline-view-all"
                 onClick={() => setViewMode('all')}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   viewMode === 'all' 
-                    ? 'bg-white text-slate-900 shadow-sm' 
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white/20 text-white' 
+                    : 'text-white/50 hover:text-white'
                 }`}
               >
                 All
@@ -492,8 +498,8 @@ const Pipeline = () => {
                 onClick={() => setViewMode('mine')}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   viewMode === 'mine' 
-                    ? 'bg-white text-slate-900 shadow-sm' 
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white/20 text-white' 
+                    : 'text-white/50 hover:text-white'
                 }`}
               >
                 My
@@ -503,29 +509,29 @@ const Pipeline = () => {
           
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button data-testid="create-opportunity-btn" className="bg-ocean-950 hover:bg-ocean-900 rounded-full">
+              <Button data-testid="create-opportunity-btn" className="bg-gradient-to-r from-secondary to-yellow-400 text-slate-900 font-semibold rounded-full hover:shadow-lg hover:shadow-secondary/25">
                 <Plus className="w-4 h-4 mr-2" /> New Opportunity
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
+            <DialogContent className="sm:max-w-lg bg-slate-900 border-white/10 text-white">
               <DialogHeader>
-                <DialogTitle className="font-heading">Create Opportunity</DialogTitle>
+                <DialogTitle className="font-bold text-white">Create Opportunity</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div>
-                  <Label htmlFor="opp-name">Opportunity Name *</Label>
+                  <Label htmlFor="opp-name" className="text-white/70">Opportunity Name *</Label>
                   <Input
                     id="opp-name"
                     data-testid="opp-name-input"
                     value={newOpp.name}
                     onChange={(e) => setNewOpp(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="e.g., Acme Data Platform Modernization"
-                    className="mt-1"
+                    className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="opp-org">Organization *</Label>
+                  <Label htmlFor="opp-org" className="text-white/70">Organization *</Label>
                   <Select
                     value={newOpp.org_id}
                     onValueChange={(value) => setNewOpp(prev => ({ ...prev, org_id: value }))}
