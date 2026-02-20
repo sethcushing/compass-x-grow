@@ -26,22 +26,35 @@ import { useTheme } from '@/context/ThemeContext';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const ACTIVITY_CONFIG = {
-  'Call': { icon: Phone, color: 'from-blue-50 to-blue-100', iconColor: 'text-blue-600', bgColor: 'bg-blue-100' },
-  'Email': { icon: Mail, color: 'from-purple-50 to-purple-100', iconColor: 'text-purple-600', bgColor: 'bg-purple-100' },
-  'Meeting': { icon: Video, color: 'from-emerald-50 to-emerald-100', iconColor: 'text-emerald-600', bgColor: 'bg-emerald-100' },
-  'Demo': { icon: Presentation, color: 'from-orange-50 to-orange-100', iconColor: 'text-orange-600', bgColor: 'bg-orange-100' },
-  'Workshop': { icon: Users, color: 'from-pink-50 to-pink-100', iconColor: 'text-pink-600', bgColor: 'bg-pink-100' },
-  'Discovery Session': { icon: MessageSquare, color: 'from-cyan-50 to-cyan-100', iconColor: 'text-cyan-600', bgColor: 'bg-cyan-100' },
-  'Follow-up': { icon: Clock, color: 'from-amber-50 to-amber-100', iconColor: 'text-amber-600', bgColor: 'bg-amber-100' },
-  'Exec Readout': { icon: FileText, color: 'from-indigo-50 to-indigo-100', iconColor: 'text-indigo-600', bgColor: 'bg-indigo-100' },
-  'Other': { icon: FileText, color: 'from-slate-50 to-slate-100', iconColor: 'text-slate-600', bgColor: 'bg-slate-100' }
+  'Call': { icon: Phone, color: 'from-blue-50 to-blue-100', darkColor: 'from-blue-500/10 to-blue-500/5', iconColor: 'text-blue-600', darkIconColor: 'text-blue-400', bgColor: 'bg-blue-100', darkBgColor: 'bg-blue-500/20' },
+  'Email': { icon: Mail, color: 'from-purple-50 to-purple-100', darkColor: 'from-purple-500/10 to-purple-500/5', iconColor: 'text-purple-600', darkIconColor: 'text-purple-400', bgColor: 'bg-purple-100', darkBgColor: 'bg-purple-500/20' },
+  'Meeting': { icon: Video, color: 'from-emerald-50 to-emerald-100', darkColor: 'from-emerald-500/10 to-emerald-500/5', iconColor: 'text-emerald-600', darkIconColor: 'text-emerald-400', bgColor: 'bg-emerald-100', darkBgColor: 'bg-emerald-500/20' },
+  'Demo': { icon: Presentation, color: 'from-orange-50 to-orange-100', darkColor: 'from-orange-500/10 to-orange-500/5', iconColor: 'text-orange-600', darkIconColor: 'text-orange-400', bgColor: 'bg-orange-100', darkBgColor: 'bg-orange-500/20' },
+  'Workshop': { icon: Users, color: 'from-pink-50 to-pink-100', darkColor: 'from-pink-500/10 to-pink-500/5', iconColor: 'text-pink-600', darkIconColor: 'text-pink-400', bgColor: 'bg-pink-100', darkBgColor: 'bg-pink-500/20' },
+  'Discovery Session': { icon: MessageSquare, color: 'from-cyan-50 to-cyan-100', darkColor: 'from-cyan-500/10 to-cyan-500/5', iconColor: 'text-cyan-600', darkIconColor: 'text-cyan-400', bgColor: 'bg-cyan-100', darkBgColor: 'bg-cyan-500/20' },
+  'Follow-up': { icon: Clock, color: 'from-amber-50 to-amber-100', darkColor: 'from-amber-500/10 to-amber-500/5', iconColor: 'text-amber-600', darkIconColor: 'text-amber-400', bgColor: 'bg-amber-100', darkBgColor: 'bg-amber-500/20' },
+  'Exec Readout': { icon: FileText, color: 'from-indigo-50 to-indigo-100', darkColor: 'from-indigo-500/10 to-indigo-500/5', iconColor: 'text-indigo-600', darkIconColor: 'text-indigo-400', bgColor: 'bg-indigo-100', darkBgColor: 'bg-indigo-500/20' },
+  'Other': { icon: FileText, color: 'from-slate-50 to-slate-100', darkColor: 'from-slate-500/10 to-slate-500/5', iconColor: 'text-slate-600', darkIconColor: 'text-slate-400', bgColor: 'bg-slate-100', darkBgColor: 'bg-slate-500/20' }
 };
 
-const Card = ({ children, className = '' }) => (
-  <div className={`bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow ${className}`}>
-    {children}
-  </div>
-);
+const GlassCard = ({ children, className = '' }) => {
+  const { theme } = useTheme();
+  return (
+    <div className={`
+      relative overflow-hidden rounded-2xl
+      ${theme === 'dark' 
+        ? 'bg-white/5 border border-white/10 backdrop-blur-xl' 
+        : 'bg-white border border-slate-200 shadow-sm hover:shadow-md'
+      }
+      transition-shadow ${className}
+    `}>
+      {theme === 'dark' && (
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      )}
+      <div className="relative">{children}</div>
+    </div>
+  );
+};
 
 const Dashboard = () => {
   const [data, setData] = useState(null);
