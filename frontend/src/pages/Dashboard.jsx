@@ -122,13 +122,13 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 flex">
+      <div className={`min-h-screen flex ${theme === 'dark' ? 'bg-slate-950' : 'bg-slate-50'}`}>
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-slate-200 rounded-xl w-64" />
+            <div className={`h-8 rounded-xl w-64 ${theme === 'dark' ? 'bg-slate-800' : 'bg-slate-200'}`} />
             <div className="grid grid-cols-4 gap-6">
-              {[1,2,3,4].map(i => <div key={i} className="h-32 bg-slate-100 rounded-2xl" />)}
+              {[1,2,3,4].map(i => <div key={i} className={`h-32 rounded-2xl ${theme === 'dark' ? 'bg-slate-800/50' : 'bg-slate-100'}`} />)}
             </div>
           </div>
         </main>
