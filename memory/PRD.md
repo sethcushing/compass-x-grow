@@ -30,7 +30,26 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 
 **Health Check:** `GET /api/health` - Returns database connection status
 
+**Production Setup Steps:**
+1. Deploy to Koyeb with Dockerfile
+2. Visit `/api/auth/setup-admin` to create admin user
+3. Visit `/api/seed` to load sample data
+4. Login with seth.cushing@compassx.com / CompassX2026!
+
 ## What's Been Implemented
+
+### Light Mode UI Conversion (Feb 20, 2026)
+- ✅ **Full Light Mode Conversion** - Converted entire application from dark glassmorphic theme to clean light mode
+- ✅ **Login Page** - Light background with subtle gradients, clean card design
+- ✅ **Sidebar** - White background with subtle shadows, consistent hover states
+- ✅ **Dashboard** - Light slate-50 background, clean metric cards
+- ✅ **Pipeline** - Light Kanban board with white cards
+- ✅ **Settings** - Clean light forms and user management interface
+- ✅ **All Pages** - Consistent button colors (ocean-600), light backgrounds throughout
+- ✅ **CSS Variables** - Updated to lighter color palette
+
+### Backend Error Handling (Feb 20, 2026)
+- ✅ **Global Exception Handler** - Added to ensure all errors return JSON instead of HTML
 
 ### User Management (Feb 19, 2026)
 - ✅ **Admin User Management** - Settings page shows User Management section for admins
@@ -75,79 +94,12 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 - ✅ **Won vs Lost Metrics** - Dashboard shows Won (Closed) and Lost (Closed) totals with counts
 - ✅ **Active Opportunities Card** - Shows Closed Won opportunities count and value
 - ✅ **Pipeline Opportunities Card** - Shows Open opportunities count and value
-- ✅ **8 Metric Cards** - Two rows: Top row (Total Pipeline, Weighted Forecast, Overdue Activities, At-Risk Deals), Bottom row (Won, Lost, Active, Pipeline)
-
-### Activities Enhancements (Feb 13, 2026)
-- ✅ **Title Field** - Activities now have title as main content (type shown as badge)
-- ✅ **Color-coded Cards** - Each activity type has unique color border:
-  - Call: Blue, Email: Purple, Meeting: Emerald, Demo: Orange
-  - Workshop: Pink, Discovery Session: Cyan, Follow-up: Amber
-  - Exec Readout: Indigo, Other: Slate
-- ✅ **Type-specific Icons** - Phone, Mail, Video, Presentation, Users, MessageSquare, Clock, FileText
-
-### Client Page Redesign (Feb 13, 2026)
-- ✅ **Buyer Section** - Shows identified buyer (Decision Maker/Champion) or "No buyer identified"
-- ✅ **Opportunity Totals** - Shows deal count, total value, avg confidence on client cards
-- ✅ **Google Drive Link** - Prominent clickable button on cards and card-style link on detail page
-- ✅ **Notes Running Tally** - Add notes with input field, displayed with author & timestamp
-- ✅ Activity deletion now working correctly
-- ✅ **Separated Opportunities** - Pipeline Opportunities and Active Opportunities (Closed Won) shown in separate sections
-- ✅ **Visual Distinction** - Pipeline opps have blue border, Active opps have green border with "Closed Won" badge
-
-### Create Opportunity Simplification (Feb 13, 2026)
-- ✅ **Removed Source Dropdown** - Source field removed from Create Opportunity dialog
-- ✅ **Removed Estimated Value** - No manual entry, use Deal Builder on opportunity detail page
-- ✅ **Streamlined Fields** - Only Name, Organization, Owner, Engagement Type, Initial Stage, Confidence
-
-### App Rebranding (Feb 13, 2026)
-- ✅ Changed app name from "CompassX" to "**Compass X Grow**"
-- ✅ Updated login page, sidebar, and settings
-
-### Google OAuth Authentication (Feb 13, 2026)
-- ✅ **Google OAuth** via Emergent-managed Auth
-- ✅ **Email Whitelisting** - Only 7 authorized CompassX emails can login
-- ✅ **Both auth methods** - Password login + Google OAuth on same page
-- ✅ **Role sync** - Admin/Sales Lead roles synced from authorized list
-- ✅ **Seth Cushing** is the only admin
+- ✅ **Avg Confidence** - Dashboard shows average confidence score (replaced Weighted Forecast)
+- ✅ **8 Metric Cards** - Two rows: Top row (Total Pipeline, Avg Confidence, Overdue Activities, At-Risk Deals), Bottom row (Won, Lost, Active, Pipeline)
 
 ### UI Improvements (Feb 13, 2026)
 - ✅ Changed "Mine" to "My" on Pipeline and Reports page toggles
-
-### Activity Deletion & Expanded Types (Feb 13, 2026)
-- ✅ **Delete Activities** - DELETE /api/activities/{activity_id} endpoint
-- ✅ Delete buttons on Activities page (Timeline & By Client views)
-- ✅ Delete buttons on Client/Organization detail page
-- ✅ Delete confirmation dialog
-- ✅ **Expanded Activity Types**: Call, Email, Meeting, Demo, Workshop, Discovery Session, Follow-up, Exec Readout, Other
-
-### Naming & Terminology Changes (Feb 13, 2026)
-- ✅ "Organizations" → "Clients" throughout the app
-- ✅ "Strategic Tier" → "Client Status" with values: **Current, Future, Return**
-- ✅ Sidebar updated to show "Clients" instead of "Organizations"
-
-### At-Risk Detection (Feb 13, 2026)
-- ✅ Clients marked "At Risk" if no activity in 7 days
-- ✅ At-Risk badge displays on client cards and detail pages
-- ✅ Automatic calculation based on activities (direct + via opportunities)
-
-### Client Page Enhancements (Feb 13, 2026)
-- ✅ **Create Contact** directly from client detail page
-- ✅ **Create Activity** directly from client detail page (linked to org_id)
-- ✅ **Create Opportunity** from client detail page
-- ✅ Activities section shows all client activities (direct + via opportunities)
-
-### Activities Page Enhancements (Feb 13, 2026)
-- ✅ **Timeline / By Client** toggle view
-- ✅ Timeline: Activities sorted by date with tabs (Upcoming, Overdue, Completed)
-- ✅ By Client: Activities grouped by client organization
-- ✅ **Create Activity** with client selection
-- ✅ Activities can be linked directly to org_id (not just opportunities)
-- ✅ Search functionality across activities
-
-### Pipeline & Reports
-- ✅ All/My toggle on Pipeline page
-- ✅ All/My toggle on Reports page with filtered analytics
-- ✅ Owner selection on all entities
+- ✅ Currency values formatted as $1.25M for millions
 
 ### AI Sales Copilot
 - ✅ Summarize, Suggest Activity, Draft Email, Value Hypothesis
@@ -215,28 +167,25 @@ Build a clean, modern, pipeline-driven CRM for Tech, Data, and AI Consulting fir
 
 ## API Endpoints
 
+### Authentication
+- POST /api/auth/login - Password-based login
+- GET/POST /api/auth/setup-admin - Initialize admin user (production setup)
+- GET/POST /api/seed - Load sample data
+
 ### Opportunities
 - PUT /api/opportunities/{opp_id}/at-risk - Toggle at-risk status with reason
 - PUT /api/opportunities/{opp_id} - Update opportunity including deal builder fields
-  - Deal Builder fields: `deal_start_date`, `deal_end_date`, `num_consultants`, `blended_hourly_rate`, `calculated_value`
 
 ### Organizations
 - GET /api/organizations/{org_id}/summary - Returns buyer, opportunity totals, won/lost values
-  - Response includes: `won_count`, `won_value`, `lost_count`, `lost_value`, `pipeline_count`, `pipeline_value`
-  - Returns `active_opportunities` array (Closed Won) and `pipeline_opportunities` array (Open)
 
 ### Reports
 - GET /api/reports/summary - Dashboard metrics endpoint
-  - Returns `won`, `lost`, `active`, `pipeline` objects with count and value
 
 ### Activities
 - GET /api/activities?org_id=xxx - Filter by client
 - POST /api/activities - Now supports org_id without opp_id
 - DELETE /api/activities/{activity_id} - Delete an activity
-
-### Organizations
-- GET /api/organizations - Returns is_at_risk flag
-- GET /api/organizations/{id} - Returns is_at_risk flag
 
 ## Prioritized Backlog
 
