@@ -208,7 +208,7 @@ const Organizations = () => {
             
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button data-testid="create-org-btn" className="bg-ocean-950 hover:bg-ocean-900 rounded-full">
+                <Button data-testid="create-org-btn" className="bg-ocean-600 hover:bg-ocean-700 rounded-full">
                   <Plus className="w-4 h-4 mr-2" /> Add Client
                 </Button>
               </DialogTrigger>
@@ -354,7 +354,7 @@ const Organizations = () => {
                   <Button
                     data-testid="submit-org-btn"
                     onClick={handleCreateOrg}
-                    className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                    className="w-full bg-ocean-600 hover:bg-ocean-700 rounded-full"
                   >
                     Add Client
                   </Button>

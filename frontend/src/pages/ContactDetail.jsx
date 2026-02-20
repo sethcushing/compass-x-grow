@@ -213,7 +213,7 @@ const ContactDetail = () => {
                     <Button
                       data-testid="save-contact-btn"
                       onClick={handleSave}
-                      className="bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                      className="bg-ocean-600 hover:bg-ocean-700 rounded-full"
                     >
                       <Save className="w-4 h-4 mr-2" /> Save
                     </Button>

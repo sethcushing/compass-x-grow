@@ -349,7 +349,7 @@ const Activities = () => {
               
               <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button data-testid="create-activity-btn" className="bg-ocean-950 hover:bg-ocean-900 rounded-full">
+                  <Button data-testid="create-activity-btn" className="bg-ocean-600 hover:bg-ocean-700 rounded-full">
                     <Plus className="w-4 h-4 mr-2" /> Add Activity
                   </Button>
                 </DialogTrigger>
@@ -435,7 +435,7 @@ const Activities = () => {
                     <Button
                       data-testid="submit-activity-btn"
                       onClick={handleCreateActivity}
-                      className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                      className="w-full bg-ocean-600 hover:bg-ocean-700 rounded-full"
                     >
                       Add Activity
                     </Button>

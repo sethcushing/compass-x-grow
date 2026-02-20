@@ -525,7 +525,7 @@ const OrganizationDetail = () => {
                     <Button
                       data-testid="save-org-btn"
                       onClick={handleSave}
-                      className="bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                      className="bg-ocean-600 hover:bg-ocean-700 rounded-full"
                     >
                       <Save className="w-4 h-4 mr-2" /> Save
                     </Button>
@@ -825,7 +825,7 @@ const OrganizationDetail = () => {
                 />
                 <Button 
                   onClick={handleAddNote}
-                  className="bg-ocean-950 hover:bg-ocean-900"
+                  className="bg-ocean-600 hover:bg-ocean-700"
                   data-testid="add-note-btn"
                 >
                   <Send className="w-4 h-4" />
@@ -935,7 +935,7 @@ const OrganizationDetail = () => {
                     <Button
                       data-testid="submit-activity-btn"
                       onClick={handleCreateActivity}
-                      className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                      className="w-full bg-ocean-600 hover:bg-ocean-700 rounded-full"
                     >
                       Add Activity
                     </Button>
@@ -1094,7 +1094,7 @@ const OrganizationDetail = () => {
                       <Button
                         data-testid="submit-contact-btn"
                         onClick={handleCreateContact}
-                        className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                        className="w-full bg-ocean-600 hover:bg-ocean-700 rounded-full"
                       >
                         Add Contact
                       </Button>
@@ -1237,7 +1237,7 @@ const OrganizationDetail = () => {
                       <Button
                         data-testid="submit-new-opp-btn"
                         onClick={handleCreateOpp}
-                        className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                        className="w-full bg-ocean-600 hover:bg-ocean-700 rounded-full"
                       >
                         Create Opportunity
                       </Button>

@@ -438,7 +438,7 @@ const OpportunityDetail = () => {
                   <Button
                     data-testid="save-opp-btn"
                     onClick={handleSave}
-                    className="bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                    className="bg-ocean-600 hover:bg-ocean-700 rounded-full"
                   >
                     <Save className="w-4 h-4 mr-2" /> Save
                   </Button>
@@ -746,7 +746,7 @@ const OpportunityDetail = () => {
                   <CardTitle className="text-lg font-heading">Activities</CardTitle>
                   <Dialog open={isActivityDialogOpen} onOpenChange={setIsActivityDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button data-testid="add-activity-btn" size="sm" className="bg-ocean-950 hover:bg-ocean-900 rounded-full">
+                      <Button data-testid="add-activity-btn" size="sm" className="bg-ocean-600 hover:bg-ocean-700 rounded-full">
                         <Plus className="w-4 h-4 mr-2" /> Add Activity
                       </Button>
                     </DialogTrigger>
@@ -797,7 +797,7 @@ const OpportunityDetail = () => {
                         <Button
                           data-testid="submit-activity-btn"
                           onClick={handleCreateActivity}
-                          className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                          className="w-full bg-ocean-600 hover:bg-ocean-700 rounded-full"
                         >
                           Add Activity
                         </Button>
@@ -951,7 +951,7 @@ const OpportunityDetail = () => {
                       <Button
                         data-testid="save-deal-builder-btn"
                         onClick={handleSaveDealBuilder}
-                        className="w-full bg-ocean-950 hover:bg-ocean-900 rounded-full"
+                        className="w-full bg-ocean-600 hover:bg-ocean-700 rounded-full"
                       >
                         <Save className="w-4 h-4 mr-2" /> Save Deal Financials
                       </Button>
