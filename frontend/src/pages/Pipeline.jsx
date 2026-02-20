@@ -78,47 +78,47 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
     <div
       ref={setNodeRef}
       style={style}
-      className={`kanban-card ${isDragging ? 'dragging' : ''} ${
-        status === 'at-risk' ? 'ring-2 ring-amber-300' : ''
+      className={`bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-3 mb-2 transition-all hover:bg-white/10 ${isDragging ? 'opacity-50 scale-105' : ''} ${
+        status === 'at-risk' ? 'ring-1 ring-amber-500/50' : ''
       }`}
     >
       <div className="flex items-start gap-2">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab p-1 hover:bg-slate-100 rounded"
+          className="cursor-grab p-1 hover:bg-white/10 rounded"
         >
-          <GripVertical className="w-4 h-4 text-slate-400" />
+          <GripVertical className="w-4 h-4 text-white/40" />
         </div>
         <div className="flex-1 min-w-0">
           <Link to={`/opportunities/${opportunity.opp_id}`}>
-            <h4 className="font-medium text-sm text-slate-900 hover:text-ocean-600 truncate">
+            <h4 className="font-medium text-sm text-white hover:text-secondary truncate transition-colors">
               {opportunity.name}
             </h4>
           </Link>
           <div className="flex items-center gap-1 mt-1">
-            <Building2 className="w-3 h-3 text-slate-400" />
-            <span className="text-xs text-slate-500 truncate">{org?.name || 'Unknown'}</span>
+            <Building2 className="w-3 h-3 text-white/40" />
+            <span className="text-xs text-white/50 truncate">{org?.name || 'Unknown'}</span>
           </div>
           <div className="flex items-center gap-1 mt-1">
-            <User className="w-3 h-3 text-slate-400" />
-            <span className="text-xs text-slate-500 truncate">{owner?.name || 'Unassigned'}</span>
+            <User className="w-3 h-3 text-white/40" />
+            <span className="text-xs text-white/50 truncate">{owner?.name || 'Unassigned'}</span>
           </div>
         </div>
         
         {/* Actions Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-              <MoreHorizontal className="w-4 h-4 text-slate-400" />
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-white/10">
+              <MoreHorizontal className="w-4 h-4 text-white/40" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="end" className="bg-slate-800 border-white/10">
             {opportunity.is_at_risk ? (
               <DropdownMenuItem
                 data-testid={`clear-at-risk-${opportunity.opp_id}`}
                 onClick={() => onToggleAtRisk(opportunity, false)}
-                className="text-emerald-600"
+                className="text-emerald-400 focus:bg-white/10 focus:text-emerald-400"
               >
                 <ShieldCheck className="w-4 h-4 mr-2" />
                 Clear At-Risk Status
@@ -127,7 +127,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
               <DropdownMenuItem
                 data-testid={`mark-at-risk-${opportunity.opp_id}`}
                 onClick={() => onToggleAtRisk(opportunity, true)}
-                className="text-amber-600"
+                className="text-amber-400 focus:bg-white/10 focus:text-amber-400"
               >
                 <ShieldAlert className="w-4 h-4 mr-2" />
                 Mark as At-Risk
