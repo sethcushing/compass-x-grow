@@ -36,12 +36,20 @@ const Login = () => {
         body: JSON.stringify(formData)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Login failed');
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.error('Non-JSON response:', text);
+        throw new Error('Server error. Please try again later.');
       }
 
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.detail || 'Login failed');
+      }
+
       const firstName = data.name ? data.name.split(' ')[0] : 'there';
       toast.success(`Welcome back, ${firstName}!`);
       navigate('/dashboard', { replace: true, state: { user: data } });
