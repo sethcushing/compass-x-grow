@@ -70,16 +70,8 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// App Router - Handles OAuth callback detection synchronously
+// App Router - Handles routing
 const AppRouter = () => {
-  const location = useLocation();
-  
-  // CRITICAL: Check for session_id during render (NOT in useEffect)
-  // This prevents race conditions with ProtectedRoute
-  if (location.hash?.includes('session_id=')) {
-    return <AuthCallback />;
-  }
-  
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
