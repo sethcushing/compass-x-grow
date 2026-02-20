@@ -889,7 +889,7 @@ const OrganizationDetail = () => {
           </Card>
 
           {/* Activities Section */}
-          <Card className="border-slate-200 shadow-soft mb-6">
+          <GlassCard className=" mb-6">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg font-heading">Activities ({activities.length})</CardTitle>
               <Dialog open={isActivityDialogOpen} onOpenChange={setIsActivityDialogOpen}>
@@ -1024,7 +1024,7 @@ const OrganizationDetail = () => {
           {/* Contacts & Opportunities */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Contacts */}
-            <Card className="border-slate-200 shadow-soft">
+            <GlassCard className="">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg font-heading">Contacts ({contacts.length})</CardTitle>
                 <Dialog open={isContactDialogOpen} onOpenChange={setIsContactDialogOpen}>
@@ -1162,7 +1162,7 @@ const OrganizationDetail = () => {
             </Card>
 
             {/* Opportunities */}
-            <Card className="border-slate-200 shadow-soft">
+            <GlassCard className="">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg font-heading">Opportunities ({opportunities.length})</CardTitle>
                 <Dialog open={isOppDialogOpen} onOpenChange={setIsOppDialogOpen}>
