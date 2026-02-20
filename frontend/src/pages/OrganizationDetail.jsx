@@ -46,16 +46,40 @@ import {
   ExternalLink,
   Send,
   DollarSign,
-  TrendingUp
+  TrendingUp,
+  MessageSquare
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import { useTheme } from '@/context/ThemeContext';
 
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
+
+// Glassmorphic Card Component
+const GlassCard = ({ children, className = '', glow = false }) => {
+  const { theme } = useTheme();
+  return (
+    <div className={`
+      relative overflow-hidden rounded-2xl
+      ${theme === 'dark' 
+        ? 'bg-white/5 border border-white/10 backdrop-blur-xl' 
+        : 'bg-white border border-slate-200 shadow-lg shadow-slate-200/50'
+      }
+      ${glow && theme === 'dark' ? 'ring-1 ring-ocean-500/20' : ''}
+      ${className}
+    `}>
+      {theme === 'dark' && (
+        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+      )}
+      <div className="relative">{children}</div>
+    </div>
+  );
+};
 
 const OrganizationDetail = () => {
   const { orgId } = useParams();
   const navigate = useNavigate();
+  const { theme } = useTheme();
   const [organization, setOrganization] = useState(null);
   const [contacts, setContacts] = useState([]);
   const [opportunities, setOpportunities] = useState([]);
