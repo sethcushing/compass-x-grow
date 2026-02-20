@@ -677,19 +677,19 @@ const Pipeline = () => {
             </DialogHeader>
             <div className="space-y-4 mt-4">
               <div className="p-3 bg-slate-50 rounded-lg">
-                <p className="text-sm text-slate-600">
-                  <strong>{selectedOppForRisk?.name}</strong>
+                <p className="text-sm text-white/70">
+                  <strong className="text-white">{selectedOppForRisk?.name}</strong>
                 </p>
               </div>
               <div>
-                <Label htmlFor="at-risk-reason">Reason for At-Risk Status *</Label>
+                <Label htmlFor="at-risk-reason" className="text-white/70">Reason for At-Risk Status *</Label>
                 <Textarea
                   id="at-risk-reason"
                   data-testid="at-risk-reason-input"
                   value={atRiskReason}
                   onChange={(e) => setAtRiskReason(e.target.value)}
                   placeholder="e.g., Budget concerns, Decision maker left, Competitor threat..."
-                  className="mt-1"
+                  className="mt-1 bg-white/5 border-white/10 text-white placeholder:text-white/30"
                   rows={3}
                 />
               </div>
@@ -698,7 +698,7 @@ const Pipeline = () => {
               <Button
                 variant="outline"
                 onClick={() => setAtRiskDialogOpen(false)}
-                className="rounded-full"
+                className="rounded-full border-white/20 text-white hover:bg-white/10"
               >
                 Cancel
               </Button>
