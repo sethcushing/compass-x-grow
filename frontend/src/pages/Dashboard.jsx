@@ -62,6 +62,7 @@ const Dashboard = () => {
   const [reportsSummary, setReportsSummary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
+  const { theme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
