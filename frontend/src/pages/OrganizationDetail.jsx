@@ -886,7 +886,7 @@ const OrganizationDetail = () => {
                 )}
               </div>
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {/* Activities Section */}
           <GlassCard className=" mb-6">
@@ -1019,7 +1019,7 @@ const OrganizationDetail = () => {
                 </div>
               )}
             </CardContent>
-          </Card>
+          </GlassCard>
 
           {/* Contacts & Opportunities */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -1159,7 +1159,7 @@ const OrganizationDetail = () => {
                   </div>
                 )}
               </CardContent>
-            </Card>
+            </GlassCard>
 
             {/* Opportunities */}
             <GlassCard className="">
@@ -1339,7 +1339,7 @@ const OrganizationDetail = () => {
                   )}
                 </div>
               </CardContent>
-            </Card>
+            </GlassCard>
           </div>
         </motion.div>
       </main>
