@@ -67,25 +67,27 @@ const Sidebar = () => {
     { icon: Settings, label: 'Settings', path: '/settings' },
   ];
 
-  const isActive = (path) => location.pathname === path;
+  const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   return (
     <TooltipProvider delayDuration={0}>
       <aside className={`
         ${collapsed ? 'w-20' : 'w-64'} 
         h-screen sticky top-0 
-        bg-white border-r border-slate-200 
+        bg-slate-900/50 backdrop-blur-xl border-r border-white/10
         flex flex-col transition-all duration-300
-        shadow-soft
       `}>
         {/* Logo */}
         <div className={`p-4 flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
           <Link to="/dashboard" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-ocean-950 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Compass className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 bg-gradient-to-br from-secondary to-yellow-400 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-secondary/20">
+              <Compass className="w-6 h-6 text-slate-900" />
             </div>
             {!collapsed && (
-              <span className="text-xl font-heading font-semibold text-ocean-950">Compass X Grow</span>
+              <div>
+                <span className="text-lg font-bold text-white">Compass X</span>
+                <span className="block text-xs text-secondary font-medium -mt-1">Grow</span>
+              </div>
             )}
           </Link>
           
@@ -94,7 +96,7 @@ const Sidebar = () => {
             variant="ghost"
             size="sm"
             onClick={() => setCollapsed(!collapsed)}
-            className={`p-1 hover:bg-slate-100 rounded-lg ${collapsed ? 'hidden' : ''}`}
+            className={`p-1 hover:bg-white/10 rounded-lg text-white/60 hover:text-white ${collapsed ? 'hidden' : ''}`}
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
@@ -105,7 +107,7 @@ const Sidebar = () => {
             variant="ghost"
             size="sm"
             onClick={() => setCollapsed(false)}
-            className="mx-auto mb-2 p-1 hover:bg-slate-100 rounded-lg"
+            className="mx-auto mb-2 p-1 hover:bg-white/10 rounded-lg text-white/60 hover:text-white"
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
@@ -125,13 +127,13 @@ const Sidebar = () => {
                   flex items-center gap-3 px-3 py-2.5 rounded-xl
                   transition-all duration-200
                   ${active 
-                    ? 'bg-ocean-950 text-white shadow-md' 
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    ? 'bg-gradient-to-r from-secondary/20 to-yellow-400/10 text-white border border-secondary/30' 
+                    : 'text-white/60 hover:bg-white/5 hover:text-white'
                   }
                   ${collapsed ? 'justify-center' : ''}
                 `}
               >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-white' : ''}`} />
+                <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-secondary' : ''}`} />
                 {!collapsed && <span className="font-medium text-sm">{item.label}</span>}
               </Link>
             );
@@ -142,7 +144,7 @@ const Sidebar = () => {
                   <TooltipTrigger asChild>
                     {NavLink}
                   </TooltipTrigger>
-                  <TooltipContent side="right">
+                  <TooltipContent side="right" className="bg-slate-800 text-white border-slate-700">
                     {item.label}
                   </TooltipContent>
                 </Tooltip>
@@ -153,7 +155,7 @@ const Sidebar = () => {
           })}
 
           {/* Divider */}
-          <div className="my-4 border-t border-slate-200" />
+          <div className="my-4 border-t border-white/10" />
 
           {/* Secondary Items */}
           {secondaryItems.map((item) => {
@@ -167,13 +169,13 @@ const Sidebar = () => {
                   flex items-center gap-3 px-3 py-2.5 rounded-xl
                   transition-all duration-200
                   ${active 
-                    ? 'bg-ocean-950 text-white shadow-md' 
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                    ? 'bg-gradient-to-r from-secondary/20 to-yellow-400/10 text-white border border-secondary/30' 
+                    : 'text-white/60 hover:bg-white/5 hover:text-white'
                   }
                   ${collapsed ? 'justify-center' : ''}
                 `}
               >
-                <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-white' : ''}`} />
+                <item.icon className={`w-5 h-5 flex-shrink-0 ${active ? 'text-secondary' : ''}`} />
                 {!collapsed && <span className="font-medium text-sm">{item.label}</span>}
               </Link>
             );
@@ -184,7 +186,7 @@ const Sidebar = () => {
                   <TooltipTrigger asChild>
                     {NavLink}
                   </TooltipTrigger>
-                  <TooltipContent side="right">
+                  <TooltipContent side="right" className="bg-slate-800 text-white border-slate-700">
                     {item.label}
                   </TooltipContent>
                 </Tooltip>
@@ -196,21 +198,21 @@ const Sidebar = () => {
         </nav>
 
         {/* User Section */}
-        <div className={`p-4 border-t border-slate-200 ${collapsed ? 'flex flex-col items-center' : ''}`}>
+        <div className={`p-4 border-t border-white/10 ${collapsed ? 'flex flex-col items-center' : ''}`}>
           <div className={`flex items-center ${collapsed ? 'flex-col gap-2' : 'gap-3'}`}>
-            <Avatar className="w-10 h-10">
+            <Avatar className="w-10 h-10 ring-2 ring-white/20">
               <AvatarImage src={user?.picture} />
-              <AvatarFallback className="bg-ocean-100 text-ocean-700">
+              <AvatarFallback className="bg-gradient-to-br from-secondary to-yellow-400 text-slate-900 font-semibold">
                 {user?.name?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
             
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-900 truncate">
+                <p className="text-sm font-medium text-white truncate">
                   {user?.name || 'User'}
                 </p>
-                <p className="text-xs text-slate-500 truncate capitalize">
+                <p className="text-xs text-white/50 truncate capitalize">
                   {user?.role?.replace('_', ' ') || 'Sales Lead'}
                 </p>
               </div>
@@ -224,12 +226,12 @@ const Sidebar = () => {
                     variant="ghost"
                     size="sm"
                     onClick={handleLogout}
-                    className="p-2 hover:bg-red-50 hover:text-red-600 rounded-lg"
+                    className="p-2 hover:bg-red-500/20 text-white/60 hover:text-red-400 rounded-lg"
                   >
                     <LogOut className="w-4 h-4" />
                   </Button>
                 </TooltipTrigger>
-                <TooltipContent side="right">Logout</TooltipContent>
+                <TooltipContent side="right" className="bg-slate-800 text-white border-slate-700">Logout</TooltipContent>
               </Tooltip>
             ) : (
               <Button
@@ -237,7 +239,7 @@ const Sidebar = () => {
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="p-2 hover:bg-red-50 hover:text-red-600 rounded-lg"
+                className="p-2 hover:bg-red-500/20 text-white/60 hover:text-red-400 rounded-lg"
               >
                 <LogOut className="w-4 h-4" />
               </Button>
