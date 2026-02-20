@@ -377,39 +377,59 @@ async def health_check():
 @api_router.post("/auth/login")
 async def login(data: LoginRequest, response: Response):
     """Login with email and password"""
-    email = data.email.lower().strip()
-    
-    # Get user from database
-    user = await db.users.find_one({"email": email}, {"_id": 0})
-    if not user:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    # Verify password
-    if not user.get("password_hash") or not verify_password(data.password, user["password_hash"]):
-        raise HTTPException(status_code=401, detail="Invalid credentials")
-    
-    # Create JWT token
-    token = create_access_token({"user_id": user["user_id"], "email": user["email"]})
-    
-    # Set cookie
-    response.set_cookie(
-        key="session_token",
-        value=token,
-        httponly=True,
-        secure=True,
-        samesite="none",
-        path="/",
-        max_age=ACCESS_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
-    )
-    
-    # Return user without password hash
-    return {
-        "user_id": user["user_id"],
-        "email": user["email"],
-        "name": user["name"],
-        "role": user["role"],
-        "picture": user.get("picture")
-    }
+    try:
+        email = data.email.lower().strip()
+        
+        # Test database connection first
+        try:
+            await db.command("ping")
+        except Exception as db_error:
+            logger.error(f"Database connection error: {db_error}")
+            raise HTTPException(status_code=503, detail="Database connection error. Please try again.")
+        
+        # Get user from database
+        user = await db.users.find_one({"email": email}, {"_id": 0})
+        if not user:
+            # Check if any users exist - might need setup
+            user_count = await db.users.count_documents({})
+            if user_count == 0:
+                raise HTTPException(status_code=401, detail="No users found. Please run /api/auth/setup-admin first.")
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Verify password
+        if not user.get("password_hash"):
+            raise HTTPException(status_code=401, detail="Account not configured for password login")
+        
+        if not verify_password(data.password, user["password_hash"]):
+            raise HTTPException(status_code=401, detail="Invalid credentials")
+        
+        # Create JWT token
+        token = create_access_token({"user_id": user["user_id"], "email": user["email"]})
+        
+        # Set cookie
+        response.set_cookie(
+            key="session_token",
+            value=token,
+            httponly=True,
+            secure=True,
+            samesite="none",
+            path="/",
+            max_age=ACCESS_TOKEN_EXPIRE_DAYS * 24 * 60 * 60
+        )
+        
+        # Return user without password hash
+        return {
+            "user_id": user["user_id"],
+            "email": user["email"],
+            "name": user["name"],
+            "role": user["role"],
+            "picture": user.get("picture")
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Login error: {e}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Login failed: {str(e)}")
 
 @api_router.api_route("/auth/setup-admin", methods=["GET", "POST"])
 async def setup_admin():
