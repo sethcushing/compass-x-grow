@@ -139,21 +139,21 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
       
       <div className="mt-3 flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <DollarSign className="w-3 h-3 text-emerald-600" />
-          <span className="text-sm font-medium text-slate-900">
+          <DollarSign className="w-3 h-3 text-secondary" />
+          <span className="text-sm font-medium text-white">
             {new Intl.NumberFormat('en-US', {
               notation: 'compact',
               maximumFractionDigits: 1
             }).format(opportunity.calculated_value || opportunity.estimated_value || 0)}
           </span>
         </div>
-        <Badge variant="secondary" className="text-xs bg-slate-100">
+        <Badge className="text-xs bg-white/10 text-white/70 border-0">
           {opportunity.confidence_level}%
         </Badge>
       </div>
 
       {opportunity.is_at_risk && (
-        <div className="mt-2 flex items-center gap-1 text-amber-600">
+        <div className="mt-2 flex items-center gap-1 text-amber-400">
           <AlertTriangle className="w-3 h-3" />
           <span className="text-xs truncate" title={opportunity.at_risk_reason || 'At Risk'}>
             {opportunity.at_risk_reason || 'At Risk'}
@@ -162,7 +162,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
       )}
       
       {opportunity.target_close_date && (
-        <div className="mt-2 flex items-center gap-1 text-slate-500">
+        <div className="mt-2 flex items-center gap-1 text-white/40">
           <Calendar className="w-3 h-3" />
           <span className="text-xs">
             {new Date(opportunity.target_close_date).toLocaleDateString('en-US', { 
@@ -181,15 +181,15 @@ const KanbanColumn = ({ stage, opportunities, organizations, users, onToggleAtRi
   const totalValue = opportunities.reduce((sum, o) => sum + (o.estimated_value || 0), 0);
   
   return (
-    <div className="kanban-column">
+    <div className="w-80 flex-shrink-0 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-heading font-medium text-slate-900 text-sm">{stage.name}</h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h3 className="font-semibold text-white text-sm">{stage.name}</h3>
+          <p className="text-xs text-white/40 mt-0.5">
             {opportunities.length} deals · ${(totalValue / 1000).toFixed(0)}K
           </p>
         </div>
-        <Badge variant="secondary" className="bg-ocean-100 text-ocean-700">
+        <Badge className="bg-secondary/20 text-secondary border-0">
           {stage.win_probability}%
         </Badge>
       </div>
