@@ -625,42 +625,42 @@ const OrganizationDetail = () => {
                   </div>
                   
                   {/* Pipeline Value */}
-                  <div className="p-4 bg-blue-50 rounded-xl" data-testid="client-pipeline-value">
-                    <p className="text-xs font-medium text-blue-600 uppercase mb-2">Pipeline</p>
-                    <p className="text-2xl font-bold text-blue-700">
+                  <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-50'}`} data-testid="client-pipeline-value">
+                    <p className={`text-xs font-medium uppercase mb-2 ${theme === 'dark' ? 'text-blue-400' : 'text-blue-600'}`}>Pipeline</p>
+                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-blue-400' : 'text-blue-700'}`}>
                       ${(orgSummary.opportunities.pipeline_value || 0) >= 1000000 
                         ? `${((orgSummary.opportunities.pipeline_value || 0) / 1000000).toFixed(2)}M`
                         : (orgSummary.opportunities.pipeline_value || 0) >= 1000 
                           ? `${((orgSummary.opportunities.pipeline_value || 0) / 1000).toFixed(0)}K` 
                           : (orgSummary.opportunities.pipeline_value || 0).toLocaleString()}
                     </p>
-                    <p className="text-xs text-blue-500">{orgSummary.opportunities.pipeline_count || 0} deals</p>
+                    <p className={`text-xs ${theme === 'dark' ? 'text-blue-500' : 'text-blue-500'}`}>{orgSummary.opportunities.pipeline_count || 0} deals</p>
                   </div>
                   
                   {/* Won Value */}
-                  <div className="p-4 bg-green-50 rounded-xl" data-testid="client-won-value">
-                    <p className="text-xs font-medium text-green-600 uppercase mb-2">Won</p>
-                    <p className="text-2xl font-bold text-green-700">
+                  <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-green-500/10 border border-green-500/20' : 'bg-green-50'}`} data-testid="client-won-value">
+                    <p className={`text-xs font-medium uppercase mb-2 ${theme === 'dark' ? 'text-green-400' : 'text-green-600'}`}>Won</p>
+                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-green-400' : 'text-green-700'}`}>
                       ${(orgSummary.opportunities.won_value || 0) >= 1000000 
                         ? `${((orgSummary.opportunities.won_value || 0) / 1000000).toFixed(2)}M`
                         : (orgSummary.opportunities.won_value || 0) >= 1000 
                           ? `${((orgSummary.opportunities.won_value || 0) / 1000).toFixed(0)}K` 
                           : (orgSummary.opportunities.won_value || 0).toLocaleString()}
                     </p>
-                    <p className="text-xs text-green-500">{orgSummary.opportunities.won_count || 0} deals</p>
+                    <p className={`text-xs ${theme === 'dark' ? 'text-green-500' : 'text-green-500'}`}>{orgSummary.opportunities.won_count || 0} deals</p>
                   </div>
                   
                   {/* Lost Value */}
-                  <div className="p-4 bg-rose-50 rounded-xl" data-testid="client-lost-value">
-                    <p className="text-xs font-medium text-rose-600 uppercase mb-2">Lost</p>
-                    <p className="text-2xl font-bold text-rose-700">
+                  <div className={`p-4 rounded-xl ${theme === 'dark' ? 'bg-rose-500/10 border border-rose-500/20' : 'bg-rose-50'}`} data-testid="client-lost-value">
+                    <p className={`text-xs font-medium uppercase mb-2 ${theme === 'dark' ? 'text-rose-400' : 'text-rose-600'}`}>Lost</p>
+                    <p className={`text-2xl font-bold ${theme === 'dark' ? 'text-rose-400' : 'text-rose-700'}`}>
                       ${(orgSummary.opportunities.lost_value || 0) >= 1000000 
                         ? `${((orgSummary.opportunities.lost_value || 0) / 1000000).toFixed(2)}M`
                         : (orgSummary.opportunities.lost_value || 0) >= 1000 
                           ? `${((orgSummary.opportunities.lost_value || 0) / 1000).toFixed(0)}K` 
                           : (orgSummary.opportunities.lost_value || 0).toLocaleString()}
                     </p>
-                    <p className="text-xs text-rose-500">{orgSummary.opportunities.lost_count || 0} deals</p>
+                    <p className={`text-xs ${theme === 'dark' ? 'text-rose-500' : 'text-rose-500'}`}>{orgSummary.opportunities.lost_count || 0} deals</p>
                   </div>
                 </div>
               </div>
