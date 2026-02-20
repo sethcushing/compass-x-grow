@@ -25,19 +25,19 @@ import { motion } from 'framer-motion';
 const API = `${process.env.REACT_APP_BACKEND_URL}/api`;
 
 const ACTIVITY_CONFIG = {
-  'Call': { icon: Phone, color: 'from-blue-500/20 to-blue-600/10', iconColor: 'text-blue-400' },
-  'Email': { icon: Mail, color: 'from-purple-500/20 to-purple-600/10', iconColor: 'text-purple-400' },
-  'Meeting': { icon: Video, color: 'from-emerald-500/20 to-emerald-600/10', iconColor: 'text-emerald-400' },
-  'Demo': { icon: Presentation, color: 'from-orange-500/20 to-orange-600/10', iconColor: 'text-orange-400' },
-  'Workshop': { icon: Users, color: 'from-pink-500/20 to-pink-600/10', iconColor: 'text-pink-400' },
-  'Discovery Session': { icon: MessageSquare, color: 'from-cyan-500/20 to-cyan-600/10', iconColor: 'text-cyan-400' },
-  'Follow-up': { icon: Clock, color: 'from-amber-500/20 to-amber-600/10', iconColor: 'text-amber-400' },
-  'Exec Readout': { icon: FileText, color: 'from-indigo-500/20 to-indigo-600/10', iconColor: 'text-indigo-400' },
-  'Other': { icon: FileText, color: 'from-slate-500/20 to-slate-600/10', iconColor: 'text-slate-400' }
+  'Call': { icon: Phone, color: 'from-blue-50 to-blue-100', iconColor: 'text-blue-600', bgColor: 'bg-blue-100' },
+  'Email': { icon: Mail, color: 'from-purple-50 to-purple-100', iconColor: 'text-purple-600', bgColor: 'bg-purple-100' },
+  'Meeting': { icon: Video, color: 'from-emerald-50 to-emerald-100', iconColor: 'text-emerald-600', bgColor: 'bg-emerald-100' },
+  'Demo': { icon: Presentation, color: 'from-orange-50 to-orange-100', iconColor: 'text-orange-600', bgColor: 'bg-orange-100' },
+  'Workshop': { icon: Users, color: 'from-pink-50 to-pink-100', iconColor: 'text-pink-600', bgColor: 'bg-pink-100' },
+  'Discovery Session': { icon: MessageSquare, color: 'from-cyan-50 to-cyan-100', iconColor: 'text-cyan-600', bgColor: 'bg-cyan-100' },
+  'Follow-up': { icon: Clock, color: 'from-amber-50 to-amber-100', iconColor: 'text-amber-600', bgColor: 'bg-amber-100' },
+  'Exec Readout': { icon: FileText, color: 'from-indigo-50 to-indigo-100', iconColor: 'text-indigo-600', bgColor: 'bg-indigo-100' },
+  'Other': { icon: FileText, color: 'from-slate-50 to-slate-100', iconColor: 'text-slate-600', bgColor: 'bg-slate-100' }
 };
 
-const GlassCard = ({ children, className = '' }) => (
-  <div className={`bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl ${className}`}>
+const Card = ({ children, className = '' }) => (
+  <div className={`bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow ${className}`}>
     {children}
   </div>
 );
@@ -107,13 +107,13 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900 flex">
+      <div className="min-h-screen bg-slate-50 flex">
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-white/10 rounded-xl w-64" />
+            <div className="h-8 bg-slate-200 rounded-xl w-64" />
             <div className="grid grid-cols-4 gap-6">
-              {[1,2,3,4].map(i => <div key={i} className="h-32 bg-white/5 rounded-2xl" />)}
+              {[1,2,3,4].map(i => <div key={i} className="h-32 bg-slate-100 rounded-2xl" />)}
             </div>
           </div>
         </main>
@@ -141,17 +141,10 @@ const Dashboard = () => {
     .slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-ocean-900 flex">
-      {/* Background effects */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-ocean-500/10 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 -left-40 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 right-1/3 w-72 h-72 bg-ocean-400/10 rounded-full blur-3xl" />
-      </div>
-
+    <div className="min-h-screen bg-slate-50 flex">
       <Sidebar />
       
-      <main className="flex-1 p-8 overflow-auto relative">
+      <main className="flex-1 p-8 overflow-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -160,13 +153,13 @@ const Dashboard = () => {
           {/* Header */}
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-3xl font-bold text-slate-800">
                 Welcome back, {user?.name?.split(' ')[0] || 'there'}
               </h1>
-              <p className="text-white/50 mt-1">Here's what's happening with your pipeline</p>
+              <p className="text-slate-500 mt-1">Here's what's happening with your pipeline</p>
             </div>
             <Link to="/pipeline">
-              <Button className="bg-gradient-to-r from-secondary to-yellow-400 text-slate-900 font-semibold rounded-xl hover:shadow-lg hover:shadow-secondary/25 transition-all">
+              <Button className="bg-ocean-600 hover:bg-ocean-700 text-white font-semibold rounded-xl shadow-lg shadow-ocean-600/20 transition-all">
                 View Pipeline
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -176,131 +169,127 @@ const Dashboard = () => {
           {/* Top Metrics Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-              <GlassCard className="p-6">
+              <Card className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-ocean-400/20 to-ocean-600/10 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-ocean-400" />
+                  <div className="w-12 h-12 bg-ocean-100 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-ocean-600" />
                   </div>
-                  <Badge className="bg-emerald-500/20 text-emerald-400 border-0">
+                  <Badge className="bg-emerald-100 text-emerald-700 border-0">
                     {metrics?.total_opportunities || 0} deals
                   </Badge>
                 </div>
-                <p className="text-white/50 text-sm mb-1">Total Pipeline</p>
-                <p className="text-2xl font-bold text-white">{formatCurrency(metrics?.total_value)}</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">Total Pipeline</p>
+                <p className="text-2xl font-bold text-slate-800">{formatCurrency(metrics?.total_value)}</p>
+              </Card>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-              <GlassCard className="p-6">
+              <Card className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-amber-400/20 to-amber-600/10 rounded-xl flex items-center justify-center">
-                    <Target className="w-6 h-6 text-amber-400" />
+                  <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                    <Target className="w-6 h-6 text-amber-600" />
                   </div>
                 </div>
-                <p className="text-white/50 text-sm mb-1">Avg Confidence</p>
-                <p className="text-2xl font-bold text-white">{metrics?.avg_confidence || 0}%</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">Avg Confidence</p>
+                <p className="text-2xl font-bold text-slate-800">{metrics?.avg_confidence || 0}%</p>
+              </Card>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <GlassCard className={`p-6 ${metrics?.overdue_activities > 0 ? 'ring-1 ring-red-500/30' : ''}`}>
+              <Card className={`p-6 ${metrics?.overdue_activities > 0 ? 'ring-2 ring-red-200' : ''}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    metrics?.overdue_activities > 0 
-                      ? 'bg-gradient-to-br from-red-400/20 to-red-600/10' 
-                      : 'bg-gradient-to-br from-slate-400/20 to-slate-600/10'
+                    metrics?.overdue_activities > 0 ? 'bg-red-100' : 'bg-slate-100'
                   }`}>
-                    <Clock className={`w-6 h-6 ${metrics?.overdue_activities > 0 ? 'text-red-400' : 'text-slate-400'}`} />
+                    <Clock className={`w-6 h-6 ${metrics?.overdue_activities > 0 ? 'text-red-600' : 'text-slate-500'}`} />
                   </div>
                   {metrics?.overdue_activities > 0 && (
-                    <Badge className="bg-red-500/20 text-red-400 border-0">Action Needed</Badge>
+                    <Badge className="bg-red-100 text-red-700 border-0">Action Needed</Badge>
                   )}
                 </div>
-                <p className="text-white/50 text-sm mb-1">Overdue Activities</p>
-                <p className="text-2xl font-bold text-white">{metrics?.overdue_activities || 0}</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">Overdue Activities</p>
+                <p className="text-2xl font-bold text-slate-800">{metrics?.overdue_activities || 0}</p>
+              </Card>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-              <GlassCard className={`p-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'ring-1 ring-amber-500/30' : ''}`}>
+              <Card className={`p-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'ring-2 ring-amber-200' : ''}`}>
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    (metrics?.at_risk_opportunities > 0 || atRiskClients > 0)
-                      ? 'bg-gradient-to-br from-amber-400/20 to-amber-600/10' 
-                      : 'bg-gradient-to-br from-slate-400/20 to-slate-600/10'
+                    (metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'bg-amber-100' : 'bg-slate-100'
                   }`}>
-                    <AlertTriangle className={`w-6 h-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'text-amber-400' : 'text-slate-400'}`} />
+                    <AlertTriangle className={`w-6 h-6 ${(metrics?.at_risk_opportunities > 0 || atRiskClients > 0) ? 'text-amber-600' : 'text-slate-500'}`} />
                   </div>
                   {atRiskClients > 0 && (
-                    <Badge className="bg-rose-500/20 text-rose-400 border-0">{atRiskClients} clients</Badge>
+                    <Badge className="bg-rose-100 text-rose-700 border-0">{atRiskClients} clients</Badge>
                   )}
                 </div>
-                <p className="text-white/50 text-sm mb-1">At-Risk Deals</p>
-                <p className="text-2xl font-bold text-white">{metrics?.at_risk_opportunities || 0}</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">At-Risk Deals</p>
+                <p className="text-2xl font-bold text-slate-800">{metrics?.at_risk_opportunities || 0}</p>
+              </Card>
             </motion.div>
           </div>
 
           {/* Won/Lost/Active/Pipeline Row */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              <GlassCard className="p-6" data-testid="dashboard-won-card">
+              <Card className="p-6" data-testid="dashboard-won-card">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-400/20 to-emerald-600/10 rounded-xl flex items-center justify-center">
-                    <CheckCircle2 className="w-6 h-6 text-emerald-400" />
+                  <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                    <CheckCircle2 className="w-6 h-6 text-emerald-600" />
                   </div>
-                  <Badge className="bg-emerald-500/20 text-emerald-400 border-0">
+                  <Badge className="bg-emerald-100 text-emerald-700 border-0">
                     {reportsSummary?.won?.count || 0} deals
                   </Badge>
                 </div>
-                <p className="text-white/50 text-sm mb-1">Won (Closed)</p>
-                <p className="text-2xl font-bold text-emerald-400">{formatCurrency(reportsSummary?.won?.value)}</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">Won (Closed)</p>
+                <p className="text-2xl font-bold text-emerald-600">{formatCurrency(reportsSummary?.won?.value)}</p>
+              </Card>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
-              <GlassCard className="p-6" data-testid="dashboard-lost-card">
+              <Card className="p-6" data-testid="dashboard-lost-card">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-rose-400/20 to-rose-600/10 rounded-xl flex items-center justify-center">
-                    <XCircle className="w-6 h-6 text-rose-400" />
+                  <div className="w-12 h-12 bg-rose-100 rounded-xl flex items-center justify-center">
+                    <XCircle className="w-6 h-6 text-rose-600" />
                   </div>
-                  <Badge className="bg-rose-500/20 text-rose-400 border-0">
+                  <Badge className="bg-rose-100 text-rose-700 border-0">
                     {reportsSummary?.lost?.count || 0} deals
                   </Badge>
                 </div>
-                <p className="text-white/50 text-sm mb-1">Lost (Closed)</p>
-                <p className="text-2xl font-bold text-rose-400">{formatCurrency(reportsSummary?.lost?.value)}</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">Lost (Closed)</p>
+                <p className="text-2xl font-bold text-rose-600">{formatCurrency(reportsSummary?.lost?.value)}</p>
+              </Card>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-              <GlassCard className="p-6" data-testid="dashboard-active-card">
+              <Card className="p-6" data-testid="dashboard-active-card">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-400/20 to-green-600/10 rounded-xl flex items-center justify-center">
-                    <CheckCircle2 className="w-6 h-6 text-green-400" />
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                    <CheckCircle2 className="w-6 h-6 text-green-600" />
                   </div>
-                  <Badge className="bg-green-500/20 text-green-400 border-0">
+                  <Badge className="bg-green-100 text-green-700 border-0">
                     {reportsSummary?.active?.count || 0} deals
                   </Badge>
                 </div>
-                <p className="text-white/50 text-sm mb-1">Active (Closed Won)</p>
-                <p className="text-2xl font-bold text-green-400">{formatCurrency(reportsSummary?.active?.value)}</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">Active (Closed Won)</p>
+                <p className="text-2xl font-bold text-green-600">{formatCurrency(reportsSummary?.active?.value)}</p>
+              </Card>
             </motion.div>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
-              <GlassCard className="p-6" data-testid="dashboard-pipeline-card">
+              <Card className="p-6" data-testid="dashboard-pipeline-card">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400/20 to-blue-600/10 rounded-xl flex items-center justify-center">
-                    <TrendingUp className="w-6 h-6 text-blue-400" />
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-blue-600" />
                   </div>
-                  <Badge className="bg-blue-500/20 text-blue-400 border-0">
+                  <Badge className="bg-blue-100 text-blue-700 border-0">
                     {reportsSummary?.pipeline?.count || 0} deals
                   </Badge>
                 </div>
-                <p className="text-white/50 text-sm mb-1">Pipeline (Open)</p>
-                <p className="text-2xl font-bold text-blue-400">{formatCurrency(reportsSummary?.pipeline?.value)}</p>
-              </GlassCard>
+                <p className="text-slate-500 text-sm mb-1">Pipeline (Open)</p>
+                <p className="text-2xl font-bold text-blue-600">{formatCurrency(reportsSummary?.pipeline?.value)}</p>
+              </Card>
             </motion.div>
           </div>
 
@@ -308,16 +297,16 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Upcoming Activities */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-              <GlassCard className="p-6">
+              <Card className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-lg font-semibold text-white">Upcoming Activities</h2>
-                  <Link to="/activities" className="text-secondary text-sm hover:text-secondary/80 transition-colors">
+                  <h2 className="text-lg font-semibold text-slate-800">Upcoming Activities</h2>
+                  <Link to="/activities" className="text-ocean-600 text-sm hover:text-ocean-700 transition-colors">
                     View all
                   </Link>
                 </div>
                 <div className="space-y-3">
                   {activities.length === 0 ? (
-                    <p className="text-white/40 text-sm text-center py-8">No upcoming activities</p>
+                    <p className="text-slate-400 text-sm text-center py-8">No upcoming activities</p>
                   ) : (
                     activities.map((activity) => {
                       const config = ACTIVITY_CONFIG[activity.type] || ACTIVITY_CONFIG['Other'];
@@ -325,16 +314,16 @@ const Dashboard = () => {
                       return (
                         <div
                           key={activity.activity_id}
-                          className={`flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r ${config.color} border border-white/5`}
+                          className={`flex items-center gap-4 p-3 rounded-xl bg-gradient-to-r ${config.color} border border-slate-100`}
                         >
-                          <div className={`w-10 h-10 rounded-lg bg-white/10 flex items-center justify-center`}>
+                          <div className={`w-10 h-10 rounded-lg ${config.bgColor} flex items-center justify-center`}>
                             <Icon className={`w-5 h-5 ${config.iconColor}`} />
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="font-medium text-white text-sm truncate">{activity.title || activity.type}</p>
-                            <p className="text-white/50 text-xs truncate">{activity.notes || 'No notes'}</p>
+                            <p className="font-medium text-slate-700 text-sm truncate">{activity.title || activity.type}</p>
+                            <p className="text-slate-500 text-xs truncate">{activity.notes || 'No notes'}</p>
                           </div>
-                          <Badge className="bg-white/10 text-white/70 border-0 text-xs">
+                          <Badge className="bg-white text-slate-600 border border-slate-200 text-xs">
                             {formatDate(activity.due_date)}
                           </Badge>
                         </div>
@@ -342,35 +331,35 @@ const Dashboard = () => {
                     })
                   )}
                 </div>
-              </GlassCard>
+              </Card>
             </motion.div>
 
             {/* Top Opportunities by Client */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-              <GlassCard className="p-6">
+              <Card className="p-6">
                 <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-lg font-semibold text-white">Top Opportunities by Client</h2>
-                  <Link to="/pipeline" className="text-secondary text-sm hover:text-secondary/80 transition-colors">
+                  <h2 className="text-lg font-semibold text-slate-800">Top Opportunities by Client</h2>
+                  <Link to="/pipeline" className="text-ocean-600 text-sm hover:text-ocean-700 transition-colors">
                     View pipeline
                   </Link>
                 </div>
                 <div className="space-y-4">
                   {sortedClients.length === 0 ? (
-                    <p className="text-white/40 text-sm text-center py-8">No opportunities yet</p>
+                    <p className="text-slate-400 text-sm text-center py-8">No opportunities yet</p>
                   ) : (
                     sortedClients.map(([clientName, clientData]) => (
                       <div key={clientName} className="space-y-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-gradient-to-br from-ocean-400/20 to-ocean-600/10 rounded-lg flex items-center justify-center">
-                              <Building2 className="w-4 h-4 text-ocean-400" />
+                            <div className="w-8 h-8 bg-ocean-100 rounded-lg flex items-center justify-center">
+                              <Building2 className="w-4 h-4 text-ocean-600" />
                             </div>
                             <div>
-                              <p className="font-medium text-white text-sm">{clientName}</p>
-                              <p className="text-white/40 text-xs">{clientData.opps.length} opportunities</p>
+                              <p className="font-medium text-slate-700 text-sm">{clientName}</p>
+                              <p className="text-slate-400 text-xs">{clientData.opps.length} opportunities</p>
                             </div>
                           </div>
-                          <p className="font-semibold text-secondary">{formatCurrency(clientData.totalValue)}</p>
+                          <p className="font-semibold text-ocean-600">{formatCurrency(clientData.totalValue)}</p>
                         </div>
                         <div className="ml-11 space-y-1">
                           {clientData.opps.slice(0, 3).map(opp => {
@@ -379,12 +368,12 @@ const Dashboard = () => {
                               <Link 
                                 key={opp.opp_id} 
                                 to={`/opportunities/${opp.opp_id}`}
-                                className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                                className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-slate-50 hover:bg-slate-100 transition-colors"
                               >
-                                <span className="text-white/70 text-xs truncate">{opp.name}</span>
+                                <span className="text-slate-600 text-xs truncate">{opp.name}</span>
                                 <div className="flex items-center gap-2">
-                                  <span className="text-white/50 text-xs">{stage?.name || ''}</span>
-                                  <span className="text-white font-medium text-xs">{formatCurrency(opp.estimated_value)}</span>
+                                  <span className="text-slate-400 text-xs">{stage?.name || ''}</span>
+                                  <span className="text-slate-700 font-medium text-xs">{formatCurrency(opp.estimated_value)}</span>
                                 </div>
                               </Link>
                             );
@@ -394,7 +383,7 @@ const Dashboard = () => {
                     ))
                   )}
                 </div>
-              </GlassCard>
+              </Card>
             </motion.div>
           </div>
         </motion.div>
