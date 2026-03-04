@@ -78,47 +78,47 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
     <div
       ref={setNodeRef}
       style={style}
-      className={`bg-white border border-slate-200 rounded-xl p-3 mb-2 transition-all hover:shadow-md hover:border-slate-300 ${isDragging ? 'opacity-50 scale-105 shadow-lg' : ''} ${
-        status === 'at-risk' ? 'ring-2 ring-amber-200' : ''
+      className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-3 mb-2 transition-all hover:shadow-md dark:hover:shadow-none hover:border-slate-300 dark:hover:border-slate-600 ${isDragging ? 'opacity-50 scale-105 shadow-lg' : ''} ${
+        status === 'at-risk' ? 'ring-2 ring-amber-200 dark:ring-amber-500/50' : ''
       }`}
     >
       <div className="flex items-start gap-2">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab p-1 hover:bg-slate-100 rounded"
+          className="cursor-grab p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded"
         >
-          <GripVertical className="w-4 h-4 text-slate-400" />
+          <GripVertical className="w-4 h-4 text-slate-400 dark:text-slate-500" />
         </div>
         <div className="flex-1 min-w-0">
           <Link to={`/opportunities/${opportunity.opp_id}`}>
-            <h4 className="font-medium text-sm text-slate-700 hover:text-ocean-600 truncate transition-colors">
+            <h4 className="font-medium text-sm text-slate-700 dark:text-slate-200 hover:text-ocean-600 dark:hover:text-ocean-400 truncate transition-colors">
               {opportunity.name}
             </h4>
           </Link>
           <div className="flex items-center gap-1 mt-1">
-            <Building2 className="w-3 h-3 text-slate-400" />
-            <span className="text-xs text-slate-500 truncate">{org?.name || 'Unknown'}</span>
+            <Building2 className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+            <span className="text-xs text-slate-500 dark:text-slate-400 truncate">{org?.name || 'Unknown'}</span>
           </div>
           <div className="flex items-center gap-1 mt-1">
-            <User className="w-3 h-3 text-slate-400" />
-            <span className="text-xs text-slate-500 truncate">{owner?.name || 'Unassigned'}</span>
+            <User className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+            <span className="text-xs text-slate-500 dark:text-slate-400 truncate">{owner?.name || 'Unassigned'}</span>
           </div>
         </div>
         
         {/* Actions Menu */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-slate-100">
-              <MoreHorizontal className="w-4 h-4 text-slate-400" />
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 hover:bg-slate-100 dark:hover:bg-slate-700">
+              <MoreHorizontal className="w-4 h-4 text-slate-400 dark:text-slate-500" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-white border-slate-200">
+          <DropdownMenuContent align="end" className="bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700">
             {opportunity.is_at_risk ? (
               <DropdownMenuItem
                 data-testid={`clear-at-risk-${opportunity.opp_id}`}
                 onClick={() => onToggleAtRisk(opportunity, false)}
-                className="text-emerald-600 focus:bg-emerald-50 focus:text-emerald-700"
+                className="text-emerald-600 dark:text-emerald-400 focus:bg-emerald-50 dark:focus:bg-emerald-900/30 focus:text-emerald-700 dark:focus:text-emerald-300"
               >
                 <ShieldCheck className="w-4 h-4 mr-2" />
                 Clear At-Risk Status
@@ -127,7 +127,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
               <DropdownMenuItem
                 data-testid={`mark-at-risk-${opportunity.opp_id}`}
                 onClick={() => onToggleAtRisk(opportunity, true)}
-                className="text-amber-600 focus:bg-amber-50 focus:text-amber-700"
+                className="text-amber-600 dark:text-amber-400 focus:bg-amber-50 dark:focus:bg-amber-900/30 focus:text-amber-700 dark:focus:text-amber-300"
               >
                 <ShieldAlert className="w-4 h-4 mr-2" />
                 Mark as At-Risk
@@ -139,21 +139,21 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
       
       <div className="mt-3 flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <DollarSign className="w-3 h-3 text-ocean-600" />
-          <span className="text-sm font-medium text-slate-700">
+          <DollarSign className="w-3 h-3 text-ocean-600 dark:text-ocean-400" />
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
             {new Intl.NumberFormat('en-US', {
               notation: 'compact',
               maximumFractionDigits: 1
             }).format(opportunity.calculated_value || opportunity.estimated_value || 0)}
           </span>
         </div>
-        <Badge className="text-xs bg-slate-100 text-slate-600 border-0">
+        <Badge className="text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 border-0">
           {opportunity.confidence_level}%
         </Badge>
       </div>
 
       {opportunity.is_at_risk && (
-        <div className="mt-2 flex items-center gap-1 text-amber-600">
+        <div className="mt-2 flex items-center gap-1 text-amber-600 dark:text-amber-400">
           <AlertTriangle className="w-3 h-3" />
           <span className="text-xs truncate" title={opportunity.at_risk_reason || 'At Risk'}>
             {opportunity.at_risk_reason || 'At Risk'}
@@ -162,7 +162,7 @@ const OpportunityCard = ({ opportunity, organizations, users, onToggleAtRisk }) 
       )}
       
       {opportunity.target_close_date && (
-        <div className="mt-2 flex items-center gap-1 text-slate-400">
+        <div className="mt-2 flex items-center gap-1 text-slate-400 dark:text-slate-500">
           <Calendar className="w-3 h-3" />
           <span className="text-xs">
             {new Date(opportunity.target_close_date).toLocaleDateString('en-US', { 
@@ -181,15 +181,15 @@ const KanbanColumn = ({ stage, opportunities, organizations, users, onToggleAtRi
   const totalValue = opportunities.reduce((sum, o) => sum + (o.estimated_value || 0), 0);
   
   return (
-    <div className="w-80 flex-shrink-0 bg-slate-100 border border-slate-200 rounded-2xl p-4">
+    <div className="w-80 flex-shrink-0 bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50 rounded-2xl p-4">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-semibold text-slate-700 text-sm">{stage.name}</h3>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <h3 className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{stage.name}</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
             {opportunities.length} deals · ${(totalValue / 1000).toFixed(0)}K
           </p>
         </div>
-        <Badge className="bg-ocean-100 text-ocean-700 border-0">
+        <Badge className="bg-ocean-100 dark:bg-ocean-500/20 text-ocean-700 dark:text-ocean-400 border-0">
           {stage.win_probability}%
         </Badge>
       </div>
@@ -438,14 +438,14 @@ const Pipeline = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen bg-slate-50">
+      <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
         <Sidebar />
         <main className="flex-1 p-8">
           <div className="animate-pulse">
-            <div className="h-8 w-48 bg-slate-200 rounded mb-6"></div>
+            <div className="h-8 w-48 bg-slate-200 dark:bg-slate-800 rounded mb-6"></div>
             <div className="flex gap-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="w-80 h-96 bg-slate-100 rounded-xl"></div>
+                <div key={i} className="w-80 h-96 bg-slate-100 dark:bg-slate-800 rounded-xl"></div>
               ))}
             </div>
           </div>
@@ -455,26 +455,26 @@ const Pipeline = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 dark:bg-slate-950">
       <Sidebar />
       <main className="flex-1 overflow-hidden">
         {/* Header */}
-        <div className="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between">
+        <div className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-6">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800">Sales Pipeline</h1>
-              <p className="text-sm text-slate-500">Drag deals between stages to update progress</p>
+              <h1 className="text-2xl font-bold text-slate-800 dark:text-white">Sales Pipeline</h1>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Drag deals between stages to update progress</p>
             </div>
             
             {/* View Toggle */}
-            <div className="flex items-center bg-slate-100 rounded-full p-1">
+            <div className="flex items-center bg-slate-100 dark:bg-slate-800 rounded-full p-1">
               <button
                 data-testid="pipeline-view-all"
                 onClick={() => setViewMode('all')}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   viewMode === 'all' 
-                    ? 'bg-white text-slate-800 shadow-sm' 
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' 
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
               >
                 All
@@ -484,8 +484,8 @@ const Pipeline = () => {
                 onClick={() => setViewMode('mine')}
                 className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
                   viewMode === 'mine' 
-                    ? 'bg-white text-slate-800 shadow-sm' 
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' 
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 }`}
               >
                 My
@@ -499,35 +499,35 @@ const Pipeline = () => {
                 <Plus className="w-4 h-4 mr-2" /> New Opportunity
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg bg-white">
+            <DialogContent className="sm:max-w-lg bg-white dark:bg-slate-900 dark:border-slate-700">
               <DialogHeader>
-                <DialogTitle className="font-bold text-slate-800">Create Opportunity</DialogTitle>
+                <DialogTitle className="font-bold text-slate-800 dark:text-white">Create Opportunity</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 mt-4">
                 <div>
-                  <Label htmlFor="opp-name" className="text-slate-600">Opportunity Name *</Label>
+                  <Label htmlFor="opp-name" className="text-slate-600 dark:text-slate-300">Opportunity Name *</Label>
                   <Input
                     id="opp-name"
                     data-testid="opp-name-input"
                     value={newOpp.name}
                     onChange={(e) => setNewOpp(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="e.g., Acme Data Platform Modernization"
-                    className="mt-1"
+                    className="mt-1 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                   />
                 </div>
                 
                 <div>
-                  <Label htmlFor="opp-org" className="text-slate-600">Organization *</Label>
+                  <Label htmlFor="opp-org" className="text-slate-600 dark:text-slate-300">Organization *</Label>
                   <Select
                     value={newOpp.org_id}
                     onValueChange={(value) => setNewOpp(prev => ({ ...prev, org_id: value }))}
                   >
-                    <SelectTrigger data-testid="opp-org-select" className="mt-1">
+                    <SelectTrigger data-testid="opp-org-select" className="mt-1 dark:bg-slate-800 dark:border-slate-700 dark:text-white">
                       <SelectValue placeholder="Select organization" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="dark:bg-slate-800 dark:border-slate-700">
                       {organizations.map(org => (
-                        <SelectItem key={org.org_id} value={org.org_id}>
+                        <SelectItem key={org.org_id} value={org.org_id} className="dark:text-slate-200 dark:focus:bg-slate-700">
                           {org.name}
                         </SelectItem>
                       ))}
